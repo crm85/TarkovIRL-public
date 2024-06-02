@@ -12,8 +12,8 @@ namespace TarkovIRL
     public class SetHeadRotationPatch_ApplyDeadzone : ModulePatch
     {
         private static FieldInfo playerField;
-
         private static FieldInfo fcField;
+        private static float target = 0;
 
         protected override MethodBase GetTargetMethod()
         {
@@ -50,7 +50,17 @@ namespace TarkovIRL
                 float headDeltaAdjusted = WeaponHandlingController.ProcessHeadDelta(headDeltaRaw);
                 float weightMulti = WeaponHandlingController.TotalWeaponWeight * 0.1f;
                 float finalValue = headDeltaAdjusted * weightMulti;
-                headRotThisFrame.y += finalValue;
+
+                string deltaRotDebug = string.Format($"rot delta {WeaponHandlingController.RotationDelta}");
+                Utils.Log(true, deltaRotDebug);
+
+                if (__instance.IsAiming && !WeaponHandlingController.IsPlayerMovement)
+                {
+                    finalValue = 0;
+                }
+
+                target = Mathf.Lerp(target, finalValue, Time.deltaTime * 10f);
+                headRotThisFrame.y += target;
 
                 AccessTools.Field(typeof(ProceduralWeaponAnimation), "_headRotationVec").SetValue(__instance, headRotThisFrame);
             }

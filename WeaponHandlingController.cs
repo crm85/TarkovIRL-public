@@ -39,7 +39,7 @@ namespace TarkovIRL
 
             _playerRotationHistory += distance;
             _playerRotationHistory -= _playerRotationAvg;
-            _playerRotationHistory = Mathf.Clamp(_playerRotationHistory, 0, 0.025f);
+            _playerRotationHistory = Mathf.Clamp(_playerRotationHistory, 0, 0.02f);
             _playerRotationAvg = _playerRotationHistory * DeltaTime;
 
             // set for next frame

@@ -107,8 +107,8 @@ namespace TarkovIRL
                     rotDelta *= 1000f;
                     float rotDeltaEval = PrimeMover.Instance.weapSwayCurve.Evaluate(rotDelta);
                     addedSway *= rotDeltaEval;
-                    string rotDeltadebug = string.Format("rotDeltaPure {0}, rotDelta {1}, rotDeltaEval {2}", rotDeltaPure, rotDelta, rotDeltaEval);
-                    Utils.Log(true, rotDeltadebug);
+                    //string rotDeltadebug = string.Format("rotDeltaPure {0}, rotDelta {1}, rotDeltaEval {2}", rotDeltaPure, rotDelta, rotDeltaEval);
+                    //Utils.Log(true, rotDeltadebug);
                 }
 
                 // push values
