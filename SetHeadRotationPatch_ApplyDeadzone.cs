@@ -51,15 +51,15 @@ namespace TarkovIRL
                 float weightMulti = WeaponHandlingController.TotalWeaponWeight * 0.1f;
                 float finalValue = headDeltaAdjusted * weightMulti;
 
-                string deltaRotDebug = string.Format($"rot delta {WeaponHandlingController.RotationDelta}");
-                Utils.Log(true, deltaRotDebug);
+                float lerpRate = 10f;
 
-                if (__instance.IsAiming && !WeaponHandlingController.IsPlayerMovement)
+                if (__instance.IsAiming)
                 {
                     finalValue = 0;
+                    lerpRate = WeaponHandlingController.TargetErgo * WeaponHandlingController.TotalWeaponWeight * 2f;
                 }
 
-                target = Mathf.Lerp(target, finalValue, Time.deltaTime * 10f);
+                target = Mathf.Lerp(target, finalValue, Time.deltaTime * lerpRate);
                 headRotThisFrame.y += target;
 
                 AccessTools.Field(typeof(ProceduralWeaponAnimation), "_headRotationVec").SetValue(__instance, headRotThisFrame);
