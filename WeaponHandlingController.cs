@@ -26,7 +26,7 @@ namespace TarkovIRL
         static public float ProcessHeadDelta(float rawHeadDelta)
         {
             float adjustedHeadDelta = rawHeadDelta / TargetErgo / 10f;
-            return adjustedHeadDelta;
+            return adjustedHeadDelta * WeaponHandlingController.TotalWeaponWeight * 0.1f;
         }
 
         public static void UpdateRotationHistory(Vector2 newRot)

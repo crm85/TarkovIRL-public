@@ -14,6 +14,7 @@ namespace TarkovIRL
         private static FieldInfo playerField;
         private static FieldInfo fcField;
         private static float target = 0;
+        private static float _lerpRate = 10f;
 
         protected override MethodBase GetTargetMethod()
         {
@@ -48,15 +49,14 @@ namespace TarkovIRL
 
                 float headDeltaRaw = player.MovementContext.DeltaRotation;
                 float headDeltaAdjusted = WeaponHandlingController.ProcessHeadDelta(headDeltaRaw);
-                float weightMulti = WeaponHandlingController.TotalWeaponWeight * 0.1f;
-                float finalValue = headDeltaAdjusted * weightMulti;
+                float finalValue = headDeltaAdjusted;
 
-                float lerpRate = 10f;
+                float lerpRate = _lerpRate;
 
                 if (__instance.IsAiming)
                 {
                     finalValue = 0;
-                    lerpRate = WeaponHandlingController.TargetErgo * WeaponHandlingController.TotalWeaponWeight * 2f;
+                    lerpRate = _lerpRate * (1f / (WeaponHandlingController.TargetErgo * WeaponHandlingController.TotalWeaponWeight * 2f));
                 }
 
                 target = Mathf.Lerp(target, finalValue, Time.deltaTime * lerpRate);
