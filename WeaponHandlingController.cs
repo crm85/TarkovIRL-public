@@ -23,6 +23,8 @@ namespace TarkovIRL
         static bool _playerMoving = false;
         static float _verticalAvg = 0;
 
+        static public bool IsReposStance = false;
+
         static public float ProcessHeadDelta(float rawHeadDelta)
         {
             float adjustedHeadDelta = rawHeadDelta / TargetErgo / 10f;

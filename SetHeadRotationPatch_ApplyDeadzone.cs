@@ -6,6 +6,7 @@ using EFT;
 using System;
 using EFT.UI;
 using HarmonyLib;
+using static MultiFlareLight;
 
 namespace TarkovIRL
 {
@@ -15,6 +16,9 @@ namespace TarkovIRL
         private static FieldInfo fcField;
         private static float target = 0;
         private static float _lerpRate = 10f;
+
+        static int _turnState1 = -31136456;
+        static int _turnState2 = 287005718;
 
         protected override MethodBase GetTargetMethod()
         {
@@ -47,9 +51,23 @@ namespace TarkovIRL
                 headRotThisFrame.z *= 1.5f;
                 // ^ just adds +50% head freelook rotation
 
+
+                bool flag1 = player.MovementContext.CurrentState.AnimatorStateHash == _turnState1;
+                bool flag2 = player.MovementContext.CurrentState.AnimatorStateHash == _turnState2;
+                bool flag3 = flag1 || flag2;
+
+
                 float headDeltaRaw = player.MovementContext.DeltaRotation;
+                float headDeltaTaperMulti = Mathf.Abs(headDeltaRaw / 45f);
+                headDeltaTaperMulti = PrimeMover.Instance.deadZoneCurve.Evaluate(headDeltaTaperMulti);
                 float headDeltaAdjusted = WeaponHandlingController.ProcessHeadDelta(headDeltaRaw);
-                float finalValue = headDeltaAdjusted;
+
+                float finalValue = headDeltaAdjusted * headDeltaTaperMulti;
+
+                if (flag3)
+                {
+                    finalValue = 0;
+                }
 
                 float lerpRate = _lerpRate;
 
@@ -58,6 +76,7 @@ namespace TarkovIRL
                     finalValue = 0;
                     lerpRate = _lerpRate * (1f / (WeaponHandlingController.TargetErgo * WeaponHandlingController.TotalWeaponWeight * 2f));
                 }
+
 
                 target = Mathf.Lerp(target, finalValue, Time.deltaTime * lerpRate);
                 headRotThisFrame.y += target;

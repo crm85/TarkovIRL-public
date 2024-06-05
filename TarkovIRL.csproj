@@ -69,6 +69,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplyRotationPatch.cs" />
     <Compile Include="LateUpdatePatch_RetrieveFAC.cs" />
     <Compile Include="IsAimingPatch.cs" />
     <Compile Include="LerpCameraPatch_ApplyUpdateSwayFactors.cs" />
