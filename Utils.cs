@@ -31,7 +31,7 @@ namespace TarkovIRL
             }
         }
 
-        public static void PumpUpdate(float dt)
+        public static void PumpUtilsUpdate(float dt)
         {
             DeltaTime += dt;
         }

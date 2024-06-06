@@ -12,13 +12,14 @@ namespace TarkovIRL
 {
     public class SetHeadRotationPatch_ApplyDeadzone : ModulePatch
     {
-        private static FieldInfo playerField;
-        private static FieldInfo fcField;
-        private static float target = 0;
-        private static float _lerpRate = 10f;
+        static FieldInfo playerField;
+        static FieldInfo fcField;
 
-        static int _turnState1 = -31136456;
-        static int _turnState2 = 287005718;
+        static readonly float _lerpRate = 10f;
+        static readonly int _turnState1 = -31136456;
+        static readonly int _turnState2 = 287005718;
+
+        static float _deadZoneLerpTarget = 0;
 
         protected override MethodBase GetTargetMethod()
         {
@@ -59,7 +60,7 @@ namespace TarkovIRL
 
                 float headDeltaRaw = player.MovementContext.DeltaRotation;
                 float headDeltaTaperMulti = Mathf.Abs(headDeltaRaw / 45f);
-                headDeltaTaperMulti = PrimeMover.Instance.deadZoneCurve.Evaluate(headDeltaTaperMulti);
+                headDeltaTaperMulti = PrimeMover.Instance.DeadZoneCurve.Evaluate(headDeltaTaperMulti);
                 float headDeltaAdjusted = WeaponHandlingController.ProcessHeadDelta(headDeltaRaw);
 
                 float finalValue = headDeltaAdjusted * headDeltaTaperMulti;
@@ -78,8 +79,8 @@ namespace TarkovIRL
                 }
 
 
-                target = Mathf.Lerp(target, finalValue, Time.deltaTime * lerpRate);
-                headRotThisFrame.y += target;
+                _deadZoneLerpTarget = Mathf.Lerp(_deadZoneLerpTarget, finalValue, Time.deltaTime * lerpRate);
+                headRotThisFrame.y += _deadZoneLerpTarget;
 
                 AccessTools.Field(typeof(ProceduralWeaponAnimation), "_headRotationVec").SetValue(__instance, headRotThisFrame);
             }

@@ -69,12 +69,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApplyRotationPatch.cs" />
-    <Compile Include="LateUpdatePatch_RetrieveFAC.cs" />
-    <Compile Include="IsAimingPatch.cs" />
+    <Compile Include="LateUpdatePatch_UpdateWpnStats.cs" />
     <Compile Include="LerpCameraPatch_ApplyUpdateSwayFactors.cs" />
-    <Compile Include="ProcessUpperbodyRotationPatch.cs" />
-    <Compile Include="UpdateWeaponVariablesPatch.cs" />
+    <Compile Include="OnShotPatch_UpdateWpnWeight.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="WeaponHandlingController.cs" />
     <Compile Include="SetHeadRotationPatch_ApplyDeadzone.cs" />
