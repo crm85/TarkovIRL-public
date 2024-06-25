@@ -40,6 +40,9 @@ namespace TarkovIRL
                 if (!player.IsInventoryOpened)
                 {
                     __instance.UpdateSwayFactors();
+                    float addedBreath = HandsMovController.GetAdjustedHandsPosition(player);
+                    Vector3 addedPosePosition = HandsMovController.GetModifiedHandPosWithPose(player);
+                    __instance.HandsContainer.WeaponRoot.position += addedPosePosition;
                 }
             }
         }

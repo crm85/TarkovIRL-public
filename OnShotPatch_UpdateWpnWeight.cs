@@ -21,7 +21,7 @@ namespace TarkovIRL
         [PatchPostfix]
         private static void PatchPostfix(Player __instance)
         {
-            if (!__instance.IsYourPlayer)
+            if ((UnityEngine.Object) (object)__instance != (UnityEngine.Object)null || __instance.IsYourPlayer)
             {
                 return;
             }

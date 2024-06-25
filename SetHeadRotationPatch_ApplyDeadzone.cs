@@ -20,6 +20,7 @@ namespace TarkovIRL
         static readonly int _turnState2 = 287005718;
 
         static float _deadZoneLerpTarget = 0;
+        static bool _updateDZ = true;
 
         protected override MethodBase GetTargetMethod()
         {
@@ -31,6 +32,11 @@ namespace TarkovIRL
         [PatchPostfix]
         private static void Postfix(ProceduralWeaponAnimation __instance)
         {
+            if (!_updateDZ)
+            {
+                Utils.Log(true, string.Format($"rot delta is {WeaponHandlingController.RotationDelta}"));
+                _updateDZ = WeaponHandlingController.IsPlayerMovement || WeaponHandlingController.RotationDelta > 0.0002f;
+            }
 
             if ((UnityEngine.Object)(object)__instance == (UnityEngine.Object)null)
             {
@@ -47,11 +53,7 @@ namespace TarkovIRL
 
                 Vector3 headRotThisFrame = player.HeadRotation;
 
-                headRotThisFrame.x *= 1.5f;
                 headRotThisFrame.y *= 1.5f;
-                headRotThisFrame.z *= 1.5f;
-                // ^ just adds +50% head freelook rotation
-
 
                 bool flag1 = player.MovementContext.CurrentState.AnimatorStateHash == _turnState1;
                 bool flag2 = player.MovementContext.CurrentState.AnimatorStateHash == _turnState2;
@@ -74,8 +76,14 @@ namespace TarkovIRL
 
                 if (__instance.IsAiming)
                 {
+                    _updateDZ = false;
                     finalValue = 0;
                     lerpRate = _lerpRate * (1f / (WeaponHandlingController.TargetErgo * WeaponHandlingController.TotalWeaponWeight * 2f));
+                }
+
+                if (!_updateDZ)
+                {
+                    finalValue = 0;
                 }
 
 

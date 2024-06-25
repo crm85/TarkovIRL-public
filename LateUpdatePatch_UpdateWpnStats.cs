@@ -20,6 +20,7 @@ public class LateUpdatePatch_UpdateWpnStats : ModulePatch
     [PatchPostfix]
 	private static void PatchPostfix(Player __instance)
     {
+
         _updateWeightTimer += Time.deltaTime;
         if (!__instance.IsYourPlayer)
         {
