@@ -51,6 +51,7 @@ namespace TarkovIRL
             TryLoadPatch(new SetHeadRotationPatch_ApplyDeadzone());
             TryLoadPatch(new LateUpdatePatch_UpdateWpnStats());
             TryLoadPatch(new OnShotPatch_UpdateWpnWeight());
+            TryLoadPatch(new CalculateCameraPositionPatch());
         }
 
         void Update()

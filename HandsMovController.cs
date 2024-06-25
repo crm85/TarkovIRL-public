@@ -15,7 +15,7 @@ namespace TarkovIRL
         static float currentLerpRate = 0;
 
         static float poseVerticalPoseOffsetModifier = .03f;
-        static float poseProjectedPoseOffsetModifier = -0.01f;
+        static float poseProjectedPoseOffsetModifier = -0.05f;
 
         static float poseVerticalPoseOffsetTarget = 0;
         static float poseProjectedPoseOffsetTarget = 0;
@@ -23,8 +23,8 @@ namespace TarkovIRL
         static float poseVerticalPoseOffsetLerp = 0;
         static float poseProjectedPoseOffsetLerp = 0;
 
-        static float breathVerticalOffsetModifier = .02f;
-        static float breathSpeedModifier = 1f;
+        static float breathVerticalOffsetModifier = .01f;
+        static float breathSpeedModifier = 0.05f;
 
         public static void UpdateLerp(float dt)
         {
@@ -35,12 +35,14 @@ namespace TarkovIRL
         {
             float stamNormalized = player.Physical.Stamina.Current / 104f;
             float stamModifier = 1f - stamNormalized;
-            float sinTime = Mathf.Sin(Time.time * stamModifier * breathSpeedModifier) ;
+            float timeMod = 1f + (breathSpeedModifier * stamModifier);
+            float sinTime = Mathf.Sin(Time.unscaledTime * timeMod);
             float breathOffset = breathVerticalOffsetModifier * sinTime * stamModifier;
+            Utils.Log(true, $"stam norm {stamNormalized}, stam mod {stamModifier}, sin mod {sinTime}, offset {breathOffset}");
             return new Vector3(0, breathOffset, 0);
         }
 
-        public static Vector3 GetModifiedHandPosWithPose(EFT.Player player)
+        public static Vector3 GetModifiedHandPosWithPose(Player player)
         {
             currentLerpRate = lerpRate;
 
@@ -57,6 +59,11 @@ namespace TarkovIRL
             }
 
             return new Vector3(0, poseVerticalPoseOffsetLerp, poseProjectedPoseOffsetLerp);
+        }
+
+        public static Vector3 GetModifiedHandPosWithPoseChange(Player player)
+        {
+            return new Vector3();
         }
     }
 }

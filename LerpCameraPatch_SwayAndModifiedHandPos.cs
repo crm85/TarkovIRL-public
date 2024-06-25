@@ -35,12 +35,8 @@ namespace TarkovIRL
                 return;
             }
             Player player = (Player)playerField.GetValue(firearmController);
-            if ((Object)(object)player != (Object)null && player.IsYourPlayer && player.MovementContext.CurrentState.Name != EPlayerState.Stationary)
+            if ((Object)(object)player != (Object)null && player.IsYourPlayer)
             {
-                Vector3 addedBreathPosition = HandsMovController.GetModifiedHandPosForBreath(player);
-                Vector3 addedPosePosition = HandsMovController.GetModifiedHandPosWithPose(player);
-                __instance.HandsContainer.WeaponRoot.position += addedPosePosition;
-                __instance.HandsContainer.WeaponRoot.position += addedBreathPosition;
 
                 if (!player.IsInventoryOpened)
                 {
