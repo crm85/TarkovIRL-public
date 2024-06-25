@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace TarkovIRL
 {
-    public class LerpCameraPatch_ApplyUpdateSwayFactors : ModulePatch
+    public class LerpCameraPatch_SwayAndModifiedHandPos : ModulePatch
     {
         private static FieldInfo playerField;
         private static FieldInfo fcField;
@@ -37,12 +37,14 @@ namespace TarkovIRL
             Player player = (Player)playerField.GetValue(firearmController);
             if ((Object)(object)player != (Object)null && player.IsYourPlayer && player.MovementContext.CurrentState.Name != EPlayerState.Stationary)
             {
+                Vector3 addedBreathPosition = HandsMovController.GetModifiedHandPosForBreath(player);
+                Vector3 addedPosePosition = HandsMovController.GetModifiedHandPosWithPose(player);
+                __instance.HandsContainer.WeaponRoot.position += addedPosePosition;
+                __instance.HandsContainer.WeaponRoot.position += addedBreathPosition;
+
                 if (!player.IsInventoryOpened)
                 {
                     __instance.UpdateSwayFactors();
-                    float addedBreath = HandsMovController.GetAdjustedHandsPosition(player);
-                    Vector3 addedPosePosition = HandsMovController.GetModifiedHandPosWithPose(player);
-                    __instance.HandsContainer.WeaponRoot.position += addedPosePosition;
                 }
             }
         }
