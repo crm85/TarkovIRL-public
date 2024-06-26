@@ -34,7 +34,6 @@ namespace TarkovIRL
         {
             if (!_updateDZ)
             {
-                Utils.Log(true, string.Format($"rot delta is {WeaponHandlingController.RotationDelta}"));
                 _updateDZ = WeaponHandlingController.IsPlayerMovement || WeaponHandlingController.RotationDelta > 0.0002f;
             }
 

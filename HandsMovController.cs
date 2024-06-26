@@ -23,8 +23,8 @@ namespace TarkovIRL
         static float poseVerticalPoseOffsetLerp = 0;
         static float poseProjectedPoseOffsetLerp = 0;
 
-        static float breathVerticalOffsetModifier = .01f;
-        static float breathSpeedModifier = 0.4f;
+        static float breathVerticalOffsetModifier = .0075f;
+        static float breathSpeedModifier = 0.55f;
 
         static float poseLevelLastFrame = 0;
 
@@ -47,7 +47,8 @@ namespace TarkovIRL
                 breathUpdateTimer -= 1f;
             }
             float breathValue = breathCurve.Evaluate(breathUpdateTimer);
-            float breathOffset = breathValue * breathVerticalOffsetModifier * stamModifier;
+            float stamModClamped = Mathf.Clamp(stamModifier, 0.025f, 1f);
+            float breathOffset = breathValue * breathVerticalOffsetModifier * stamModClamped;
             return new Vector3(0, breathOffset, 0);
         }
 
