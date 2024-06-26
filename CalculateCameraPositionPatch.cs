@@ -41,8 +41,10 @@ namespace TarkovIRL
             {
                 Vector3 addedBreathPosition = HandsMovController.GetModifiedHandPosForBreath(player);
                 Vector3 addedPosePosition = HandsMovController.GetModifiedHandPosWithPose(player);
+                Vector3 addedChangePosePos = HandsMovController.GetModifiedHandPosWithPoseChange(player);
                 __instance.HandsContainer.WeaponRoot.localPosition += addedBreathPosition;
                 __instance.HandsContainer.WeaponRoot.localPosition += addedPosePosition;
+                __instance.HandsContainer.WeaponRoot.localPosition += addedChangePosePos;
             }
         }
     }
