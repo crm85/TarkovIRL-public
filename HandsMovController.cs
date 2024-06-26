@@ -24,7 +24,11 @@ namespace TarkovIRL
         static float poseProjectedPoseOffsetLerp = 0;
 
         static float breathVerticalOffsetModifier = .01f;
-        static float breathSpeedModifier = 0.05f;
+        static float breathSpeedModifier = 0.4f;
+
+        static float poseLevelLastFrame = 0;
+
+        static float breathUpdateTimer = 0;
 
         public static void UpdateLerp(float dt)
         {
@@ -33,12 +37,17 @@ namespace TarkovIRL
         }
         public static Vector3 GetModifiedHandPosForBreath(Player player)
         {
+            AnimationCurve breathCurve = PrimeMover.Instance.BreathCurve;
             float stamNormalized = player.Physical.Stamina.Current / 104f;
             float stamModifier = 1f - stamNormalized;
-            float timeMod = 1f + (breathSpeedModifier * stamModifier);
-            float sinTime = Mathf.Sin(Time.unscaledTime * timeMod);
-            float breathOffset = breathVerticalOffsetModifier * sinTime * stamModifier;
-            Utils.Log(true, $"stam norm {stamNormalized}, stam mod {stamModifier}, sin mod {sinTime}, offset {breathOffset}");
+            float breathModifier = 1f + stamModifier;
+            breathUpdateTimer += player.DeltaTime * breathModifier * breathSpeedModifier;
+            if (breathUpdateTimer >= 1f)
+            {
+                breathUpdateTimer -= 1f;
+            }
+            float breathValue = breathCurve.Evaluate(breathUpdateTimer);
+            float breathOffset = breathValue * breathVerticalOffsetModifier * stamModifier;
             return new Vector3(0, breathOffset, 0);
         }
 
@@ -63,7 +72,16 @@ namespace TarkovIRL
 
         public static Vector3 GetModifiedHandPosWithPoseChange(Player player)
         {
-            return new Vector3();
+            Vector3 addedVert = Vector3.zero;
+            float poseLevelThisFrame = player.PoseLevel;
+            if (poseLevelThisFrame != poseLevelLastFrame)
+            {
+                float vertDiff = Mathf.Abs(poseLevelThisFrame - poseLevelLastFrame);
+
+            }
+            
+            poseLevelLastFrame = poseLevelThisFrame;
+            return addedVert;
         }
     }
 }
