@@ -42,9 +42,14 @@ namespace TarkovIRL
                 Vector3 addedBreathPosition = HandsMovController.GetModifiedHandPosForBreath(player);
                 Vector3 addedPosePosition = HandsMovController.GetModifiedHandPosWithPose(player);
                 Vector3 addedChangePosePos = HandsMovController.GetModifiedHandPosWithPoseChange(player);
-                __instance.HandsContainer.WeaponRoot.localPosition += addedBreathPosition;
-                __instance.HandsContainer.WeaponRoot.localPosition += addedPosePosition;
-                __instance.HandsContainer.WeaponRoot.localPosition += addedChangePosePos;
+
+                bool isBreathPos = PrimeMover.IsBreathingEffect.Value;
+                bool isPosePos = PrimeMover.IsPoseEffect.Value;
+                bool isPoseChangePos = PrimeMover.IsPoseChangeEffect.Value;
+
+                if (isBreathPos) __instance.HandsContainer.WeaponRoot.localPosition += addedBreathPosition;
+                if (isPosePos) __instance.HandsContainer.WeaponRoot.localPosition += addedPosePosition;
+                if (isPoseChangePos) __instance.HandsContainer.WeaponRoot.localPosition += addedChangePosePos;
             }
         }
     }

@@ -32,6 +32,11 @@ namespace TarkovIRL
         [PatchPostfix]
         private static void Postfix(ProceduralWeaponAnimation __instance)
         {
+            if (!PrimeMover.IsWeaponDeadzone.Value)
+            {
+                return;
+            }
+
             if (!_updateDZ)
             {
                 _updateDZ = WeaponHandlingController.IsPlayerMovement || WeaponHandlingController.RotationDelta > 0.0002f;
@@ -87,7 +92,7 @@ namespace TarkovIRL
 
 
                 _deadZoneLerpTarget = Mathf.Lerp(_deadZoneLerpTarget, finalValue, Time.deltaTime * lerpRate);
-                headRotThisFrame.y += _deadZoneLerpTarget;
+                headRotThisFrame.y += _deadZoneLerpTarget * PrimeMover.DeadzoneGlobalMultiplier.Value;
 
                 AccessTools.Field(typeof(ProceduralWeaponAnimation), "_headRotationVec").SetValue(__instance, headRotThisFrame);
             }

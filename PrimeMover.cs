@@ -1,6 +1,7 @@
 ﻿using System;
 using Aki.Reflection.Patching;
 using BepInEx;
+using BepInEx.Configuration;
 using HarmonyLib;
 using UnityEngine;
 
@@ -9,10 +10,10 @@ namespace TarkovIRL
     [BepInPlugin(modGUID, modName, modVersion)]
     public class PrimeMover : BaseUnityPlugin
     {
-        private const string modGUID = "TarkovIRL";
-        private const string modName = "TarkovIRL";
-        private const string modVersion = "0.31";
-        private readonly Harmony harmony = new Harmony(modGUID);
+        const string modGUID = "TarkovIRL";
+        const string modName = "TarkovIRL";
+        const string modVersion = "0.32";
+        readonly Harmony harmony = new Harmony(modGUID);
 
         public static PrimeMover Instance;
 
@@ -24,6 +25,24 @@ namespace TarkovIRL
         public float DeltaTime = 0;
         public float Time = 0;
 
+        // config items
+
+        const string section1 = "1) - Define base features";
+        public static ConfigEntry<bool> IsWeaponDeadzone;
+        public static ConfigEntry<bool> IsWeaponSway;
+        public static ConfigEntry<bool> IsBreathingEffect;
+        public static ConfigEntry<bool> IsPoseEffect;
+        public static ConfigEntry<bool> IsPoseChangeEffect;
+
+        const string section2 = "2) - Adjust feature values";
+        public static ConfigEntry<float> DeadzoneGlobalMultiplier;
+        public static ConfigEntry<float> WeaponSwayGlobalMultiplier;
+        public static ConfigEntry<float> FreelookMultiplier;
+        public static ConfigEntry<float> BreathingEffectMulti;
+
+        const string section5 = "5) - Only for dev/testing";
+        public static ConfigEntry<float> DevTestFloat;
+
 
         void Awake()
         {
@@ -32,6 +51,7 @@ namespace TarkovIRL
                 Instance = this;
             }
             Initialize();
+            LoadConfigValues();
         }
 
         void Initialize()
@@ -66,6 +86,23 @@ namespace TarkovIRL
             TryLoadPatch(new CalculateCameraPositionPatch());
         }
 
+        void LoadConfigValues()
+        {
+            // section 1
+            IsWeaponDeadzone = ConstructBoolConfig(true, section1, "Enable weapon deadzone", "The weapon 'deadzone' effect is a separation of the player's camera from where the weapon is pointing. In vanilla these are perfectly aligned at all times; in this mod, these values become disaligned depending on the size and ergo value of the weapon");
+            IsWeaponSway = ConstructBoolConfig(true, section1, "Enable weapon sway", "This mod changes how weapon sway works: your weapon generally sways ahead of your aimpoint (rather than behind like in vanilla), and the severity of the sway is defined by many factors. See mod documentation for fuller explanation");
+            IsBreathingEffect = ConstructBoolConfig(true, section1, "Enable breathing effect", "Adds a visual oscillation to your character's weapon, the intensity of which relating to your current stamina");
+            IsPoseEffect = ConstructBoolConfig(true, section1, "Enable weapons position pose changes", "When you crouch, your weapon position is pulled in closer to your character");
+            IsPoseChangeEffect = ConstructBoolConfig(true, section1, "Enable pose change effect", "When you change your crouch position, you see a dip in your sight picture, the speed and intensity of which is driven by how much you change your stance (e.g. incrimental change versus full change");
+
+            // section 2
+            DeadzoneGlobalMultiplier = ConstructFloatConfig(1f, section2, "Weapon deadzone global multiplier", "Define how intense you want the deadzone effect to be", 0, 5f);
+            WeaponSwayGlobalMultiplier = ConstructFloatConfig(1f, section2, "Weapon deadzone global multiplier", "Define how intense you want the deadzone effect to be", 0, 5f);
+
+            // section 5
+            DevTestFloat = ConstructFloatConfig(0, section5, "Test value", "This is only used for dev, should not be connected to anything in production releases", -1000f, 1000f);
+        }
+
         void Update()
         {
             WeaponHandlingController.DeltaTime = DeltaTime;
@@ -94,6 +131,18 @@ namespace TarkovIRL
                 Utils.Log(true, "could not load " + patchName + " -- " + e);
                 throw;
             }
+        }
+
+        ConfigEntry<float> ConstructFloatConfig(float defaultValue, string category, string descriptionShort, string descriptionFull, float min, float max)
+        {
+            ConfigEntry<float> result = ((BaseUnityPlugin)this).Config.Bind<float>(category, descriptionShort, defaultValue, new ConfigDescription(descriptionFull, (AcceptableValueBase)(object)new AcceptableValueRange<float>(min, max), Array.Empty<object>()));
+            return result;
+        }
+
+        ConfigEntry<bool> ConstructBoolConfig(bool defaultValue, string category, string descriptionShort, string descriptionFull)
+        {
+            ConfigEntry<bool> result = ((BaseUnityPlugin)this).Config.Bind<bool>(category, descriptionShort, defaultValue, new ConfigDescription(descriptionFull, (AcceptableValueBase)null, Array.Empty<object>()));
+            return result;
         }
     }
 }

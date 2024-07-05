@@ -26,6 +26,11 @@ namespace TarkovIRL
         [PatchPostfix]
         private static void Postfix(ProceduralWeaponAnimation __instance)
         {
+            if (!PrimeMover.IsWeaponSway.Value)
+            {
+                return;
+            }
+
             if (WeaponHandlingController.SwayUpdatedThisFrame)
             {
                 return;
@@ -103,10 +108,9 @@ namespace TarkovIRL
                 }
                 else
                 {
-                    float rotDeltaPure = rotDelta;
                     rotDelta *= 1000f;
                     float rotDeltaEval = PrimeMover.Instance.WeapSwayCurve.Evaluate(rotDelta);
-                    addedSway *= rotDeltaEval;
+                    addedSway *= rotDeltaEval * PrimeMover.WeaponSwayGlobalMultiplier.Value;
                     //string rotDeltadebug = string.Format("rotDeltaPure {0}, rotDelta {1}, rotDeltaEval {2}", rotDeltaPure, rotDelta, rotDeltaEval);
                     //Utils.Log(true, rotDeltadebug);
                 }
