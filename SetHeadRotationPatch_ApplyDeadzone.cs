@@ -26,7 +26,7 @@ namespace TarkovIRL
         {
             playerField = AccessTools.Field(typeof(Player.FirearmController), "_player");
             fcField = AccessTools.Field(typeof(ProceduralWeaponAnimation), "_firearmController");
-            return typeof(ProceduralWeaponAnimation).GetMethod("SetHeadRotation", BindingFlags.Instance | BindingFlags.Public);
+            return typeof(ProceduralWeaponAnimation).GetMethod("GetHeadRotation", BindingFlags.Instance | BindingFlags.Public);
         }
 
         [PatchPostfix]
