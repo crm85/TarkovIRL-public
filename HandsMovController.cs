@@ -56,7 +56,7 @@ namespace TarkovIRL
             }
             float breathValue = breathCurve.Evaluate(breathUpdateTimer);
             float stamModClamped = Mathf.Clamp(stamModifier, 0.025f, 1f);
-            float breathOffset = breathValue * breathVerticalOffsetModifier * stamModClamped;
+            float breathOffset = breathValue * breathVerticalOffsetModifier * stamModClamped * PrimeMover.BreathingEffectMulti.Value;
             return new Vector3(0, breathOffset, 0);
         }
 

@@ -12,8 +12,8 @@ namespace TarkovIRL
 {
     public class SetHeadRotationPatch_ApplyDeadzone : ModulePatch
     {
-        static FieldInfo playerField;
-        static FieldInfo fcField;
+        static FieldInfo _playerField;
+        static FieldInfo _fcField;
 
         static readonly float _lerpRate = 10f;
         static readonly int _turnState1 = -31136456;
@@ -24,13 +24,13 @@ namespace TarkovIRL
 
         protected override MethodBase GetTargetMethod()
         {
-            playerField = AccessTools.Field(typeof(Player.FirearmController), "_player");
-            fcField = AccessTools.Field(typeof(ProceduralWeaponAnimation), "_firearmController");
-            return typeof(ProceduralWeaponAnimation).GetMethod("GetHeadRotation", BindingFlags.Instance | BindingFlags.Public);
+            _playerField = AccessTools.Field(typeof(Player.FirearmController), "_player");
+            _fcField = AccessTools.Field(typeof(ProceduralWeaponAnimation), "_firearmController");
+            return typeof(ProceduralWeaponAnimation).GetMethod("SetHeadRotation", BindingFlags.Instance | BindingFlags.Public);
         }
 
         [PatchPostfix]
-        private static void Postfix(ProceduralWeaponAnimation __instance)
+        private static void Postfix(ProceduralWeaponAnimation __instance, Vector3 headRot)
         {
             if (!PrimeMover.IsWeaponDeadzone.Value)
             {
@@ -46,17 +46,17 @@ namespace TarkovIRL
             {
                 return;
             }
-            Player.FirearmController firearmController = (Player.FirearmController)fcField.GetValue(__instance);
+
+            Player.FirearmController firearmController = (Player.FirearmController)_fcField.GetValue(__instance);
             if ((UnityEngine.Object)(object)firearmController == (UnityEngine.Object)null)
             {
                 return;
             }
-            Player player = (Player)playerField.GetValue(firearmController);
+
+            Player player = (Player)_playerField.GetValue(firearmController);
             if ((UnityEngine.Object)(object)player != (UnityEngine.Object)null && player.IsYourPlayer && player.MovementContext.CurrentState.Name != EPlayerState.Stationary)
             {
-
-                Vector3 headRotThisFrame = player.HeadRotation;
-
+                Vector3 headRotThisFrame = headRot;
                 headRotThisFrame.y *= 1.5f;
 
                 bool flag1 = player.MovementContext.CurrentState.AnimatorStateHash == _turnState1;
@@ -89,7 +89,6 @@ namespace TarkovIRL
                 {
                     finalValue = 0;
                 }
-
 
                 _deadZoneLerpTarget = Mathf.Lerp(_deadZoneLerpTarget, finalValue, Time.deltaTime * lerpRate);
                 headRotThisFrame.y += _deadZoneLerpTarget * PrimeMover.DeadzoneGlobalMultiplier.Value;

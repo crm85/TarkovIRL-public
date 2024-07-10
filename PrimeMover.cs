@@ -27,22 +27,27 @@ namespace TarkovIRL
 
         // config items
 
-        const string section1 = "1) - Define base features";
+        const string BASE_FEATURES_SECTION = "Define base features";
         public static ConfigEntry<bool> IsWeaponDeadzone;
         public static ConfigEntry<bool> IsWeaponSway;
         public static ConfigEntry<bool> IsBreathingEffect;
         public static ConfigEntry<bool> IsPoseEffect;
         public static ConfigEntry<bool> IsPoseChangeEffect;
 
-        const string section2 = "2) - Adjust feature values";
+        const string ADJUST_VAR_SECTION = "Adjust feature values";
         public static ConfigEntry<float> DeadzoneGlobalMultiplier;
         public static ConfigEntry<float> WeaponSwayGlobalMultiplier;
-        public static ConfigEntry<float> FreelookMultiplier;
         public static ConfigEntry<float> BreathingEffectMulti;
+        public static ConfigEntry<float> RotHistoryPoolClamp;
 
-        const string section5 = "5) - Only for dev/testing";
+        const string DEV_SECTION = "Only for dev/testing";
         public static ConfigEntry<float> DevTestFloat;
 
+        // config defaults
+        float _deadzoneGlobalMultiplierDefault = 1.5f;
+        float _weaponSwayGlobalMultiplierDefault = 0.5f;
+        float _breathingEffectMultiDefault = 1f;
+        float _rotHistoryPoolClampDefault = 0.015f;
 
         void Awake()
         {
@@ -89,18 +94,20 @@ namespace TarkovIRL
         void LoadConfigValues()
         {
             // section 1
-            IsWeaponDeadzone = ConstructBoolConfig(true, section1, "Enable weapon deadzone", "The weapon 'deadzone' effect is a separation of the player's camera from where the weapon is pointing. In vanilla these are perfectly aligned at all times; in this mod, these values become disaligned depending on the size and ergo value of the weapon");
-            IsWeaponSway = ConstructBoolConfig(true, section1, "Enable weapon sway", "This mod changes how weapon sway works: your weapon generally sways ahead of your aimpoint (rather than behind like in vanilla), and the severity of the sway is defined by many factors. See mod documentation for fuller explanation");
-            IsBreathingEffect = ConstructBoolConfig(true, section1, "Enable breathing effect", "Adds a visual oscillation to your character's weapon, the intensity of which relating to your current stamina");
-            IsPoseEffect = ConstructBoolConfig(true, section1, "Enable weapons position pose changes", "When you crouch, your weapon position is pulled in closer to your character");
-            IsPoseChangeEffect = ConstructBoolConfig(true, section1, "Enable pose change effect", "When you change your crouch position, you see a dip in your sight picture, the speed and intensity of which is driven by how much you change your stance (e.g. incrimental change versus full change");
+            IsWeaponDeadzone = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable weapon deadzone", "The weapon 'deadzone' effect is a separation of the player's camera from where the weapon is pointing. In vanilla these are perfectly aligned at all times; in this mod, these values become disaligned based on the size and ergo value of the weapon.");
+            IsWeaponSway = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable weapon sway", "This mod changes how weapon sway works: your weapon generally sways ahead of your aimpoint (rather than behind like in vanilla), and the severity of the sway is defined by many factors. See mod documentation for fuller explanation.");
+            IsBreathingEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable breathing effect", "Adds a visual oscillation to your character's weapon, the intensity of which relating to your current stamina.");
+            IsPoseEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable weapons position pose changes", "When you crouch, your weapon position is pulled in closer to your character.");
+            IsPoseChangeEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable pose change effect", "When you change your crouch position, you see a dip in your sight picture, the speed and intensity of which is driven by how much you change your stance (e.g. incrimental change versus full change.");
 
             // section 2
-            DeadzoneGlobalMultiplier = ConstructFloatConfig(1f, section2, "Weapon deadzone global multiplier", "Define deadzone intensity", 0, 5f);
-            WeaponSwayGlobalMultiplier = ConstructFloatConfig(0.5f, section2, "Weapon sway global multiplier", "Define weapon sway intensity", 0, 5f);
+            DeadzoneGlobalMultiplier = ConstructFloatConfig(_deadzoneGlobalMultiplierDefault, ADJUST_VAR_SECTION, "Weapon deadzone global multiplier", "Define deadzone intensity.", 0, 5f);
+            WeaponSwayGlobalMultiplier = ConstructFloatConfig(_weaponSwayGlobalMultiplierDefault, ADJUST_VAR_SECTION, "Weapon sway global multiplier", "Define weapon sway intensity.", 0, 5f);
+            BreathingEffectMulti = ConstructFloatConfig(_breathingEffectMultiDefault, ADJUST_VAR_SECTION, "Breathing effect intensity", "Define breathing effect intensity.", 0, 5f);
+            RotHistoryPoolClamp = ConstructFloatConfig(_rotHistoryPoolClampDefault, ADJUST_VAR_SECTION, "Rotation Average Set Size", "Hard to explain this one, I wouldn't touch it if I were you.", 0, 0.1f);
 
             // section 5
-            DevTestFloat = ConstructFloatConfig(0.02f, section5, "Test value", "This is only used for dev, should not be connected to anything in production releases", -1000f, 1000f);
+            DevTestFloat = ConstructFloatConfig(0, DEV_SECTION, "Test value", "This is only for dev use, should not be connected to anything in production releases.", -1000f, 1000f);
         }
 
         void Update()
