@@ -1,0 +1,7 @@
+
+--- Version 0.3.2 ---
+
+- Added F12 config menu
+- Tweaked animation curve and values for weapon sway, looks a bit more complex
+- Tweaked animation curve for pose change visual effect
+- Improved stuttering problem (something much smaller and less noticeable happens now)
