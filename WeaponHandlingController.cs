@@ -8,11 +8,18 @@ namespace TarkovIRL
 {
     public static class WeaponHandlingController
     {
+        // public vars
+
         public static float DeltaTime = 0;
         public static float Time = 0;
-        public static float TargetErgo = 0;
-        public static float TotalWeaponWeight = 0;
+        public static float CurrentWeaponErgo = 0;
+        public static float CurrentWeaponWeight = 0;
+        public static float CurrentWeaponLength = 0;
+
         public static bool SwayUpdatedThisFrame = false;
+        static public bool IsReposStance = false;
+
+        // private vars
 
         static Vector2 _playerRotLastFrame = Vector2.zero;
         static Vector3 _playerPosLastFrame = Vector3.zero;
@@ -23,12 +30,11 @@ namespace TarkovIRL
         static bool _playerMoving = false;
         static float _verticalAvg = 0;
 
-        static public bool IsReposStance = false;
 
         static public float ProcessHeadDelta(float rawHeadDelta)
         {
-            float adjustedHeadDelta = rawHeadDelta / TargetErgo / 10f;
-            return adjustedHeadDelta * WeaponHandlingController.TotalWeaponWeight * 0.1f;
+            float adjustedHeadDelta = rawHeadDelta / CurrentWeaponErgo / 10f;
+            return adjustedHeadDelta * WeaponHandlingController.CurrentWeaponWeight * 0.1f;
         }
 
         public static void UpdateRotationHistory(Vector2 newRot)

@@ -11,7 +11,7 @@ using UnityEngine;
 public class LateUpdatePatch_UpdateWpnStats : ModulePatch
 {
     static float _updateWeightTimer = 0;
-    static readonly float _updateWeightTime = 1f;
+    static readonly float _updateStatsTime = 1f;
     protected override MethodBase GetTargetMethod()
     {
         return typeof(Player).GetMethod("LateUpdate", BindingFlags.Instance | BindingFlags.Public);
@@ -20,25 +20,23 @@ public class LateUpdatePatch_UpdateWpnStats : ModulePatch
     [PatchPostfix]
 	private static void PatchPostfix(Player __instance)
     {
-
         _updateWeightTimer += Time.deltaTime;
         if (!__instance.IsYourPlayer)
         {
             return;
         }
         Player.FirearmController fc = __instance.HandsController as Player.FirearmController;
-        if (_updateWeightTimer > _updateWeightTime)
+        if (_updateWeightTimer > _updateStatsTime)
         {
             if (fc != null)
             {
-                WeaponHandlingController.TotalWeaponWeight = fc.Weapon.GetSingleItemTotalWeight();
-                WeaponHandlingController.TargetErgo = fc.TotalErgonomics / 100f;
+                WeaponHandlingController.CurrentWeaponWeight = fc.Weapon.GetSingleItemTotalWeight();
+                WeaponHandlingController.CurrentWeaponErgo = fc.TotalErgonomics / 100f;
             }
             else
             {
-                WeaponHandlingController.TotalWeaponWeight = 0;
-                WeaponHandlingController.TargetErgo = 1f;
-
+                WeaponHandlingController.CurrentWeaponWeight = 0;
+                WeaponHandlingController.CurrentWeaponErgo = 1f;
             }
             _updateWeightTimer = 0;
         }

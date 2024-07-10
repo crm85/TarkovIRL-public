@@ -18,6 +18,7 @@ namespace TarkovIRL
         static readonly float _lerpRate = 10f;
         static readonly int _turnState1 = -31136456;
         static readonly int _turnState2 = 287005718;
+        static readonly float _rotDeltaThresh = 0.0002f;
 
         static float _deadZoneLerpTarget = 0;
         static bool _updateDZ = true;
@@ -39,7 +40,7 @@ namespace TarkovIRL
 
             if (!_updateDZ)
             {
-                _updateDZ = WeaponHandlingController.IsPlayerMovement || WeaponHandlingController.RotationDelta > 0.0002f;
+                _updateDZ = WeaponHandlingController.IsPlayerMovement || WeaponHandlingController.RotationDelta > _rotDeltaThresh;
             }
 
             if ((UnityEngine.Object)(object)__instance == (UnityEngine.Object)null)
@@ -82,7 +83,7 @@ namespace TarkovIRL
                 {
                     _updateDZ = false;
                     finalValue = 0;
-                    lerpRate = _lerpRate * (1f / (WeaponHandlingController.TargetErgo * WeaponHandlingController.TotalWeaponWeight * 2f));
+                    lerpRate = _lerpRate * (1f / (WeaponHandlingController.CurrentWeaponErgo * WeaponHandlingController.CurrentWeaponWeight * 2f));
                 }
 
                 if (!_updateDZ)

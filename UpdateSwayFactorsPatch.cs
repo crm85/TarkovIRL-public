@@ -73,7 +73,7 @@ namespace TarkovIRL
                 WeaponHandlingController.UpdateTransformHistory(player.Position);
                 WeaponHandlingController.UpdateRotationHistory(player.Rotation);
 
-                float weaponWeight = WeaponHandlingController.TotalWeaponWeight;
+                float weaponWeight = WeaponHandlingController.CurrentWeaponWeight;
                 Vector3 newSwayFactors = __instance.MotionReact.SwayFactors;
 
 
