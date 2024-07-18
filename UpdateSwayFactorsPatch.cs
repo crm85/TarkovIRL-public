@@ -90,7 +90,6 @@ namespace TarkovIRL
 
                 // horizontal axis ***
                 float addedSway = _primarySwayValue * weaponWeight * speedMulti * strengthMulti * underweightReduction * healthMulti * armHealthRMulti * armHealthLMulti * stamMulti * handStamMulti;
-                float rotDelta = WeaponHandlingController.RotationDelta;
 
                 if (__instance.IsAiming)
                 {
@@ -103,17 +102,15 @@ namespace TarkovIRL
                     }
                     else if (flag2)
                     {
-                        addedSway *= -1.5f;
+                        addedSway *= -3f;
                     }
                 }
                 else
                 {
-                    rotDelta *= 1000f;
-                    float rotDeltaEval = PrimeMover.Instance.WeapSwayCurve.Evaluate(rotDelta);
-                    addedSway *= rotDeltaEval * PrimeMover.WeaponSwayGlobalMultiplier.Value;
-                    //string rotDeltadebug = string.Format("rotDeltaPure {0}, rotDelta {1}, rotDeltaEval {2}", rotDeltaPure, rotDelta, rotDeltaEval);
-                    //Utils.Log(true, rotDeltadebug);
+                    float rotDeltaEval = PrimeMover.Instance.WeapSwayCurve.Evaluate(WeaponHandlingController.RotationDelta * 1000f);
+                    addedSway *= rotDeltaEval;
                 }
+                addedSway *= PrimeMover.WeaponSwayGlobalMultiplier.Value;
 
                 // push values
                 newSwayFactors.z *= addedSway;
