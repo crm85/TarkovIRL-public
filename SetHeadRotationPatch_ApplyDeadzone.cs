@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using EFT.Animations;
-using Aki.Reflection.Patching;
+using SPT.Reflection.Patching;
 using System.Reflection;
 using EFT;
 using System;
@@ -63,6 +63,7 @@ namespace TarkovIRL
                 bool flag1 = player.MovementContext.CurrentState.AnimatorStateHash == _turnState1;
                 bool flag2 = player.MovementContext.CurrentState.AnimatorStateHash == _turnState2;
                 bool flag3 = flag1 || flag2;
+                bool flag4 = WeaponHandlingController.RotationDelta > _rotDeltaThresh;
 
 
                 float headDeltaRaw = player.MovementContext.DeltaRotation;
@@ -89,6 +90,11 @@ namespace TarkovIRL
                 if (!_updateDZ)
                 {
                     finalValue = 0;
+                }
+
+                if (flag4)
+                {
+                    lerpRate *= .25f;
                 }
 
                 _deadZoneLerpTarget = Mathf.Lerp(_deadZoneLerpTarget, finalValue, Time.deltaTime * lerpRate);

@@ -1,5 +1,5 @@
 ﻿using System;
-using Aki.Reflection.Patching;
+using SPT.Reflection.Patching;
 using BepInEx;
 using BepInEx.Configuration;
 using HarmonyLib;
@@ -85,10 +85,10 @@ namespace TarkovIRL
 
             TryLoadPatch(new LerpCameraPatch_SwayAndModifiedHandPos());
             TryLoadPatch(new UpdateSwayFactorsPatch());
-            TryLoadPatch(new SetHeadRotationPatch_ApplyDeadzone());
-            TryLoadPatch(new LateUpdatePatch_UpdateWpnStats());
-            TryLoadPatch(new OnShotPatch_UpdateWpnWeight());
-            TryLoadPatch(new CalculateCameraPositionPatch());
+            //TryLoadPatch(new SetHeadRotationPatch_ApplyDeadzone());
+            //TryLoadPatch(new LateUpdatePatch_UpdateWpnStats());
+            //TryLoadPatch(new OnShotPatch_UpdateWpnWeight());
+            //TryLoadPatch(new CalculateCameraPositionPatch());
         }
 
         void LoadConfigValues()
@@ -123,7 +123,7 @@ namespace TarkovIRL
 
         void LateUpdate()
         {
-            WeaponHandlingController.SwayUpdatedThisFrame = false;
+            WeaponHandlingController.IsSwayUpdatedThisFrame = false;
         }
 
         void TryLoadPatch(ModulePatch patch)

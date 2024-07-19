@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using EFT.Animations;
-using Aki.Reflection.Patching;
+using SPT.Reflection.Patching;
 using System.Reflection;
 using EFT;
 using static EFT.Player;
@@ -26,27 +26,71 @@ namespace TarkovIRL
         [PatchPostfix]
         private static void Postfix(ProceduralWeaponAnimation __instance)
         {
+            if ((Object)(object)__instance == (Object)null)
+            {
+                return;
+            }
+
             if (!PrimeMover.IsWeaponSway.Value)
             {
                 return;
             }
 
-            if (WeaponHandlingController.SwayUpdatedThisFrame)
+            if (WeaponHandlingController.IsSwayUpdatedThisFrame)
             {
                 return;
             }
-            if ((Object)(object)__instance == (Object)null)
-            {
-                return;
-            }
+
             Player.FirearmController firearmController = (Player.FirearmController)fcField.GetValue(__instance);
             if ((Object)(object)firearmController == (Object)null)
             {
                 return;
             }
+
             Player player = (Player)playerField.GetValue(firearmController);
             if ((Object)(object)player != (Object)null && player.IsYourPlayer && player.MovementContext.CurrentState.Name != EPlayerState.Stationary)
             {
+                if (__instance.Shootingg.CurrentRecoilEffect == null)
+                {
+                    return;
+                }
+
+                if (__instance.Shootingg == null)
+                {
+                    return;
+                }
+
+                if (__instance.HandsContainer == null)
+                {
+                    return;
+                }
+
+                if (__instance.HandsContainer.HandsPosition == null)
+                {
+                    return;
+                }
+
+                if (__instance.HandsContainer.WeaponRootAnim == null)
+                {
+                    return;
+                }
+
+                if (__instance.HandsContainer.WeaponRoot == null)
+                {
+                    return;
+                }
+
+                if (__instance.HandsContainer.Weapon == null)
+                {
+                    return;
+                }
+
+                if (__instance.HandsContainer == null)
+                {
+                    return;
+                }
+                return;
+
                 float healthCommon = player.HealthController.GetBodyPartHealth(EBodyPart.Common).Normalized;
                 float armHealthR = player.HealthController.GetBodyPartHealth(EBodyPart.RightArm).Normalized;
                 float armHealthL = player.HealthController.GetBodyPartHealth(EBodyPart.LeftArm).Normalized;
@@ -115,7 +159,7 @@ namespace TarkovIRL
                 // push values
                 newSwayFactors.z *= addedSway;
                 __instance.MotionReact.SwayFactors = newSwayFactors;
-                WeaponHandlingController.SwayUpdatedThisFrame = true;
+                WeaponHandlingController.IsSwayUpdatedThisFrame = true;
             }
             else
             {

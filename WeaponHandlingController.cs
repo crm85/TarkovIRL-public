@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using EFT.InventoryLogic;
 using EFT.UI;
-using Aki.Reflection.Patching;
+using SPT.Reflection.Patching;
 using Comfort.Common;
 
 namespace TarkovIRL
@@ -16,7 +16,7 @@ namespace TarkovIRL
         public static float CurrentWeaponWeight = 0;
         public static float CurrentWeaponLength = 0;
 
-        public static bool SwayUpdatedThisFrame = false;
+        public static bool IsSwayUpdatedThisFrame = false;
         static public bool IsReposStance = false;
 
         // private vars

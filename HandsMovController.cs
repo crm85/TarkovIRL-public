@@ -79,7 +79,6 @@ namespace TarkovIRL
             return new Vector3(0, poseVerticalPoseOffsetLerp, poseProjectedPoseOffsetLerp);
         }
 
-
         public static Vector3 GetModifiedHandPosWithPoseChange(Player player)
         {
             Vector3 addedVert = poseShiftVector;
