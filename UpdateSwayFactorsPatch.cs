@@ -3,9 +3,7 @@ using EFT.Animations;
 using SPT.Reflection.Patching;
 using System.Reflection;
 using EFT;
-using static EFT.Player;
 using HarmonyLib;
-using EFT.HealthSystem;
 
 namespace TarkovIRL
 {
@@ -42,53 +40,47 @@ namespace TarkovIRL
             }
 
             Player.FirearmController firearmController = (Player.FirearmController)fcField.GetValue(__instance);
-            if ((Object)(object)firearmController == (Object)null)
+            if (firearmController == null)
             {
                 return;
             }
 
             Player player = (Player)playerField.GetValue(firearmController);
-            if ((Object)(object)player != (Object)null && player.IsYourPlayer && player.MovementContext.CurrentState.Name != EPlayerState.Stationary)
+            if (player != null && player.IsYourPlayer && player.MovementContext.CurrentState.Name != EPlayerState.Stationary)
             {
-                if (__instance.Shootingg.CurrentRecoilEffect == null)
-                {
-                    return;
-                }
 
-                if (__instance.Shootingg == null)
+                
+                if (player == null)
+                { 
+                    return; 
+                }
+               
+                if (player.HealthController == null)
                 {
                     return;
                 }
-
-                if (__instance.HandsContainer == null)
+                if (player.Physical == null)
                 {
                     return;
                 }
-
-                if (__instance.HandsContainer.HandsPosition == null)
+                if (player.Physical.Stamina == null)
                 {
                     return;
                 }
-
-                if (__instance.HandsContainer.WeaponRootAnim == null)
+                if (player.Physical.HandsStamina == null)
                 {
                     return;
                 }
-
-                if (__instance.HandsContainer.WeaponRoot == null)
+                if (player.Skills == null)
                 {
                     return;
                 }
-
-                if (__instance.HandsContainer.Weapon == null)
+                if (player.Skills.Strength == null)
                 {
                     return;
                 }
-
-                if (__instance.HandsContainer == null)
-                {
-                    return;
-                }
+                
+                // ^^ THIS shit actually crashes it as well, null ref
                 return;
 
                 float healthCommon = player.HealthController.GetBodyPartHealth(EBodyPart.Common).Normalized;
@@ -98,6 +90,19 @@ namespace TarkovIRL
                 float handStamNormalized = player.Physical.HandsStamina.Current / 70f;
                 float strength = player.Skills.Strength.Current;
                 float currentWeight = player.Physical.PreviousWeight;
+
+
+                /*
+                float healthCommon = 0;
+                float armHealthR = 0;
+                float armHealthL = 0;
+                float stamNormalized = 0;
+                float handStamNormalized = 0;
+                float strength = 0;
+                float currentWeight = 0;
+                */
+
+                return;
 
                 float healthMulti = 1f + ((1f - healthCommon) * .2f);
                 float armHealthRMulti = 1f + ((1f - armHealthR) * .2f);
@@ -119,6 +124,7 @@ namespace TarkovIRL
 
                 float weaponWeight = WeaponHandlingController.CurrentWeaponWeight;
                 Vector3 newSwayFactors = __instance.MotionReact.SwayFactors;
+
 
 
                 // vertical axis
