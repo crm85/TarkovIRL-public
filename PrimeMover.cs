@@ -85,10 +85,10 @@ namespace TarkovIRL
 
             TryLoadPatch(new LerpCameraPatch_SwayAndModifiedHandPos());
             TryLoadPatch(new UpdateSwayFactorsPatch());
-            //TryLoadPatch(new SetHeadRotationPatch_ApplyDeadzone());
-            //TryLoadPatch(new LateUpdatePatch_UpdateWpnStats());
-            //TryLoadPatch(new OnShotPatch_UpdateWpnWeight());
-            //TryLoadPatch(new CalculateCameraPositionPatch());
+            TryLoadPatch(new SetHeadRotationPatch_ApplyDeadzone());
+            TryLoadPatch(new LateUpdatePatch_UpdateWpnStats());
+            TryLoadPatch(new OnShotPatch_UpdateWpnWeight());
+            TryLoadPatch(new CalculateCameraPositionPatch());
         }
 
         void LoadConfigValues()

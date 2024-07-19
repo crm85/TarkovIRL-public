@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
-using EFT.Animations;
 using SPT.Reflection.Patching;
 using System.Reflection;
-using EFT;
 using HarmonyLib;
+using EFT;
+using EFT.Animations;
 
 namespace TarkovIRL
 {
@@ -49,40 +49,6 @@ namespace TarkovIRL
             if (player != null && player.IsYourPlayer && player.MovementContext.CurrentState.Name != EPlayerState.Stationary)
             {
 
-                
-                if (player == null)
-                { 
-                    return; 
-                }
-               
-                if (player.HealthController == null)
-                {
-                    return;
-                }
-                if (player.Physical == null)
-                {
-                    return;
-                }
-                if (player.Physical.Stamina == null)
-                {
-                    return;
-                }
-                if (player.Physical.HandsStamina == null)
-                {
-                    return;
-                }
-                if (player.Skills == null)
-                {
-                    return;
-                }
-                if (player.Skills.Strength == null)
-                {
-                    return;
-                }
-                
-                // ^^ THIS shit actually crashes it as well, null ref
-                return;
-
                 float healthCommon = player.HealthController.GetBodyPartHealth(EBodyPart.Common).Normalized;
                 float armHealthR = player.HealthController.GetBodyPartHealth(EBodyPart.RightArm).Normalized;
                 float armHealthL = player.HealthController.GetBodyPartHealth(EBodyPart.LeftArm).Normalized;
@@ -91,19 +57,6 @@ namespace TarkovIRL
                 float strength = player.Skills.Strength.Current;
                 float currentWeight = player.Physical.PreviousWeight;
 
-
-                /*
-                float healthCommon = 0;
-                float armHealthR = 0;
-                float armHealthL = 0;
-                float stamNormalized = 0;
-                float handStamNormalized = 0;
-                float strength = 0;
-                float currentWeight = 0;
-                */
-
-                return;
-
                 float healthMulti = 1f + ((1f - healthCommon) * .2f);
                 float armHealthRMulti = 1f + ((1f - armHealthR) * .2f);
                 float armHealthLMulti = 1f + ((1f - armHealthL) * .2f);
@@ -111,8 +64,8 @@ namespace TarkovIRL
                 float handStamMulti = 1f + ((1f - handStamNormalized) * .1f);
                 float strengthMulti = 1f - (strength / 7500);
                 float underweightReduction = Mathf.Clamp01(currentWeight / (strength * .034f));
-
                 float speedMulti = player.Speed / .6f;
+
                 if (!WeaponHandlingController.IsPlayerMovement)
                 {
                     speedMulti = 0;
@@ -124,8 +77,6 @@ namespace TarkovIRL
 
                 float weaponWeight = WeaponHandlingController.CurrentWeaponWeight;
                 Vector3 newSwayFactors = __instance.MotionReact.SwayFactors;
-
-
 
                 // vertical axis
                 bool flag3 = firearmController.Weapon.WeapClass == "pistol";
