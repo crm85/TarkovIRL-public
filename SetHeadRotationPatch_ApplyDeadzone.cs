@@ -57,14 +57,12 @@ namespace TarkovIRL
             Player player = (Player)_playerField.GetValue(firearmController);
             if ((UnityEngine.Object)(object)player != (UnityEngine.Object)null && player.IsYourPlayer && player.MovementContext.CurrentState.Name != EPlayerState.Stationary)
             {
-                Vector3 headRotThisFrame = headRot;
+                Vector3 headRotThisFrame = player.HeadRotation;
                 headRotThisFrame.y *= 1.5f;
 
                 bool flag1 = player.MovementContext.CurrentState.AnimatorStateHash == _turnState1;
                 bool flag2 = player.MovementContext.CurrentState.AnimatorStateHash == _turnState2;
-                bool flag3 = flag1 || flag2;
-                bool flag4 = WeaponHandlingController.RotationDelta > _rotDeltaThresh;
-
+                bool isChangeingStance = flag1 || flag2;
 
                 float headDeltaRaw = player.MovementContext.DeltaRotation;
                 float headDeltaTaperMulti = Mathf.Abs(headDeltaRaw / 45f);
@@ -72,13 +70,13 @@ namespace TarkovIRL
                 float headDeltaAdjusted = WeaponHandlingController.ProcessHeadDelta(headDeltaRaw);
 
                 float finalValue = headDeltaAdjusted * headDeltaTaperMulti;
+                float lerpRate = _lerpRate;
 
-                if (flag3)
+                if (isChangeingStance)
                 {
                     finalValue = 0;
+                    lerpRate *= 0.35f;
                 }
-
-                float lerpRate = _lerpRate;
 
                 if (__instance.IsAiming)
                 {
@@ -90,11 +88,6 @@ namespace TarkovIRL
                 if (!_updateDZ)
                 {
                     finalValue = 0;
-                }
-
-                if (flag4)
-                {
-                    lerpRate *= .25f;
                 }
 
                 _deadZoneLerpTarget = Mathf.Lerp(_deadZoneLerpTarget, finalValue, Time.deltaTime * lerpRate);

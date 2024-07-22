@@ -79,7 +79,7 @@
     <Compile Include="CalculateCameraPositionPatch.cs" />
     <Compile Include="HandsMovController.cs" />
     <Compile Include="LateUpdatePatch_UpdateWpnStats.cs" />
-    <Compile Include="LerpCameraPatch_SwayAndModifiedHandPos.cs" />
+    <Compile Include="LerpCameraPatch_UpdateSway.cs" />
     <Compile Include="OnShotPatch_UpdateWpnWeight.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="WeaponHandlingController.cs" />

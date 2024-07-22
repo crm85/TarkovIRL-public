@@ -40,6 +40,6 @@ public class LateUpdatePatch_UpdateWpnStats : ModulePatch
             }
             _updateWeightTimer = 0;
         }
-
+        WeaponHandlingController.SwayThisFrame = false;
     }
 }

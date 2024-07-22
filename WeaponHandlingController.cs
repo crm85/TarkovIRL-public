@@ -30,6 +30,7 @@ namespace TarkovIRL
         static bool _playerMoving = false;
         static float _verticalAvg = 0;
 
+        public static bool SwayThisFrame = false;
 
         static public float ProcessHeadDelta(float rawHeadDelta)
         {

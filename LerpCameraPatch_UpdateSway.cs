@@ -1,16 +1,13 @@
 ﻿using System.Reflection;
 using SPT.Reflection.Patching;
-using Comfort.Common;
 using EFT;
 using EFT.Animations;
-using EFT.InventoryLogic;
 using HarmonyLib;
-using TarkovIRL;
 using UnityEngine;
 
 namespace TarkovIRL
 {
-    public class LerpCameraPatch_SwayAndModifiedHandPos : ModulePatch
+    public class LerpCameraPatch_UpdateSway : ModulePatch
     {
         private static FieldInfo playerField;
         private static FieldInfo fcField;

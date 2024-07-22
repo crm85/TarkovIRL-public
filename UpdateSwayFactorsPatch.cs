@@ -24,6 +24,7 @@ namespace TarkovIRL
         [PatchPostfix]
         private static void Postfix(ProceduralWeaponAnimation __instance)
         {
+
             if ((Object)(object)__instance == (Object)null)
             {
                 return;
@@ -48,23 +49,23 @@ namespace TarkovIRL
             Player player = (Player)playerField.GetValue(firearmController);
             if (player != null && player.IsYourPlayer && player.MovementContext.CurrentState.Name != EPlayerState.Stationary)
             {
-
                 float healthCommon = player.HealthController.GetBodyPartHealth(EBodyPart.Common).Normalized;
                 float armHealthR = player.HealthController.GetBodyPartHealth(EBodyPart.RightArm).Normalized;
                 float armHealthL = player.HealthController.GetBodyPartHealth(EBodyPart.LeftArm).Normalized;
                 float stamNormalized = player.Physical.Stamina.Current / 104f;
                 float handStamNormalized = player.Physical.HandsStamina.Current / 70f;
-                float strength = player.Skills.Strength.Current;
+                //float strength = player.Skills.Strength.Current;
+                float strength = PrimeMover.DevTestFloat.Value;
                 float currentWeight = player.Physical.PreviousWeight;
 
+                float speedMulti = player.Speed / .6f;
                 float healthMulti = 1f + ((1f - healthCommon) * .2f);
                 float armHealthRMulti = 1f + ((1f - armHealthR) * .2f);
                 float armHealthLMulti = 1f + ((1f - armHealthL) * .2f);
                 float stamMulti = 1f + ((1f - stamNormalized) * .1f);
                 float handStamMulti = 1f + ((1f - handStamNormalized) * .1f);
-                float strengthMulti = 1f - (strength / 7500);
                 float underweightReduction = Mathf.Clamp01(currentWeight / (strength * .034f));
-                float speedMulti = player.Speed / .6f;
+                float strengthMulti = 1f - (strength / 15000);
 
                 if (!WeaponHandlingController.IsPlayerMovement)
                 {
@@ -121,7 +122,7 @@ namespace TarkovIRL
             else
             {
                 return;
-            }    
+            }
         }
     }
 }
