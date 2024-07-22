@@ -54,8 +54,7 @@ namespace TarkovIRL
                 float armHealthL = player.HealthController.GetBodyPartHealth(EBodyPart.LeftArm).Normalized;
                 float stamNormalized = player.Physical.Stamina.Current / 104f;
                 float handStamNormalized = player.Physical.HandsStamina.Current / 70f;
-                //float strength = player.Skills.Strength.Current;
-                float strength = PrimeMover.DevTestFloat.Value;
+                float strength = player.Skills.Strength.Current;
                 float currentWeight = player.Physical.PreviousWeight;
 
                 float speedMulti = player.Speed / .6f;

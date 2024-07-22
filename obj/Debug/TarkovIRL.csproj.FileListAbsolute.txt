@@ -122,12 +122,6 @@ E:\SPT\BepInEx\plugins\TarkovIRL.dll
 E:\SPT\BepInEx\plugins\TarkovIRL.pdb
 E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\TarkovIRL.dll
 E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\TarkovIRL.pdb
-E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\0Harmony.dll
-E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\Assembly-CSharp.dll
-E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\BepInEx.dll
-E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\Comfort.dll
-E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\UnityEngine.CoreModule.dll
-E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\UnityEngine.dll
 E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\Mono.Cecil.dll
 E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\MonoMod.Utils.dll
 E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\MonoMod.RuntimeDetour.dll
@@ -151,7 +145,6 @@ E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\UnityEngine.AIModule.dll
 E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\Newtonsoft.Json.dll
 E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\NLog.dll
 E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\UnityEngine.JSONSerializeModule.dll
-E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\AnimationSystem.Types.dll
 E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\UnityEngine.TerrainModule.dll
 E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\com.unity.multiplayer-hlapi.Runtime.dll
 E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\bsg.componentace.compression.libs.zlib.dll
@@ -238,6 +231,13 @@ E:\tirl\TarkovIRL\TarkovIRL\obj\Debug\TarkovIRL.csproj.CoreCompileInputs.cache
 E:\tirl\TarkovIRL\TarkovIRL\obj\Debug\TarkovIRL.csproj.CopyComplete
 E:\tirl\TarkovIRL\TarkovIRL\obj\Debug\TarkovIRL.dll
 E:\tirl\TarkovIRL\TarkovIRL\obj\Debug\TarkovIRL.pdb
+E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\spt-common.dll
 E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\spt-core.dll
 E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\spt-reflection.dll
-E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\spt-common.dll
+E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\0Harmony.dll
+E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\AnimationSystem.Types.dll
+E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\Assembly-CSharp.dll
+E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\BepInEx.dll
+E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\Comfort.dll
+E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\UnityEngine.CoreModule.dll
+E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\UnityEngine.dll

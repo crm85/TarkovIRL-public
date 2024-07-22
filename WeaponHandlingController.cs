@@ -1,8 +1,4 @@
 ﻿using UnityEngine;
-using EFT.InventoryLogic;
-using EFT.UI;
-using SPT.Reflection.Patching;
-using Comfort.Common;
 
 namespace TarkovIRL
 {

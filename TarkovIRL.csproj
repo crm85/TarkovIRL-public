@@ -33,29 +33,31 @@
   <ItemGroup>
     <Reference Include="0Harmony, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\spt39\BepInEx\core\0Harmony.dll</HintPath>
+      <HintPath>..\..\..\spt393\BepInEx\core\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="AnimationSystem.Types, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\spt39\EscapeFromTarkov_Data\Managed\AnimationSystem.Types.dll</HintPath>
+      <HintPath>..\..\..\spt393\EscapeFromTarkov_Data\Managed\AnimationSystem.Types.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\spt39\EscapeFromTarkov_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\spt393\EscapeFromTarkov_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx, Version=5.4.22.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\spt39\BepInEx\core\BepInEx.dll</HintPath>
+      <HintPath>..\..\..\spt393\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="Comfort, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\spt39\EscapeFromTarkov_Data\Managed\Comfort.dll</HintPath>
+      <HintPath>..\..\..\spt393\EscapeFromTarkov_Data\Managed\Comfort.dll</HintPath>
     </Reference>
-    <Reference Include="spt-core">
-      <HintPath>..\..\..\spt39\BepInEx\plugins\spt\spt-core.dll</HintPath>
+    <Reference Include="spt-core, Version=3.9.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\spt393\BepInEx\plugins\spt\spt-core.dll</HintPath>
     </Reference>
-    <Reference Include="spt-reflection">
-      <HintPath>..\..\..\spt39\BepInEx\plugins\spt\spt-reflection.dll</HintPath>
+    <Reference Include="spt-reflection, Version=3.9.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\spt393\BepInEx\plugins\spt\spt-reflection.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -68,11 +70,11 @@
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\spt39\EscapeFromTarkov_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\spt393\EscapeFromTarkov_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\spt39\EscapeFromTarkov_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>..\..\..\spt393\EscapeFromTarkov_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -83,7 +85,7 @@
     <Compile Include="OnShotPatch_UpdateWpnWeight.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="WeaponHandlingController.cs" />
-    <Compile Include="SetHeadRotationPatch_ApplyDeadzone.cs" />
+    <Compile Include="LookPatch_ApplyDeadzone.cs" />
     <Compile Include="UpdateSwayFactorsPatch.cs" />
     <Compile Include="PrimeMover.cs" />
   </ItemGroup>

@@ -12,7 +12,7 @@ namespace TarkovIRL
     {
         const string modGUID = "TarkovIRL";
         const string modName = "TarkovIRL";
-        const string modVersion = "0.3.3";
+        const string modVersion = "0.3.3.1";
         readonly Harmony harmony = new Harmony(modGUID);
 
         public static PrimeMover Instance;
@@ -45,7 +45,7 @@ namespace TarkovIRL
 
         // config defaults
         float _deadzoneGlobalMultiplierDefault = 2f;
-        float _weaponSwayGlobalMultiplierDefault = 0.75f;
+        float _weaponSwayGlobalMultiplierDefault = 1f;
         float _breathingEffectMultiDefault = 1f;
         float _rotHistoryPoolClampDefault = 0.015f;
 
@@ -85,7 +85,7 @@ namespace TarkovIRL
 
             TryLoadPatch(new LerpCameraPatch_UpdateSway());
             TryLoadPatch(new UpdateSwayFactorsPatch());
-            TryLoadPatch(new SetHeadRotationPatch_ApplyDeadzone());
+            TryLoadPatch(new LookPatch_ApplyDeadzone());
             TryLoadPatch(new LateUpdatePatch_UpdateWpnStats());
             TryLoadPatch(new OnShotPatch_UpdateWpnWeight());
             TryLoadPatch(new CalculateCameraPositionPatch());

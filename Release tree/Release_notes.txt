@@ -1,3 +1,8 @@
+--- Version 0.3.3 ---
+
+- Updated for SPT 3.9.x.
+- Retweaked sway and deadzone values for new Realism version.
+- Reduced the influence of player's strength stat on sway: at max strength (50), sway is reduced up to 33%.
 
 --- Version 0.3.2 ---
 
