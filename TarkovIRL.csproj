@@ -78,7 +78,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CalculateCameraPositionPatch.cs" />
+    <Compile Include="CalculateCameraPositionPatch_HandsPositionLayers.cs" />
     <Compile Include="HandsMovController.cs" />
     <Compile Include="LateUpdatePatch_UpdateWpnStats.cs" />
     <Compile Include="LerpCameraPatch_UpdateSway.cs" />

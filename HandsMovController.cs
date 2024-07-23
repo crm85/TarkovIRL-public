@@ -30,6 +30,8 @@ namespace TarkovIRL
         static float poseLevelLastFrame = 0;
 
         static float breathUpdateTimer = 0;
+        static float armStamLoopTimerX = 0;
+        static float armStamLoopTimerY = 0;
 
         static Vector3 poseShiftVector = Vector3.zero;
         static bool isChangingPose = false;
@@ -37,12 +39,40 @@ namespace TarkovIRL
         static float vertDiff = 0;
         static float changePoseModifier = 0.01f;
 
+        static readonly float ArmStamDTMulti = 0.25f;
+        static readonly float ArmStamMultiFixed = 0.01f;
+
         public static void UpdateLerp(float dt)
         {
             poseVerticalPoseOffsetLerp = Mathf.Lerp(poseVerticalPoseOffsetLerp, poseVerticalPoseOffsetTarget, dt * currentLerpRate);
             poseProjectedPoseOffsetLerp = Mathf.Lerp(poseProjectedPoseOffsetLerp, poseProjectedPoseOffsetTarget, dt * currentLerpRate);
             ChangePoseUpdate(dt);
         }
+
+        public static Vector3 GetModifiedHandPosForArmStam(Player player)
+        {
+            AnimationCurve armCurve = PrimeMover.Instance.ArmStamJitterCurve;
+            float armStamNorm = player.Physical.HandsStamina.Current / 80f;
+            float armStamMulti = 1f - armStamNorm;
+
+            armStamLoopTimerX += player.DeltaTime * ArmStamDTMulti;
+            if (armStamLoopTimerX >= 1f)
+            {
+                armStamLoopTimerX -= 1f;
+            }
+
+            armStamLoopTimerY -= player.DeltaTime * ArmStamDTMulti;
+            if (armStamLoopTimerY <= 0)
+            {
+                armStamLoopTimerY += 1f;
+            }
+
+            float armJitterModX = armCurve.Evaluate(armStamLoopTimerX) * armStamMulti * PrimeMover.DevTestFloat.Value * ArmStamMultiFixed;
+            float armJitterModY = armCurve.Evaluate(armStamLoopTimerY) * armStamMulti * PrimeMover.DevTestFloat.Value * ArmStamMultiFixed;
+
+            return new Vector3(armJitterModX, armJitterModY, 0);
+        }
+
         public static Vector3 GetModifiedHandPosForBreath(Player player)
         {
             AnimationCurve breathCurve = PrimeMover.Instance.BreathCurve;

@@ -53,7 +53,7 @@ namespace TarkovIRL
                 float armHealthR = player.HealthController.GetBodyPartHealth(EBodyPart.RightArm).Normalized;
                 float armHealthL = player.HealthController.GetBodyPartHealth(EBodyPart.LeftArm).Normalized;
                 float stamNormalized = player.Physical.Stamina.Current / 104f;
-                float handStamNormalized = player.Physical.HandsStamina.Current / 70f;
+                float handStamNormalized = player.Physical.HandsStamina.Current / 80f;
                 float strength = player.Skills.Strength.Current;
                 float currentWeight = player.Physical.PreviousWeight;
 

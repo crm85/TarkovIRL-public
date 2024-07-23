@@ -52,7 +52,7 @@ namespace TarkovIRL
 
                 float headDeltaRaw = __instance.MovementContext.DeltaRotation;
                 float headDeltaTaperMulti = Mathf.Abs(headDeltaRaw / 45f);
-                headDeltaTaperMulti = PrimeMover.Instance.DeadZoneCurve.Evaluate(headDeltaTaperMulti);
+                //headDeltaTaperMulti = PrimeMover.Instance.DeadZoneCurve.Evaluate(headDeltaTaperMulti);
                 float headDeltaAdjusted = WeaponHandlingController.ProcessHeadDelta(headDeltaRaw);
 
                 float finalValue = headDeltaAdjusted * headDeltaTaperMulti;
@@ -61,6 +61,7 @@ namespace TarkovIRL
                 if (isChangeingStance)
                 {
                     finalValue = 0;
+                    lerpRate *= 0.2f;
                 }
 
                 if (__instance.ProceduralWeaponAnimation.IsAiming)
