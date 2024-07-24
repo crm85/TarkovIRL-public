@@ -40,7 +40,7 @@ namespace TarkovIRL
         static float changePoseModifier = 0.01f;
 
         static readonly float ArmStamDTMulti = 0.25f;
-        static readonly float ArmStamMultiFixed = 0.01f;
+        static readonly float ArmStamMultiFixed = 0.005f;
 
         public static void UpdateLerp(float dt)
         {
@@ -53,9 +53,20 @@ namespace TarkovIRL
         {
             AnimationCurve armCurve = PrimeMover.Instance.ArmStamJitterCurve;
             float armStamNorm = player.Physical.HandsStamina.Current / 80f;
-            float armStamMulti = 1f - armStamNorm;
+            float healthCommon = player.HealthController.GetBodyPartHealth(EBodyPart.Common).Normalized;
+            float armHealthR = player.HealthController.GetBodyPartHealth(EBodyPart.RightArm).Normalized;
+            float armHealthL = player.HealthController.GetBodyPartHealth(EBodyPart.LeftArm).Normalized;
+            float strength = player.Skills.Strength.Current;
+            float poseLevel = player.PoseLevel;
 
-            armStamLoopTimerX += player.DeltaTime * ArmStamDTMulti;
+            float armStamMulti = 1f - armStamNorm;
+            float healthMulti = 1f + ((1f - healthCommon) * .2f);
+            float armHealthRMulti = 1f + ((1f - armHealthR) * .2f);
+            float armHealthLMulti = 1f + ((1f - armHealthL) * .2f);
+            float strengthMulti = 1f - (strength / 15000);
+            float poseLevelMulti = 1f + poseLevel;
+
+            armStamLoopTimerX += player.DeltaTime * ArmStamDTMulti * 0.5f;
             if (armStamLoopTimerX >= 1f)
             {
                 armStamLoopTimerX -= 1f;
@@ -67,8 +78,10 @@ namespace TarkovIRL
                 armStamLoopTimerY += 1f;
             }
 
-            float armJitterModX = armCurve.Evaluate(armStamLoopTimerX) * armStamMulti * PrimeMover.DevTestFloat.Value * ArmStamMultiFixed;
-            float armJitterModY = armCurve.Evaluate(armStamLoopTimerY) * armStamMulti * PrimeMover.DevTestFloat.Value * ArmStamMultiFixed;
+            float finalMulti = armStamMulti * healthMulti * armHealthLMulti * armHealthRMulti * strengthMulti * poseLevelMulti;
+
+            float armJitterModX = armCurve.Evaluate(armStamLoopTimerX) * finalMulti * PrimeMover.ArmStamJitter.Value * ArmStamMultiFixed;
+            float armJitterModY = armCurve.Evaluate(armStamLoopTimerY) * finalMulti * PrimeMover.ArmStamJitter.Value * ArmStamMultiFixed;
 
             return new Vector3(armJitterModX, armJitterModY, 0);
         }
@@ -92,8 +105,6 @@ namespace TarkovIRL
 
         public static Vector3 GetModifiedHandPosWithPose(Player player)
         {
-            currentLerpRate = lerpRate;
-
             float poseLevel = player.PoseLevel;
             poseVerticalPoseOffsetTarget = (1f - poseLevel) * poseVerticalPoseOffsetModifier;
             poseProjectedPoseOffsetTarget = (1f - poseLevel) * poseProjectedPoseOffsetModifier;
@@ -102,8 +113,6 @@ namespace TarkovIRL
             {
                 poseVerticalPoseOffsetTarget = 0;
                 poseProjectedPoseOffsetTarget = 0;
-
-                currentLerpRate = lerpRate * 2f;
             }
 
             return new Vector3(0, poseVerticalPoseOffsetLerp, poseProjectedPoseOffsetLerp);

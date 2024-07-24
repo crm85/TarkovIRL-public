@@ -61,7 +61,7 @@ namespace TarkovIRL
                 if (isChangeingStance)
                 {
                     finalValue = 0;
-                    lerpRate *= 0.2f;
+                    lerpRate *= 0.35f;
                 }
 
                 if (__instance.ProceduralWeaponAnimation.IsAiming)

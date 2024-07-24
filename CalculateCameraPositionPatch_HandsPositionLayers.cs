@@ -47,11 +47,12 @@ namespace TarkovIRL
                 bool isBreathPos = PrimeMover.IsBreathingEffect.Value;
                 bool isPosePos = PrimeMover.IsPoseEffect.Value;
                 bool isPoseChangePos = PrimeMover.IsPoseChangeEffect.Value;
+                bool isArmShake = PrimeMover.IsArmJitterEffect.Value;
 
                 if (isBreathPos) __instance.HandsContainer.WeaponRoot.localPosition += addedBreathPosition;
                 if (isPosePos) __instance.HandsContainer.WeaponRoot.localPosition += addedPosePosition;
                 if (isPoseChangePos) __instance.HandsContainer.WeaponRoot.localPosition += addedChangePosePos;
-                 __instance.HandsContainer.WeaponRoot.localPosition += addedArmJitterPos;
+                if (isArmShake) __instance.HandsContainer.WeaponRoot.localPosition += addedArmJitterPos;
             }
         }
     }
