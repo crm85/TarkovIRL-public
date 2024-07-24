@@ -12,7 +12,7 @@ namespace TarkovIRL
     {
         const string modGUID = "TarkovIRL";
         const string modName = "TarkovIRL";
-        const string modVersion = "0.3.4";
+        const string modVersion = "0.3.5";
         readonly Harmony harmony = new Harmony(modGUID);
 
         public static PrimeMover Instance;

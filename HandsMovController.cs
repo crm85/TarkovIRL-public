@@ -66,7 +66,7 @@ namespace TarkovIRL
             float strengthMulti = 1f - (strength / 15000);
             float poseLevelMulti = 1f + poseLevel;
 
-            armStamLoopTimerX += player.DeltaTime * ArmStamDTMulti * 0.5f;
+            armStamLoopTimerX += player.DeltaTime * ArmStamDTMulti * 0.37f;
             if (armStamLoopTimerX >= 1f)
             {
                 armStamLoopTimerX -= 1f;
@@ -130,6 +130,11 @@ namespace TarkovIRL
                     isChangingPose = true;
                 }
             }
+
+            if (!player.ProceduralWeaponAnimation.IsAiming)
+            {
+                addedVert.y *= 3f;
+            }
             
             poseLevelLastFrame = poseLevelThisFrame;
             return addedVert;
@@ -151,7 +156,6 @@ namespace TarkovIRL
                 }
                 float directionAttenuationMod = vertDiff < 0 ? 1f : 0.5f;
                 float addedVert = PrimeMover.Instance.PoseChangeCurve.Evaluate(changingPoseCycle) * vertDiffAbs * changePoseModifier * directionAttenuationMod;
-                poseShiftVector = new Vector3(0, addedVert, 0);
             }
             else
             {
