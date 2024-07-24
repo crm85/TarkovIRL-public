@@ -12,7 +12,7 @@ namespace TarkovIRL
     {
         const string modGUID = "TarkovIRL";
         const string modName = "TarkovIRL";
-        const string modVersion = "0.3.3.1";
+        const string modVersion = "0.3.4";
         readonly Harmony harmony = new Harmony(modGUID);
 
         public static PrimeMover Instance;
@@ -21,6 +21,7 @@ namespace TarkovIRL
         public AnimationCurve DeadZoneCurve;
         public AnimationCurve BreathCurve;
         public AnimationCurve PoseChangeCurve;
+        public AnimationCurve ArmStamJitterCurve;
 
         public float DeltaTime = 0;
         public float Time = 0;
@@ -33,12 +34,14 @@ namespace TarkovIRL
         public static ConfigEntry<bool> IsBreathingEffect;
         public static ConfigEntry<bool> IsPoseEffect;
         public static ConfigEntry<bool> IsPoseChangeEffect;
+        public static ConfigEntry<bool> IsArmJitterEffect;
 
         const string ADJUST_VAR_SECTION = "Adjust feature values";
         public static ConfigEntry<float> DeadzoneGlobalMultiplier;
         public static ConfigEntry<float> WeaponSwayGlobalMultiplier;
         public static ConfigEntry<float> BreathingEffectMulti;
         public static ConfigEntry<float> RotHistoryPoolClamp;
+        public static ConfigEntry<float> ArmStamJitter;
 
         const string DEV_SECTION = "Only for dev/testing";
         public static ConfigEntry<float> DevTestFloat;
@@ -48,6 +51,7 @@ namespace TarkovIRL
         float _weaponSwayGlobalMultiplierDefault = 1f;
         float _breathingEffectMultiDefault = 1f;
         float _rotHistoryPoolClampDefault = 0.015f;
+        float _armJitterDefault = 1f;
 
         void Awake()
         {
@@ -83,12 +87,17 @@ namespace TarkovIRL
                  new Keyframe(0f, 0f), new Keyframe(0.01f, 0.04753859f), new Keyframe(0.02f, 0.06824711f), new Keyframe(0.03f, 0.07190572f), new Keyframe(0.04f, 0.06472864f), new Keyframe(0.05f, 0.03672462f), new Keyframe(0.05999999f, -0.01143076f), new Keyframe(0.06999999f, -0.07712235f), new Keyframe(0.07999999f, -0.157735f), new Keyframe(0.08999999f, -0.2506537f), new Keyframe(0.09999999f, -0.3532633f), new Keyframe(0.11f, -0.4620121f), new Keyframe(0.12f, -0.5536414f), new Keyframe(0.13f, -0.6220356f), new Keyframe(0.14f, -0.6711998f), new Keyframe(0.15f, -0.7051392f), new Keyframe(0.16f, -0.7278589f), new Keyframe(0.17f, -0.7433642f), new Keyframe(0.18f, -0.7578313f), new Keyframe(0.19f, -0.7805023f), new Keyframe(0.2f, -0.8117735f), new Keyframe(0.21f, -0.8513885f), new Keyframe(0.22f, -0.8990905f), new Keyframe(0.23f, -0.9521281f), new Keyframe(0.24f, -0.9863883f), new Keyframe(0.25f, -0.998183f), new Keyframe(0.26f, -0.9904182f), new Keyframe(0.27f, -0.9660002f), new Keyframe(0.28f, -0.9278349f), new Keyframe(0.29f, -0.8788286f), new Keyframe(0.3f, -0.8218873f), new Keyframe(0.31f, -0.759917f), new Keyframe(0.32f, -0.695824f), new Keyframe(0.33f, -0.6325832f), new Keyframe(0.3399999f, -0.5721059f), new Keyframe(0.3499999f, -0.5145938f), new Keyframe(0.3599999f, -0.4601647f), new Keyframe(0.3699999f, -0.4089365f), new Keyframe(0.3799999f, -0.361027f), new Keyframe(0.3899999f, -0.316554f), new Keyframe(0.3999999f, -0.2756355f), new Keyframe(0.4099999f, -0.2383893f), new Keyframe(0.4199999f, -0.2049332f), new Keyframe(0.4299999f, -0.1753851f), new Keyframe(0.4399998f, -0.1498628f), new Keyframe(0.4499998f, -0.1284841f), new Keyframe(0.4599998f, -0.1113669f), new Keyframe(0.4699998f, -0.09862924f), new Keyframe(0.4799998f, -0.08953421f), new Keyframe(0.4899998f, -0.07422893f), new Keyframe(0.4999998f, -0.05229831f), new Keyframe(0.5099998f, -0.02683907f), new Keyframe(0.5199998f, -0.0009481311f), new Keyframe(0.5299998f, 0.02227778f), new Keyframe(0.5399998f, 0.03974189f), new Keyframe(0.5499998f, 0.04943786f), new Keyframe(0.5599998f, 0.05533161f), new Keyframe(0.5699998f, 0.05844303f), new Keyframe(0.5799997f, 0.05908555f), new Keyframe(0.5899997f, 0.05757258f), new Keyframe(0.5999997f, 0.05421757f), new Keyframe(0.6099997f, 0.04933393f), new Keyframe(0.6199997f, 0.0432351f), new Keyframe(0.6299997f, 0.03623449f), new Keyframe(0.6399997f, 0.02864554f), new Keyframe(0.6499997f, 0.02078166f), new Keyframe(0.6599997f, 0.01295629f), new Keyframe(0.6699997f, 0.00548286f), new Keyframe(0.6799996f, -0.001325212f), new Keyframe(0.6899996f, -0.007154491f), new Keyframe(0.6999996f, -0.01169154f), new Keyframe(0.7099996f, -0.01462297f), new Keyframe(0.7199996f, -0.01570082f), new Keyframe(0.7299996f, -0.01604912f), new Keyframe(0.7399996f, -0.01618946f), new Keyframe(0.7499996f, -0.01613806f), new Keyframe(0.7599996f, -0.01591115f), new Keyframe(0.7699996f, -0.01552495f), new Keyframe(0.7799996f, -0.01499569f), new Keyframe(0.7899995f, -0.01433959f), new Keyframe(0.7999995f, -0.01357289f), new Keyframe(0.8099995f, -0.01271181f), new Keyframe(0.8199995f, -0.01177257f), new Keyframe(0.8299995f, -0.01077141f), new Keyframe(0.8399995f, -0.009724541f), new Keyframe(0.8499995f, -0.008648196f), new Keyframe(0.8599995f, -0.007558605f), new Keyframe(0.8699995f, -0.006471992f), new Keyframe(0.8799995f, -0.005404581f), new Keyframe(0.8899994f, -0.0043726f), new Keyframe(0.8999994f, -0.003392277f), new Keyframe(0.9099994f, -0.002479835f), new Keyframe(0.9199994f, -0.001651503f), new Keyframe(0.9299994f, -0.0009235078f), new Keyframe(0.9399994f, -0.0003120769f), new Keyframe(0.9499994f, 0.0001665689f), new Keyframe(0.9599994f, 0.0004961994f), new Keyframe(0.9699994f, 0.0006605871f), new Keyframe(0.9799994f, 0.0006435066f), new Keyframe(0.9899994f, 0.0004287343f), new Keyframe(0.9999993f, 3.539026E-08f)
             );
 
+            ArmStamJitterCurve = new AnimationCurve
+            (
+                 new Keyframe(0f, 0f), new Keyframe(0.01f, 0.02002987f), new Keyframe(0.02f, 0.05177919f), new Keyframe(0.03f, 0.0861365f), new Keyframe(0.04f, 0.1139903f), new Keyframe(0.05f, 0.1262292f), new Keyframe(0.05999999f, 0.1387799f), new Keyframe(0.06999999f, 0.1714787f), new Keyframe(0.07999999f, 0.2052841f), new Keyframe(0.08999999f, 0.220898f), new Keyframe(0.09999999f, 0.1931826f), new Keyframe(0.11f, 0.08000854f), new Keyframe(0.12f, 0.07054432f), new Keyframe(0.13f, 0.07545625f), new Keyframe(0.14f, 0.06106036f), new Keyframe(0.15f, 0.03696794f), new Keyframe(0.16f, 0.01279034f), new Keyframe(0.17f, -0.001861159f), new Keyframe(0.18f, -0.00503464f), new Keyframe(0.19f, -0.02902272f), new Keyframe(0.2f, -0.06406359f), new Keyframe(0.21f, -0.09354599f), new Keyframe(0.22f, -0.1367515f), new Keyframe(0.23f, -0.1946985f), new Keyframe(0.24f, -0.2474255f), new Keyframe(0.25f, -0.2756253f), new Keyframe(0.26f, -0.2846023f), new Keyframe(0.27f, -0.2834283f), new Keyframe(0.28f, -0.2741062f), new Keyframe(0.29f, -0.2586388f), new Keyframe(0.3f, -0.2390289f), new Keyframe(0.31f, -0.2172793f), new Keyframe(0.32f, -0.1953928f), new Keyframe(0.33f, -0.1753722f), new Keyframe(0.3399999f, -0.1592204f), new Keyframe(0.3499999f, -0.1489402f), new Keyframe(0.3599999f, -0.1395335f), new Keyframe(0.3699999f, -0.09086414f), new Keyframe(0.3799999f, -0.01933302f), new Keyframe(0.3899999f, 0.04705437f), new Keyframe(0.3999999f, 0.08029242f), new Keyframe(0.4099999f, 0.1618353f), new Keyframe(0.4199999f, 0.2200256f), new Keyframe(0.4299999f, 0.2271181f), new Keyframe(0.4399998f, 0.2132713f), new Keyframe(0.4499998f, 0.1909959f), new Keyframe(0.4599998f, 0.1728026f), new Keyframe(0.4699998f, 0.169514f), new Keyframe(0.4799998f, 0.1561657f), new Keyframe(0.4899998f, 0.1291374f), new Keyframe(0.4999998f, 0.09996025f), new Keyframe(0.5099998f, 0.08016507f), new Keyframe(0.5199998f, 0.08081633f), new Keyframe(0.5299998f, 0.04337962f), new Keyframe(0.5399998f, -0.03990857f), new Keyframe(0.5499998f, -0.1130076f), new Keyframe(0.5599998f, -0.1297899f), new Keyframe(0.5699998f, -0.1205692f), new Keyframe(0.5799997f, -0.1226004f), new Keyframe(0.5899997f, -0.1690248f), new Keyframe(0.5999997f, -0.2687237f), new Keyframe(0.6099997f, -0.2949535f), new Keyframe(0.6199997f, -0.2905267f), new Keyframe(0.6299997f, -0.2679948f), new Keyframe(0.6399997f, -0.2130725f), new Keyframe(0.6499997f, -0.1072184f), new Keyframe(0.6599997f, -0.07028858f), new Keyframe(0.6699997f, -0.0884738f), new Keyframe(0.6799996f, -0.03864045f), new Keyframe(0.6899996f, 0.02149329f), new Keyframe(0.6999996f, 0.04437444f), new Keyframe(0.7099996f, 0.08881943f), new Keyframe(0.7199996f, 0.147704f), new Keyframe(0.7299996f, 0.1883931f), new Keyframe(0.7399996f, 0.1978056f), new Keyframe(0.7499996f, 0.1958648f), new Keyframe(0.7599996f, 0.1974101f), new Keyframe(0.7699996f, 0.1384161f), new Keyframe(0.7799996f, 0.04644331f), new Keyframe(0.7899995f, -0.01248662f), new Keyframe(0.7999995f, -0.03949538f), new Keyframe(0.8099995f, -0.1110162f), new Keyframe(0.8199995f, -0.182054f), new Keyframe(0.8299995f, -0.2041247f), new Keyframe(0.8399995f, -0.1287441f), new Keyframe(0.8499995f, -0.04300359f), new Keyframe(0.8599995f, -0.07900946f), new Keyframe(0.8699995f, -0.1746287f), new Keyframe(0.8799995f, -0.2664219f), new Keyframe(0.8899994f, -0.2970352f), new Keyframe(0.8999994f, -0.2974063f), new Keyframe(0.9099994f, -0.2874107f), new Keyframe(0.9199994f, -0.269584f), new Keyframe(0.9299994f, -0.2464621f), new Keyframe(0.9399994f, -0.2205806f), new Keyframe(0.9499994f, -0.1944753f), new Keyframe(0.9599994f, -0.170682f), new Keyframe(0.9699994f, -0.1515432f), new Keyframe(0.9799994f, -0.1052232f), new Keyframe(0.9899994f, -0.03925297f), new Keyframe(0.9999993f, -6.854534E-07f) 
+            );
+
             TryLoadPatch(new LerpCameraPatch_UpdateSway());
             TryLoadPatch(new UpdateSwayFactorsPatch());
             TryLoadPatch(new LookPatch_ApplyDeadzone());
             TryLoadPatch(new LateUpdatePatch_UpdateWpnStats());
             TryLoadPatch(new OnShotPatch_UpdateWpnWeight());
-            TryLoadPatch(new CalculateCameraPositionPatch());
+            TryLoadPatch(new CalculateCameraPositionPatch_HandsPositionLayers());
         }
 
         void LoadConfigValues()
@@ -96,15 +105,18 @@ namespace TarkovIRL
             // section 1
             IsWeaponDeadzone = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable weapon deadzone", "The weapon 'deadzone' effect is a separation of the player's camera from where the weapon is pointing. In vanilla these are perfectly aligned at all times; in this mod, these values become disaligned based on the size and ergo value of the weapon.");
             IsWeaponSway = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable weapon sway", "This mod changes how weapon sway works: your weapon generally sways ahead of your aimpoint (rather than behind like in vanilla), and the severity of the sway is defined by many factors. See mod documentation for fuller explanation.");
-            IsBreathingEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable breathing effect", "Adds a visual oscillation to your character's weapon, the intensity of which relating to your current stamina.");
-            IsPoseEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable weapons position pose changes", "When you crouch, your weapon position is pulled in closer to your character.");
-            IsPoseChangeEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable pose change effect", "When you change your crouch position, you see a dip in your sight picture, the speed and intensity of which is driven by how much you change your stance (e.g. incrimental change versus full change.");
+            IsBreathingEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable breathing effect", "Adds a visual oscillation to your character's weapon, the intensity of which depends on your current stamina.");
+            IsPoseEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable stance-dependent weapon position", "When you crouch, your weapon position is pulled in closer to your character.");
+            IsPoseChangeEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable stance transition effect", "When you change your crouch position, you see a dip in your sight picture, the speed and intensity of which is driven by how much you change your stance (e.g. incrimental change versus full change.");
+            IsArmJitterEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable extra arms shaking", "Adds additional arm shake as arm stam decreases");
+
 
             // section 2
-            DeadzoneGlobalMultiplier = ConstructFloatConfig(_deadzoneGlobalMultiplierDefault, ADJUST_VAR_SECTION, "Weapon deadzone global multiplier", "Define deadzone intensity.", 0, 5f);
-            WeaponSwayGlobalMultiplier = ConstructFloatConfig(_weaponSwayGlobalMultiplierDefault, ADJUST_VAR_SECTION, "Weapon sway global multiplier", "Define weapon sway intensity.", 0, 5f);
-            BreathingEffectMulti = ConstructFloatConfig(_breathingEffectMultiDefault, ADJUST_VAR_SECTION, "Breathing effect intensity", "Define breathing effect intensity.", 0, 5f);
-            RotHistoryPoolClamp = ConstructFloatConfig(_rotHistoryPoolClampDefault, ADJUST_VAR_SECTION, "Rotation Average Set Size", "Hard to explain this one, I wouldn't touch it if I were you.", 0, 0.1f);
+            DeadzoneGlobalMultiplier = ConstructFloatConfig(_deadzoneGlobalMultiplierDefault, ADJUST_VAR_SECTION, "Weapon deadzone intensity", "Set deadzone intensity.", 0, 5f);
+            WeaponSwayGlobalMultiplier = ConstructFloatConfig(_weaponSwayGlobalMultiplierDefault, ADJUST_VAR_SECTION, "Weapon sway intensity", "Set weapon sway intensity.", 0, 5f);
+            BreathingEffectMulti = ConstructFloatConfig(_breathingEffectMultiDefault, ADJUST_VAR_SECTION, "Breathing effect intensity", "Set breathing effect intensity.", 0, 5f);
+            RotHistoryPoolClamp = ConstructFloatConfig(_rotHistoryPoolClampDefault, ADJUST_VAR_SECTION, "Rotation History Clamp Size", "Hard to explain this one, I wouldn't touch it if I were you.", 0, 0.1f);
+            ArmStamJitter = ConstructFloatConfig(_armJitterDefault, ADJUST_VAR_SECTION, "Arm shake intensity", "Set extra arm shake intensity.", 0, 5f);
 
             // section 5
             DevTestFloat = ConstructFloatConfig(0, DEV_SECTION, "Test value", "This is only for dev use, should not be connected to anything in production releases.", -10000f, 10000f);

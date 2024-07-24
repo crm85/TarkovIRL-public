@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace TarkovIRL
 {
-    internal class CalculateCameraPositionPatch : ModulePatch
+    internal class CalculateCameraPositionPatch_HandsPositionLayers : ModulePatch
     {
         private static FieldInfo playerField;
         private static FieldInfo fcField;
@@ -42,14 +42,17 @@ namespace TarkovIRL
                 Vector3 addedBreathPosition = HandsMovController.GetModifiedHandPosForBreath(player);
                 Vector3 addedPosePosition = HandsMovController.GetModifiedHandPosWithPose(player);
                 Vector3 addedChangePosePos = HandsMovController.GetModifiedHandPosWithPoseChange(player);
+                Vector3 addedArmJitterPos = HandsMovController.GetModifiedHandPosForArmStam(player);
 
                 bool isBreathPos = PrimeMover.IsBreathingEffect.Value;
                 bool isPosePos = PrimeMover.IsPoseEffect.Value;
                 bool isPoseChangePos = PrimeMover.IsPoseChangeEffect.Value;
+                bool isArmShake = PrimeMover.IsArmJitterEffect.Value;
 
                 if (isBreathPos) __instance.HandsContainer.WeaponRoot.localPosition += addedBreathPosition;
                 if (isPosePos) __instance.HandsContainer.WeaponRoot.localPosition += addedPosePosition;
                 if (isPoseChangePos) __instance.HandsContainer.WeaponRoot.localPosition += addedChangePosePos;
+                if (isArmShake) __instance.HandsContainer.WeaponRoot.localPosition += addedArmJitterPos;
             }
         }
     }
