@@ -53,6 +53,10 @@ namespace TarkovIRL
                 if (isPosePos) __instance.HandsContainer.WeaponRoot.localPosition += addedPosePosition;
                 if (isPoseChangePos) __instance.HandsContainer.WeaponRoot.localPosition += addedChangePosePos;
                 if (isArmShake) __instance.HandsContainer.WeaponRoot.localPosition += addedArmJitterPos;
+
+                Vector3 addedZPos = HandsMovController.GetModifiedHandPosForRotSpeed();
+                //__instance.HandsContainer.WeaponRoot.localPosition += addedZPos;
+                //firearmController.Weapon.Weight
             }
         }
     }

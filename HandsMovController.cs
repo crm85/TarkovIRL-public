@@ -42,6 +42,8 @@ namespace TarkovIRL
         static readonly float ArmStamDTMulti = 0.25f;
         static readonly float ArmStamMultiFixed = 0.005f;
 
+
+
         public static void UpdateLerp(float dt)
         {
             poseVerticalPoseOffsetLerp = Mathf.Lerp(poseVerticalPoseOffsetLerp, poseVerticalPoseOffsetTarget, dt * currentLerpRate);
@@ -156,11 +158,18 @@ namespace TarkovIRL
                 }
                 float directionAttenuationMod = vertDiff < 0 ? 1f : 0.5f;
                 float addedVert = PrimeMover.Instance.PoseChangeCurve.Evaluate(changingPoseCycle) * vertDiffAbs * changePoseModifier * directionAttenuationMod;
+                poseShiftVector = new Vector3(0, addedVert, 0);
             }
             else
             {
                 poseShiftVector = Vector3.zero;
             }
+        }
+
+        public static Vector3 GetModifiedHandPosForRotSpeed()
+        {
+            float addedZAxis = WeaponHandlingController.RotationDelta;
+            return new Vector3(0, 0, -addedZAxis);
         }
     }
 }
