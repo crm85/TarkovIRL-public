@@ -91,11 +91,12 @@ namespace TarkovIRL
 
                 // horizontal axis ***
                 float addedSway = _primarySwayValue * weaponWeight * speedMulti * strengthMulti * underweightReduction * healthMulti * armHealthRMulti * armHealthLMulti * stamMulti * handStamMulti;
+                bool flag1 = firearmController.Weapon.GetFoldable() != null && firearmController.Weapon.Folded;
+                bool flag2 = firearmController.Weapon.WeapClass == "pistol";
+                WeaponHandlingController.IsStocked = flag1 || flag2;
 
                 if (__instance.IsAiming)
                 {
-                    bool flag1 = firearmController.Weapon.GetFoldable() != null && firearmController.Weapon.Folded;
-                    bool flag2 = firearmController.Weapon.WeapClass == "pistol";
                     addedSway *= -2f;
                     if (flag1)
                     {
