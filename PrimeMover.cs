@@ -48,7 +48,7 @@ namespace TarkovIRL
 
         // config defaults
         float _deadzoneGlobalMultiplierDefault = 2f;
-        float _weaponSwayGlobalMultiplierDefault = 1f;
+        float _weaponSwayGlobalMultiplierDefault = 0.5f;
         float _breathingEffectMultiDefault = 1f;
         float _rotHistoryPoolClampDefault = 0.015f;
         float _armJitterDefault = 1f;

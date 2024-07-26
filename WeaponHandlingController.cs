@@ -13,7 +13,9 @@ namespace TarkovIRL
         public static float CurrentWeaponLength = 0;
 
         public static bool IsSwayUpdatedThisFrame = false;
-        static public bool IsReposStance = false;
+        public static bool IsReposStance = false;
+        public static bool IsStocked = false;
+        
 
         // private vars
 
