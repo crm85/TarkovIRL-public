@@ -1,3 +1,11 @@
+--- Version 0.3.5 ---
+- Fixed stance change visual not working (accidentally killed it).
+- Lowered again default sway value.
+- Added more randomness to arm shake visual effect.
+- Improved (greatly) breathing visual effect.
+- Added effect, when player is turning he pulls the weapon in a bit because I like visual complexity.
+- Added effect, when player is moving with unstocked weapon he lowers it a bit when ADSed (because I like visual complexity again).
+
 --- Version 0.3.3 ---
 
 - Updated for SPT 3.9.x.
