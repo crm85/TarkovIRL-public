@@ -64,6 +64,11 @@ namespace TarkovIRL
 
         public static Vector3 GetModifiedHandPosForArmStam(Player player)
         {
+            if (!player.ProceduralWeaponAnimation.IsAiming)
+            {  
+                return Vector3.zero; 
+            }
+
             AnimationCurve armCurve = PrimeMover.Instance.ArmStamJitterCurve;
             float armStamNorm = player.Physical.HandsStamina.Current / 80f;
             float healthCommon = player.HealthController.GetBodyPartHealth(EBodyPart.Common).Normalized;
@@ -181,13 +186,48 @@ namespace TarkovIRL
             }
         }
 
-        public static Vector3 GetModifiedHandPosForRotSpeed()
+        public static Vector3 GetModifiedHandPosForRotSpeed(Player player)
         {
+            float dt = player.DeltaTime;
+            _pullInGateTimer += dt;
+            if(!player.ProceduralWeaponAnimation.IsAiming)
+            {
+                if (_pullInGateTimer > _pullInGateTime)
+                {
+                    _pullInGateOpen = true;
+                }
+                float rotDelta = WeaponHandlingController.RotationDelta;
+                if (rotDelta > RotPullInDeltaThresh && _pullInGateOpen)
+                {
+                    _pullInGateOpen = false;
+                    _pullInGateTimer = 0;
+                    _rotPullInTarget = RotPullInValue;
+                }
+                else if (rotDelta <= RotPullInDeltaThresh && _pullInGateOpen)
+                {
+                    _pullInGateOpen = false;
+                    _pullInGateTimer = 0;
+                    _rotPullInTarget = 0;
+                }
+            }
+            else
+            {
+                if (WeaponHandlingController.IsPlayerMovement)
+                {
+                    _rotPullInTarget = RotPullInValue;
+                }
+                else
+                {
+                    _rotPullInTarget = 0;
+                }
+            }
+            _rotPullInLerp = Mathf.Lerp(_rotPullInLerp, _rotPullInTarget, dt * _lerpRate * 0.6f);
             return new Vector3(0, 0, -_rotPullInLerp);
         }
 
         static void RotDeltaUpdate(float dt)
         {
+            /*
             _pullInGateTimer += dt;
             if (_pullInGateTimer > _pullInGateTime)
             {
@@ -207,6 +247,8 @@ namespace TarkovIRL
                 _rotPullInTarget = 0;
             }
             _rotPullInLerp = Mathf.Lerp(_rotPullInLerp, _rotPullInTarget, dt * _lerpRate * 0.6f);
+            */
+            // depro to remove
         }
 
         static void VerticalPoseUpdate(float dt)
