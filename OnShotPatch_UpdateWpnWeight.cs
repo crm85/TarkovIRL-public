@@ -21,7 +21,7 @@ namespace TarkovIRL
             }
 
             FirearmController fc = __instance.HandsController as FirearmController;
-            WeaponHandlingController.CurrentWeaponWeight = fc.Weapon.GetSingleItemTotalWeight();
+            WeaponsHandlingController.CurrentWeaponWeight = fc.Weapon.GetSingleItemTotalWeight();
         }
     }
 }

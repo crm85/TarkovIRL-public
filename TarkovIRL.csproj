@@ -84,7 +84,7 @@
     <Compile Include="LerpCameraPatch_UpdateSway.cs" />
     <Compile Include="OnShotPatch_UpdateWpnWeight.cs" />
     <Compile Include="Utils.cs" />
-    <Compile Include="WeaponHandlingController.cs" />
+    <Compile Include="WeaponsHandlingController.cs" />
     <Compile Include="LookPatch_ApplyDeadzone.cs" />
     <Compile Include="UpdateSwayFactorsPatch.cs" />
     <Compile Include="PrimeMover.cs" />

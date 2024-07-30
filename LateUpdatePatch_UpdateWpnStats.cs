@@ -30,16 +30,16 @@ public class LateUpdatePatch_UpdateWpnStats : ModulePatch
         {
             if (fc != null)
             {
-                WeaponHandlingController.CurrentWeaponWeight = fc.Weapon.GetSingleItemTotalWeight();
-                WeaponHandlingController.CurrentWeaponErgo = fc.TotalErgonomics / 100f;
+                WeaponsHandlingController.CurrentWeaponWeight = fc.Weapon.GetSingleItemTotalWeight();
+                WeaponsHandlingController.CurrentWeaponErgo = fc.TotalErgonomics / 100f;
             }
             else
             {
-                WeaponHandlingController.CurrentWeaponWeight = 0;
-                WeaponHandlingController.CurrentWeaponErgo = 1f;
+                WeaponsHandlingController.CurrentWeaponWeight = 0;
+                WeaponsHandlingController.CurrentWeaponErgo = 1f;
             }
             _updateWeightTimer = 0;
         }
-        WeaponHandlingController.SwayThisFrame = false;
+        WeaponsHandlingController.SwayThisFrame = false;
     }
 }

@@ -35,7 +35,7 @@ namespace TarkovIRL
                 return;
             }
 
-            if (WeaponHandlingController.IsSwayUpdatedThisFrame)
+            if (WeaponsHandlingController.IsSwayUpdatedThisFrame)
             {
                 return;
             }
@@ -49,39 +49,16 @@ namespace TarkovIRL
             Player player = (Player)playerField.GetValue(firearmController);
             if (player != null && player.IsYourPlayer && player.MovementContext.CurrentState.Name != EPlayerState.Stationary)
             {
-                float healthCommon = player.HealthController.GetBodyPartHealth(EBodyPart.Common).Normalized;
-                float armHealthR = player.HealthController.GetBodyPartHealth(EBodyPart.RightArm).Normalized;
-                float armHealthL = player.HealthController.GetBodyPartHealth(EBodyPart.LeftArm).Normalized;
-                float stamNormalized = player.Physical.Stamina.Current / 104f;
-                float handStamNormalized = player.Physical.HandsStamina.Current / 80f;
-                float strength = player.Skills.Strength.Current;
-                float currentWeight = player.Physical.PreviousWeight;
+                WeaponsHandlingController.UpdateTransformHistory(player.Position);
+                WeaponsHandlingController.UpdateRotationHistory(player.Rotation);
 
-                float speedMulti = player.Speed / .6f;
-                float healthMulti = 1f + ((1f - healthCommon) * .2f);
-                float armHealthRMulti = 1f + ((1f - armHealthR) * .2f);
-                float armHealthLMulti = 1f + ((1f - armHealthL) * .2f);
-                float stamMulti = 1f + ((1f - stamNormalized) * .1f);
-                float handStamMulti = 1f + ((1f - handStamNormalized) * .1f);
-                float underweightReduction = Mathf.Clamp01(currentWeight / (strength * .034f));
-                float strengthMulti = 1f - (strength / 15000);
-
-                if (!WeaponHandlingController.IsPlayerMovement)
-                {
-                    speedMulti = 0;
-                }
-                speedMulti = Mathf.Clamp(speedMulti, .25f, 1f);
-
-                WeaponHandlingController.UpdateTransformHistory(player.Position);
-                WeaponHandlingController.UpdateRotationHistory(player.Rotation);
-
-                float weaponWeight = WeaponHandlingController.CurrentWeaponWeight;
+                float weaponWeight = WeaponsHandlingController.CurrentWeaponWeight;
                 Vector3 newSwayFactors = __instance.MotionReact.SwayFactors;
 
                 // vertical axis
                 bool flag3 = firearmController.Weapon.WeapClass == "pistol";
                 newSwayFactors.x *= -0.3f * weaponWeight;
-                if (WeaponHandlingController.VerticalTrend < 0 && !flag3)
+                if (WeaponsHandlingController.VerticalTrend < 0 && !flag3)
                 {
                     newSwayFactors.x *= -1f;
                 }
@@ -90,17 +67,17 @@ namespace TarkovIRL
                 newSwayFactors.y *= -.2f * weaponWeight;
 
                 // horizontal axis ***
-                float addedSway = _primarySwayValue * weaponWeight * speedMulti * strengthMulti * underweightReduction * healthMulti * armHealthRMulti * armHealthLMulti * stamMulti * handStamMulti;
+                float addedSway = _primarySwayValue * weaponWeight * WeaponsHandlingController.GetSpeedModifier(player) * WeaponsHandlingController.GetGeneralEfficiencyModifier(player);
                 bool flag1 = firearmController.Weapon.GetFoldable() != null && firearmController.Weapon.Folded;
                 bool flag2 = firearmController.Weapon.WeapClass == "pistol";
-                WeaponHandlingController.IsStocked = flag1 || flag2;
+                WeaponsHandlingController.IsStocked = flag1 || flag2;
 
                 if (__instance.IsAiming)
                 {
                     addedSway *= -2f;
                     if (flag1)
                     {
-                        addedSway *= -1f;
+                        addedSway *= -0.7f;
                     }
                     else if (flag2)
                     {
@@ -109,7 +86,7 @@ namespace TarkovIRL
                 }
                 else
                 {
-                    float rotDeltaEval = PrimeMover.Instance.WeapSwayCurve.Evaluate(WeaponHandlingController.RotationDelta * 1000f);
+                    float rotDeltaEval = PrimeMover.Instance.WeapSwayCurve.Evaluate(WeaponsHandlingController.RotationDelta * 1000f);
                     addedSway *= rotDeltaEval;
                 }
                 addedSway *= PrimeMover.WeaponSwayGlobalMultiplier.Value;
@@ -117,7 +94,7 @@ namespace TarkovIRL
                 // push values
                 newSwayFactors.z *= addedSway;
                 __instance.MotionReact.SwayFactors = newSwayFactors;
-                WeaponHandlingController.IsSwayUpdatedThisFrame = true;
+                WeaponsHandlingController.IsSwayUpdatedThisFrame = true;
             }
             else
             {

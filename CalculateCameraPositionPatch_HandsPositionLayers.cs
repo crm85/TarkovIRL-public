@@ -17,6 +17,15 @@ namespace TarkovIRL
         private static FieldInfo playerField;
         private static FieldInfo fcField;
 
+        private static float _rotAvgXSet = 0;
+        private static float _rotAvgYSet = 0;
+        private static float _rotAvgX = 0;
+        private static float _rotAvgY = 0;
+        private static Vector2 _rotAvgVector = Vector2.zero;
+
+        private static float _rotLerpX = 0;
+        private static float _rotLerpY = 0;
+
         protected override MethodBase GetTargetMethod()
         {
             playerField = AccessTools.Field(typeof(Player.FirearmController), "_player");
@@ -57,8 +66,31 @@ namespace TarkovIRL
                 Vector3 addedZPos = HandsMovController.GetModifiedHandPosForRotSpeed();
                 Vector3 addedStockedMovPos = HandsMovController.GetModifiedHandPosForUnstockedMovement();
 
+
+                // testing
+                _rotAvgXSet += player.HandsRotation.x;
+                _rotAvgYSet += player.Rotation.y;
+                _rotAvgXSet -= _rotAvgX;
+                _rotAvgYSet -= _rotAvgY;
+                _rotAvgXSet = Mathf.Clamp(_rotAvgXSet, -PrimeMover.DevTestFloat1.Value, PrimeMover.DevTestFloat1.Value);
+                _rotAvgYSet = Mathf.Clamp(_rotAvgYSet, -PrimeMover.DevTestFloat1.Value, PrimeMover.DevTestFloat1.Value);
+                _rotAvgX = _rotAvgXSet * player.DeltaTime;
+                _rotAvgY = _rotAvgYSet * player.DeltaTime;
+                _rotAvgVector = new Vector2(_rotAvgX, _rotAvgY);
+                Utils.Log(true, $"avg rot vector is {_rotAvgVector}");
+
                 __instance.HandsContainer.WeaponRoot.localPosition += addedZPos;
                 __instance.HandsContainer.WeaponRoot.localPosition += addedStockedMovPos;
+                float rotationDeltaToAdd = WeaponsHandlingController.RotationDelta;
+                rotationDeltaToAdd = Mathf.Clamp(rotationDeltaToAdd, 0, 0.0002f);
+                rotationDeltaToAdd *= PrimeMover.DevTestFloat.Value;
+                //__instance.HandsContainer.Weapon.rotation = __instance.HandsContainer.Weapon.localRotation * Quaternion.Euler(PrimeMover.DevTestFloat.Value,0, 0);
+                //__instance.HandsContainer.Weapon.localRotation = __instance.HandsContainer.Weapon.localRotation * Quaternion.Euler(0, PrimeMover.DevTestFloat1.Value, 0);
+                //__instance.HandsContainer.Weapon.localRotation = __instance.HandsContainer.Weapon.localRotation * Quaternion.Euler(0, 0, PrimeMover.DevTestFloat2.Value);
+                float lerpRate = player.DeltaTime * 2f;
+                _rotLerpX = Mathf.Lerp(_rotLerpX, _rotAvgX, lerpRate);
+                _rotLerpY = Mathf.Lerp(_rotLerpY, _rotAvgY, lerpRate);
+                __instance.HandsContainer.WeaponRoot.localPosition = __instance.HandsContainer.WeaponRoot.localPosition + new Vector3(_rotLerpX * 10f, 0, 0);
             }
         }
     }

@@ -193,7 +193,7 @@ namespace TarkovIRL
             {
                 _pullInGateOpen = true;
             }
-            float rotDelta = WeaponHandlingController.RotationDelta;
+            float rotDelta = WeaponsHandlingController.RotationDelta;
             if (rotDelta > RotPullInDeltaThresh && _pullInGateOpen)
             {
                 _pullInGateOpen = false;
@@ -217,7 +217,7 @@ namespace TarkovIRL
 
         static void StockedMovUpdate(float dt)
         {
-            if (WeaponHandlingController.IsStocked && WeaponHandlingController.IsPlayerMovement)
+            if (WeaponsHandlingController.IsStocked && WeaponsHandlingController.IsPlayerMovement)
             {
                 _stockedMovementAddedPosTarget = StockMovementAddedPosValue;
             }
