@@ -45,6 +45,10 @@ namespace TarkovIRL
 
         const string DEV_SECTION = "Only for dev/testing";
         public static ConfigEntry<float> DevTestFloat;
+        public static ConfigEntry<float> DevTestFloat1;
+        public static ConfigEntry<float> DevTestFloat2;
+        public static ConfigEntry<float> DevTestFloat3;
+        public static ConfigEntry<float> DevTestFloat4;
 
         // config defaults
         float _deadzoneGlobalMultiplierDefault = 2f;
@@ -119,13 +123,17 @@ namespace TarkovIRL
             ArmStamJitter = ConstructFloatConfig(_armJitterDefault, ADJUST_VAR_SECTION, "Arm shake intensity", "Set extra arm shake intensity.", 0, 5f);
 
             // section 5
-            DevTestFloat = ConstructFloatConfig(0, DEV_SECTION, "Test value", "This is only for dev use, should not be connected to anything in production releases.", -10000f, 10000f);
+            DevTestFloat = ConstructFloatConfig(1f, DEV_SECTION, "Test value", "This is only for dev use, should not be connected to anything in production releases.", -10, 1000);
+            DevTestFloat1 = ConstructFloatConfig(0.5f, DEV_SECTION, "Test value 1", "This is only for dev use, should not be connected to anything in production releases.", -10, 100);
+            DevTestFloat2 = ConstructFloatConfig(100f, DEV_SECTION, "Test value 2", "This is only for dev use, should not be connected to anything in production releases.", -10, 100);
+            DevTestFloat3 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 3", "This is only for dev use, should not be connected to anything in production releases.", -10, 100);
+            DevTestFloat4 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 4", "This is only for dev use, should not be connected to anything in production releases.", -10, 100);
         }
 
         void Update()
         {
-            WeaponHandlingController.DeltaTime = DeltaTime;
-            WeaponHandlingController.Time = Time;
+            WeaponsHandlingController.DeltaTime = DeltaTime;
+            WeaponsHandlingController.Time = Time;
             Utils.PumpUtilsUpdate(UnityEngine.Time.deltaTime);
             HandsMovController.UpdateLerp(DeltaTime);
 
@@ -135,7 +143,7 @@ namespace TarkovIRL
 
         void LateUpdate()
         {
-            WeaponHandlingController.IsSwayUpdatedThisFrame = false;
+            WeaponsHandlingController.IsSwayUpdatedThisFrame = false;
         }
 
         void TryLoadPatch(ModulePatch patch)
