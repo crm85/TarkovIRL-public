@@ -83,6 +83,7 @@
     <Compile Include="LateUpdatePatch_UpdateWpnStats.cs" />
     <Compile Include="LerpCameraPatch_UpdateSway.cs" />
     <Compile Include="OnShotPatch_UpdateWpnWeight.cs" />
+    <Compile Include="ParallaxController.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="WeaponsHandlingController.cs" />
     <Compile Include="LookPatch_ApplyDeadzone.cs" />

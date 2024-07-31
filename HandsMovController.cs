@@ -196,7 +196,7 @@ namespace TarkovIRL
                 {
                     _pullInGateOpen = true;
                 }
-                float rotDelta = WeaponHandlingController.RotationDelta;
+                float rotDelta = WeaponsHandlingController.RotationDelta;
                 if (rotDelta > RotPullInDeltaThresh && _pullInGateOpen)
                 {
                     _pullInGateOpen = false;
@@ -212,7 +212,7 @@ namespace TarkovIRL
             }
             else
             {
-                if (WeaponHandlingController.IsPlayerMovement)
+                if (WeaponsHandlingController.IsPlayerMovement)
                 {
                     _rotPullInTarget = RotPullInValue;
                 }

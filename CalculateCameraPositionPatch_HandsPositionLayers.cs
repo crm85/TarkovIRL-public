@@ -17,18 +17,19 @@ namespace TarkovIRL
         private static FieldInfo playerField;
         private static FieldInfo fcField;
 
-        private static float _rotAvgXSet = 0;
-        private static float _rotAvgYSet = 0;
-        private static float _rotAvgX = 0;
-        private static float _rotAvgY = 0;
-        private static Vector2 _rotAvgVector = Vector2.zero;
+        private static float _rotationAvgSetX = 0;
+        private static float _rotationAvgSetY = 0;
+        private static float _rotationAvgX = 0;
+        private static float _rotationAvgY = 0;
 
-        private static float _rotLerpX = 0;
-        private static float _rotLerpY = 0;
+        private static float _rotationLerpPosX = 0;
+        private static float _rotationLerpPosY = 0;
+
+        private static float _rotationLerpRotX = 0;
+
         private static Vector2 _playerRotationLastFrame = Vector2.zero;
 
 
-        private static float _rotLerpXforRot = 0;
 
         protected override MethodBase GetTargetMethod()
         {
@@ -78,26 +79,26 @@ namespace TarkovIRL
                 Vector2 rotationalMotionThisFrame = _playerRotationLastFrame - player.Rotation;
                 _playerRotationLastFrame = player.Rotation;
 
-                _rotAvgXSet += rotationalMotionThisFrame.x;
-                _rotAvgYSet += rotationalMotionThisFrame.y;
-                _rotAvgXSet -= _rotAvgX;
-                _rotAvgYSet -= _rotAvgY;
-                _rotAvgXSet = Mathf.Clamp(_rotAvgXSet, -PrimeMover.DevTestFloat1.Value, PrimeMover.DevTestFloat1.Value);
-                _rotAvgYSet = Mathf.Clamp(_rotAvgYSet, -PrimeMover.DevTestFloat1.Value, PrimeMover.DevTestFloat1.Value);
-                _rotAvgX = _rotAvgXSet * player.DeltaTime;
-                _rotAvgY = _rotAvgYSet * player.DeltaTime;
+                _rotationAvgSetX += rotationalMotionThisFrame.x;
+                _rotationAvgSetY += rotationalMotionThisFrame.y;
+                _rotationAvgSetX -= _rotationAvgX;
+                _rotationAvgSetY -= _rotationAvgY;
+                _rotationAvgSetX = Mathf.Clamp(_rotationAvgSetX, -PrimeMover.DevTestFloat1.Value, PrimeMover.DevTestFloat1.Value);
+                _rotationAvgSetY = Mathf.Clamp(_rotationAvgSetY, -PrimeMover.DevTestFloat1.Value, PrimeMover.DevTestFloat1.Value);
+                _rotationAvgX = _rotationAvgSetX * player.DeltaTime;
+                _rotationAvgY = _rotationAvgSetY * player.DeltaTime;
 
 
                 float lerpRate = player.DeltaTime * 2f;
-                _rotLerpX = Mathf.Lerp(_rotLerpX, _rotAvgX, lerpRate * PrimeMover.DevTestFloat3.Value);
+                _rotationLerpPosX = Mathf.Lerp(_rotationLerpPosX, _rotationAvgX, lerpRate * PrimeMover.DevTestFloat3.Value);
                 //_rotLerpY = Mathf.Lerp(_rotLerpY, _rotAvgY, lerpRate);
-                __instance.HandsContainer.WeaponRoot.localPosition = __instance.HandsContainer.WeaponRoot.localPosition + new Vector3(_rotLerpX * PrimeMover.DevTestFloat4.Value, 0, 0);
+                __instance.HandsContainer.WeaponRoot.localPosition = __instance.HandsContainer.WeaponRoot.localPosition + new Vector3(_rotationLerpPosX * PrimeMover.DevTestFloat4.Value, 0, 0);
                 // this works ^ 
 
 
-                _rotLerpXforRot = Mathf.Lerp(_rotLerpXforRot, _rotAvgX, lerpRate * PrimeMover.DevTestFloat.Value);
+                _rotationLerpRotX = Mathf.Lerp(_rotationLerpRotX, _rotationAvgX, lerpRate * PrimeMover.DevTestFloat.Value);
                 //__instance.HandsContainer.Weapon.localRotation = __instance.HandsContainer.Weapon.localRotation * Quaternion.Euler(0, PrimeMover.DevTestFloat1.Value, 0);
-                __instance.HandsContainer.Weapon.localRotation = __instance.HandsContainer.Weapon.localRotation * Quaternion.Euler(0, 0, -_rotLerpXforRot * PrimeMover.DevTestFloat2.Value);
+                __instance.HandsContainer.Weapon.localRotation = __instance.HandsContainer.Weapon.localRotation * Quaternion.Euler(0, 0, -_rotationLerpRotX * PrimeMover.DevTestFloat2.Value);
             }
         }
     }
