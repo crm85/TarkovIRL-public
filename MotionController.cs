@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TarkovIRL
 {
-    internal class ParallaxController
+    internal class MotionController
     {
     }
 }

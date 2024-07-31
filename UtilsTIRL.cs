@@ -8,10 +8,10 @@ using UnityEngine;
 
 namespace TarkovIRL
 {
-    public static class Utils
+    public static class UtilsTIRL
     {
         public static ManualLogSource Logger;
-        public static float DeltaTime = 0;
+        static float _dt = 0;
 
         static float _updateResolution = 0.1f;
 
@@ -23,17 +23,17 @@ namespace TarkovIRL
             }
             else
             {
-                if (DeltaTime > _updateResolution)
+                if (_dt > _updateResolution)
                 {
-                    DeltaTime = 0;
+                    _dt = 0;
                     Logger.LogError((object)toPrint);
                 }
             }
         }
 
-        public static void PumpUtilsUpdate(float dt)
+        public static void Update(float dt)
         {
-            DeltaTime += dt;
+            _dt += dt;
         }
     }
 

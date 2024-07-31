@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace TarkovIRL
 {
-    public static class HandsMovController
+    public static class HandMovController
     {
         static float _lerpRate = 4f;
         static float _currentLerpRate = 0;
@@ -24,23 +24,13 @@ namespace TarkovIRL
         static float _poseVerticalPoseOffsetLerp = 0;
         static float _poseProjectedPoseOffsetLerp = 0;
 
-        static float _breathVerticalOffsetModifier = 0.0075f;
-        static float _breathSpeedModifier = 0.55f;
-
         static float _poseLevelLastFrame = 0;
-
-        static float _breathUpdateTimer = 0;
-        static float _armStamLoopTimerX = 0;
-        static float _armStamLoopTimerY = 0;
 
         static Vector3 poseShiftVector = Vector3.zero;
         static bool _isChangingPose = false;
         static float _changingPoseCycle = 0;
         static float _vertDiff = 0;
         static float _changePoseModifier = 0.01f;
-
-        static readonly float ArmStamDTMulti = 0.25f;
-        static readonly float ArmStamMultiFixed = 0.005f;
 
         static float _rotPullInTarget = 0;
         static float _rotPullInLerp = 0;
@@ -58,67 +48,7 @@ namespace TarkovIRL
         {
             VerticalPoseUpdate(dt);
             ChangePoseUpdate(dt);
-            RotDeltaUpdate(dt);
             StockedMovUpdate(dt);
-        }
-
-        public static Vector3 GetModifiedHandPosForArmStam(Player player)
-        {
-            if (!player.ProceduralWeaponAnimation.IsAiming)
-            {  
-                return Vector3.zero; 
-            }
-
-            AnimationCurve armCurve = PrimeMover.Instance.ArmStamJitterCurve;
-            float armStamNorm = player.Physical.HandsStamina.Current / 80f;
-            float healthCommon = player.HealthController.GetBodyPartHealth(EBodyPart.Common).Normalized;
-            float armHealthR = player.HealthController.GetBodyPartHealth(EBodyPart.RightArm).Normalized;
-            float armHealthL = player.HealthController.GetBodyPartHealth(EBodyPart.LeftArm).Normalized;
-            float strength = player.Skills.Strength.Current;
-            float poseLevel = player.PoseLevel;
-
-            float armStamMulti = 1f - armStamNorm;
-            float healthMulti = 1f + ((1f - healthCommon) * .2f);
-            float armHealthRMulti = 1f + ((1f - armHealthR) * .2f);
-            float armHealthLMulti = 1f + ((1f - armHealthL) * .2f);
-            float strengthMulti = 1f - (strength / 15000);
-            float poseLevelMulti = 1f + poseLevel;
-
-            _armStamLoopTimerX += player.DeltaTime * ArmStamDTMulti * 0.37f;
-            if (_armStamLoopTimerX >= 1f)
-            {
-                _armStamLoopTimerX -= 1f;
-            }
-
-            _armStamLoopTimerY -= player.DeltaTime * ArmStamDTMulti;
-            if (_armStamLoopTimerY <= 0)
-            {
-                _armStamLoopTimerY += 1f;
-            }
-
-            float finalMulti = armStamMulti * healthMulti * armHealthLMulti * armHealthRMulti * strengthMulti * poseLevelMulti;
-
-            float armJitterModX = armCurve.Evaluate(_armStamLoopTimerX) * finalMulti * PrimeMover.ArmStamJitter.Value * ArmStamMultiFixed;
-            float armJitterModY = armCurve.Evaluate(_armStamLoopTimerY) * finalMulti * PrimeMover.ArmStamJitter.Value * ArmStamMultiFixed;
-
-            return new Vector3(armJitterModX, armJitterModY, 0);
-        }
-
-        public static Vector3 GetModifiedHandPosForBreath(Player player)
-        {
-            AnimationCurve breathCurve = PrimeMover.Instance.BreathCurve;
-            float stamNormalized = player.Physical.Stamina.Current / 104f;
-            float stamModifier = 1f - stamNormalized;
-            float breathModifier = 1f + stamModifier;
-            _breathUpdateTimer += player.DeltaTime * breathModifier * _breathSpeedModifier;
-            if (_breathUpdateTimer >= 1f)
-            {
-                _breathUpdateTimer -= 1f;
-            }
-            float breathValue = breathCurve.Evaluate(_breathUpdateTimer);
-            float stamModClamped = Mathf.Clamp(stamModifier, 0.025f, 1f);
-            float breathOffset = breathValue * _breathVerticalOffsetModifier * stamModClamped * PrimeMover.BreathingEffectMulti.Value;
-            return new Vector3(0, breathOffset, 0);
         }
 
         public static Vector3 GetModifiedHandPosWithPose(Player player)
@@ -223,32 +153,6 @@ namespace TarkovIRL
             }
             _rotPullInLerp = Mathf.Lerp(_rotPullInLerp, _rotPullInTarget, dt * _lerpRate * 0.6f);
             return new Vector3(0, 0, -_rotPullInLerp);
-        }
-
-        static void RotDeltaUpdate(float dt)
-        {
-            /*
-            _pullInGateTimer += dt;
-            if (_pullInGateTimer > _pullInGateTime)
-            {
-                _pullInGateOpen = true;
-            }
-            float rotDelta = WeaponsHandlingController.RotationDelta;
-            if (rotDelta > RotPullInDeltaThresh && _pullInGateOpen)
-            {
-                _pullInGateOpen = false;
-                _pullInGateTimer = 0;
-                _rotPullInTarget = RotPullInValue;
-            }
-            else if (rotDelta <= RotPullInDeltaThresh && _pullInGateOpen)
-            {
-                _pullInGateOpen = false;
-                _pullInGateTimer = 0;
-                _rotPullInTarget = 0;
-            }
-            _rotPullInLerp = Mathf.Lerp(_rotPullInLerp, _rotPullInTarget, dt * _lerpRate * 0.6f);
-            */
-            // depro to remove
         }
 
         static void VerticalPoseUpdate(float dt)

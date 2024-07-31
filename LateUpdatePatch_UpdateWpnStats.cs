@@ -10,8 +10,12 @@ using UnityEngine;
 
 public class LateUpdatePatch_UpdateWpnStats : ModulePatch
 {
+    // readyonlys
+    static readonly float _UpdateStatsTime = 1f;
+    
+    // vars
     static float _updateWeightTimer = 0;
-    static readonly float _updateStatsTime = 1f;
+
     protected override MethodBase GetTargetMethod()
     {
         return typeof(Player).GetMethod("LateUpdate", BindingFlags.Instance | BindingFlags.Public);
@@ -20,13 +24,13 @@ public class LateUpdatePatch_UpdateWpnStats : ModulePatch
     [PatchPostfix]
 	private static void PatchPostfix(Player __instance)
     {
-        _updateWeightTimer += Time.deltaTime;
+        _updateWeightTimer += PrimeMover.Instance.DeltaTime;
         if (!__instance.IsYourPlayer)
         {
             return;
         }
         Player.FirearmController fc = __instance.HandsController as Player.FirearmController;
-        if (_updateWeightTimer > _updateStatsTime)
+        if (_updateWeightTimer > _UpdateStatsTime)
         {
             if (fc != null)
             {

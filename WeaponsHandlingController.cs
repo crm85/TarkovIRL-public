@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using EFT;
 
 namespace TarkovIRL
 {
@@ -28,6 +29,8 @@ namespace TarkovIRL
         static bool _playerMoving = false;
         static float _verticalAvg = 0;
 
+        static readonly float _RotationHistoryClamp = 0.015f;
+
         public static bool SwayThisFrame = false;
 
         static public float ProcessHeadDelta(float rawHeadDelta)
@@ -46,7 +49,7 @@ namespace TarkovIRL
 
             _playerRotationHistory += distance;
             _playerRotationHistory -= _playerRotationAvg;
-            _playerRotationHistory = Mathf.Clamp(_playerRotationHistory, 0, PrimeMover.RotHistoryPoolClamp.Value);
+            _playerRotationHistory = Mathf.Clamp(_playerRotationHistory, 0, _RotationHistoryClamp);
             _playerRotationAvg = _playerRotationHistory * DeltaTime;
 
             // set for next frame
@@ -82,7 +85,7 @@ namespace TarkovIRL
             get { return _verticalAvg; }
         }
 
-        public static float GetGeneralEfficiencyModifier(EFT.Player player)
+        public static float GetGeneralEfficiencyModifier(Player player)
         {
             float healthCommon = player.HealthController.GetBodyPartHealth(EBodyPart.Common).Normalized;
             float armHealthR = player.HealthController.GetBodyPartHealth(EBodyPart.RightArm).Normalized;
@@ -104,7 +107,7 @@ namespace TarkovIRL
             return generalEfficiency;
         }
 
-        public static float GetSpeedModifier(EFT.Player player)
+        public static float GetSpeedModifier(Player player)
         {
             float speedMulti = player.Speed / .6f;
             if (!WeaponsHandlingController.IsPlayerMovement)

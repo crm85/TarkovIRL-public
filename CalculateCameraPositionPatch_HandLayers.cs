@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace TarkovIRL
 {
-    internal class CalculateCameraPositionPatch_HandsPositionLayers : ModulePatch
+    internal class CalculateCameraPositionPatch_HandLayers : ModulePatch
     {
         private static FieldInfo playerField;
         private static FieldInfo fcField;
@@ -53,23 +53,23 @@ namespace TarkovIRL
             Player player = (Player)playerField.GetValue(firearmController);
             if ((UnityEngine.Object)(object)player != (UnityEngine.Object)null && player.IsYourPlayer)
             {
-                Vector3 addedBreathPosition = HandsMovController.GetModifiedHandPosForBreath(player);
-                Vector3 addedPosePosition = HandsMovController.GetModifiedHandPosWithPose(player);
-                Vector3 addedChangePosePos = HandsMovController.GetModifiedHandPosWithPoseChange(player);
-                Vector3 addedArmJitterPos = HandsMovController.GetModifiedHandPosForArmStam(player);
+                Vector3 addedBreathPosition = HandBreathController.GetModifiedHandPosForBreath(player);
+                Vector3 addedPosePosition = HandMovController.GetModifiedHandPosWithPose(player);
+                Vector3 addedChangePosePos = HandMovController.GetModifiedHandPosWithPoseChange(player);
+                Vector3 addedArmJitterPos = HandShakeController.GetHandsShakePosition(player);
 
                 bool isBreathPos = PrimeMover.IsBreathingEffect.Value;
                 bool isPosePos = PrimeMover.IsPoseEffect.Value;
                 bool isPoseChangePos = PrimeMover.IsPoseChangeEffect.Value;
-                bool isArmShake = PrimeMover.IsArmJitterEffect.Value;
+                bool isArmShake = PrimeMover.IsArmShakeEffect.Value;
 
                 if (isBreathPos) __instance.HandsContainer.WeaponRoot.localPosition += addedBreathPosition;
                 if (isPosePos) __instance.HandsContainer.WeaponRoot.localPosition += addedPosePosition;
                 if (isPoseChangePos) __instance.HandsContainer.WeaponRoot.localPosition += addedChangePosePos;
                 if (isArmShake) __instance.HandsContainer.WeaponRoot.localPosition += addedArmJitterPos;
 
-                Vector3 addedZPos = HandsMovController.GetModifiedHandPosForRotSpeed(player);
-                Vector3 addedStockedMovPos = HandsMovController.GetModifiedHandPosForUnstockedMovement();
+                Vector3 addedZPos = HandMovController.GetModifiedHandPosForRotSpeed(player);
+                Vector3 addedStockedMovPos = HandMovController.GetModifiedHandPosForUnstockedMovement();
 
                 __instance.HandsContainer.WeaponRoot.localPosition += addedZPos;
                 __instance.HandsContainer.WeaponRoot.localPosition += addedStockedMovPos;
