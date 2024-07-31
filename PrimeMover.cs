@@ -49,6 +49,7 @@ namespace TarkovIRL
         public static ConfigEntry<float> DevTestFloat2;
         public static ConfigEntry<float> DevTestFloat3;
         public static ConfigEntry<float> DevTestFloat4;
+        public static ConfigEntry<float> DevTestFloat5;
 
         // config defaults
         float _deadzoneGlobalMultiplierDefault = 2f;
@@ -128,6 +129,7 @@ namespace TarkovIRL
             DevTestFloat2 = ConstructFloatConfig(100f, DEV_SECTION, "Test value 2", "This is only for dev use, should not be connected to anything in production releases.", -10, 100);
             DevTestFloat3 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 3", "This is only for dev use, should not be connected to anything in production releases.", -10, 100);
             DevTestFloat4 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 4", "This is only for dev use, should not be connected to anything in production releases.", -10, 100);
+            DevTestFloat5 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 5", "This is only for dev use, should not be connected to anything in production releases.", -10, 100);
         }
 
         void Update()

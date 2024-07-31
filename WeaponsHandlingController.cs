@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using EFT;
+using UnityEngine;
+using static EFT.Player;
 
 namespace TarkovIRL
 {
@@ -113,6 +115,14 @@ namespace TarkovIRL
             }
             speedMulti = Mathf.Clamp(speedMulti, .25f, 1f);
             return speedMulti;
+        }
+
+        public static bool IsStockedWeapon(EFT.InventoryLogic.Weapon weapon, out bool isPistol)
+        {
+            bool flag1 = weapon.GetFoldable() != null && weapon.Folded;
+            bool flag2 = weapon.WeapClass == "pistol";
+            isPistol = flag2;
+            return flag1 && flag2;
         }
     }
 }
