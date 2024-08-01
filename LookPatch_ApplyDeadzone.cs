@@ -40,7 +40,7 @@ namespace TarkovIRL
 
                 if (!_updateDZ)
                 {
-                    _updateDZ = WeaponsHandlingController.IsPlayerMovement || WeaponsHandlingController.RotationDelta > _rotDeltaThresh;
+                    _updateDZ = PlayerMovementController.IsPlayerMovement || PlayerMovementController.RotationDelta > _rotDeltaThresh;
                 }
 
                 Vector3 headRotThisFrame = __instance.HeadRotation;
@@ -53,7 +53,7 @@ namespace TarkovIRL
                 float headDeltaRaw = __instance.MovementContext.DeltaRotation;
                 float headDeltaTaperMulti = Mathf.Abs(headDeltaRaw / 45f);
                 //headDeltaTaperMulti = PrimeMover.Instance.DeadZoneCurve.Evaluate(headDeltaTaperMulti);
-                float headDeltaAdjusted = WeaponsHandlingController.ProcessHeadDelta(headDeltaRaw);
+                float headDeltaAdjusted = DeadzoneController.ProcessHeadDelta(headDeltaRaw);
 
                 float finalValue = headDeltaAdjusted * headDeltaTaperMulti;
                 float lerpRate = _lerpRate;

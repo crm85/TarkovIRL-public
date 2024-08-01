@@ -7,6 +7,7 @@ using EFT.InventoryLogic;
 using HarmonyLib;
 using TarkovIRL;
 using UnityEngine;
+using EFT.Animations;
 
 public class LateUpdatePatch_UpdateWpnStats : ModulePatch
 {
@@ -34,16 +35,11 @@ public class LateUpdatePatch_UpdateWpnStats : ModulePatch
         {
             if (fc != null)
             {
-                WeaponsHandlingController.CurrentWeaponWeight = fc.Weapon.GetSingleItemTotalWeight();
-                WeaponsHandlingController.CurrentWeaponErgo = fc.TotalErgonomics / 100f;
-            }
-            else
-            {
-                WeaponsHandlingController.CurrentWeaponWeight = 0;
-                WeaponsHandlingController.CurrentWeaponErgo = 1f;
+                WeaponsHandlingController.UpdateWpnStats(fc);
             }
             _updateWeightTimer = 0;
         }
         WeaponsHandlingController.SwayThisFrame = false;
+        //PlayerMovementController.UpdateMovement(__instance);
     }
 }

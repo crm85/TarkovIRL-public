@@ -12,7 +12,7 @@ namespace TarkovIRL
 
         private static FieldInfo playerField;
         private static FieldInfo fcField;
-        private static readonly float _primarySwayValue = -0.5f;
+        private static readonly float _PrimarySwayValue = -0.5f;
 
         protected override MethodBase GetTargetMethod()
         {
@@ -49,44 +49,43 @@ namespace TarkovIRL
             Player player = (Player)playerField.GetValue(firearmController);
             if (player != null && player.IsYourPlayer && player.MovementContext.CurrentState.Name != EPlayerState.Stationary)
             {
-                WeaponsHandlingController.UpdateTransformHistory(player.Position);
-                WeaponsHandlingController.UpdateRotationHistory(player.Rotation);
-
                 float weaponWeight = WeaponsHandlingController.CurrentWeaponWeight;
+                bool isFolded = firearmController.Weapon.GetFoldable() != null && firearmController.Weapon.Folded;
+                bool isPistol = firearmController.Weapon.WeapClass == "pistol";
+
                 Vector3 newSwayFactors = __instance.MotionReact.SwayFactors;
 
                 // vertical axis
-                bool flag3 = firearmController.Weapon.WeapClass == "pistol";
                 newSwayFactors.x *= -0.3f * weaponWeight;
-                if (WeaponsHandlingController.VerticalTrend < 0 && !flag3)
+                if (PlayerMovementController.VerticalTrend < 0 && !isPistol)
                 {
                     newSwayFactors.x *= -1f;
                 }
 
-                // 'z' axis (as in, projecting from the camera)
+                // z axis
                 newSwayFactors.y *= -.2f * weaponWeight;
 
                 // horizontal axis ***
-                float addedSway = _primarySwayValue * weaponWeight * WeaponsHandlingController.GetSpeedModifier(player) * WeaponsHandlingController.GetGeneralEfficiencyModifier(player);
-                bool flag1 = firearmController.Weapon.GetFoldable() != null && firearmController.Weapon.Folded;
-                bool flag2 = firearmController.Weapon.WeapClass == "pistol";
-                WeaponsHandlingController.IsStocked = flag1 || flag2;
+                float speedMulti = PlayerMovementController.IsPlayerMovement ? PlayerMovementController.GetNormalSpeed(player) : 0.25f;
+                float addedSway = _PrimarySwayValue * weaponWeight * speedMulti * WeaponsHandlingController.GetSwayModifier(player);
+
+                WeaponsHandlingController.IsStocked = isFolded || isPistol;
 
                 if (__instance.IsAiming)
                 {
                     addedSway *= -2f;
-                    if (flag1)
+                    if (isFolded)
                     {
                         addedSway *= -0.7f;
                     }
-                    else if (flag2)
+                    else if (isPistol)
                     {
                         addedSway *= -3f;
                     }
                 }
                 else
                 {
-                    float rotDeltaEval = PrimeMover.Instance.WeapSwayCurve.Evaluate(WeaponsHandlingController.RotationDelta * 1000f);
+                    float rotDeltaEval = PrimeMover.Instance.WeapSwayCurve.Evaluate(PlayerMovementController.RotationDelta * 1000f);
                     addedSway *= rotDeltaEval;
                 }
                 addedSway *= PrimeMover.WeaponSwayGlobalMultiplier.Value;

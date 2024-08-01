@@ -7,85 +7,23 @@ namespace TarkovIRL
     {
         // public vars
 
-        public static float DeltaTime = 0;
-        public static float Time = 0;
         public static float CurrentWeaponErgo = 0;
         public static float CurrentWeaponWeight = 0;
-        public static float CurrentWeaponLength = 0;
 
         public static bool IsSwayUpdatedThisFrame = false;
-        public static bool IsReposStance = false;
         public static bool IsStocked = false;
-        
-
-        // private vars
-
-        static Vector2 _playerRotLastFrame = Vector2.zero;
-        static Vector3 _playerPosLastFrame = Vector3.zero;
-
-        static float _playerRotationHistory = 0;
-        static float _playerRotationAvg = 0;
-
-        static bool _playerMoving = false;
-        static float _verticalAvg = 0;
-
-        static readonly float _RotationHistoryClamp = 0.015f;
-
         public static bool SwayThisFrame = false;
-
-        static public float ProcessHeadDelta(float rawHeadDelta)
+        
+        public static void UpdateWpnStats(Player.FirearmController firearmController)
         {
-            float adjustedHeadDelta = rawHeadDelta / CurrentWeaponErgo / 10f;
-            return adjustedHeadDelta * WeaponsHandlingController.CurrentWeaponWeight * 0.1f;
+            CurrentWeaponWeight = firearmController.Weapon.GetSingleItemTotalWeight();
+            CurrentWeaponErgo = firearmController.TotalErgonomics / 100f;
+            bool isFolded = firearmController.Weapon.GetFoldable() != null && firearmController.Weapon.Folded;
+            bool isPistol = firearmController.Weapon.WeapClass == "pistol";
+            IsStocked = isFolded || isPistol;
         }
 
-        public static void UpdateRotationHistory(Vector2 newRot)
-        {
-            // vertical 
-            _verticalAvg = newRot.y > _playerRotLastFrame.y ? 1f : -1f;
-
-            // horizontal
-            float distance = Vector2.Distance(newRot.normalized, _playerRotLastFrame.normalized);
-
-            _playerRotationHistory += distance;
-            _playerRotationHistory -= _playerRotationAvg;
-            _playerRotationHistory = Mathf.Clamp(_playerRotationHistory, 0, _RotationHistoryClamp);
-            _playerRotationAvg = _playerRotationHistory * DeltaTime;
-
-            // set for next frame
-            _playerRotLastFrame = newRot;
-        }
-
-        public static void UpdateTransformHistory(Vector3 position)
-        {
-            float dist = Vector3.Distance(position.normalized, _playerPosLastFrame.normalized);
-            if (dist > 0)
-            {
-                _playerMoving = true;
-            }
-            else
-            {
-                _playerMoving = false;
-            }
-            _playerPosLastFrame = position;
-        }
-
-        public static float RotationDelta
-        {
-            get { return _playerRotationAvg; }
-        }
-
-        public static bool IsPlayerMovement
-        {
-            get { return _playerMoving; }
-        }
-
-        public static float VerticalTrend
-        {
-            get { return _verticalAvg; }
-        }
-
-        public static float GetGeneralEfficiencyModifier(Player player)
+        public static float GetSwayModifier(Player player)
         {
             float healthCommon = player.HealthController.GetBodyPartHealth(EBodyPart.Common).Normalized;
             float armHealthR = player.HealthController.GetBodyPartHealth(EBodyPart.RightArm).Normalized;
@@ -107,15 +45,15 @@ namespace TarkovIRL
             return generalEfficiency;
         }
 
-        public static float GetSpeedModifier(Player player)
+        public static float GetEfficiencyNormalized(Player player, ref float healthCommonNorm, ref float armHealthNormR, ref float armHealthNormL, ref float stamNorm, ref float handStamNorm, ref float strengthNorm)
         {
-            float speedMulti = player.Speed / .6f;
-            if (!WeaponsHandlingController.IsPlayerMovement)
-            {
-                speedMulti = 0;
-            }
-            speedMulti = Mathf.Clamp(speedMulti, .25f, 1f);
-            return speedMulti;
+            healthCommonNorm = player.HealthController.GetBodyPartHealth(EBodyPart.Common).Normalized;
+            armHealthNormR = player.HealthController.GetBodyPartHealth(EBodyPart.RightArm).Normalized;
+            armHealthNormL = player.HealthController.GetBodyPartHealth(EBodyPart.LeftArm).Normalized;
+            stamNorm = player.Physical.Stamina.Current / 104f;
+            handStamNorm = player.Physical.HandsStamina.Current / 80f;
+            strengthNorm = player.Skills.Strength.Current / 15000f;
+            return healthCommonNorm * armHealthNormR * armHealthNormL * stamNorm * handStamNorm * strengthNorm;
         }
     }
 }

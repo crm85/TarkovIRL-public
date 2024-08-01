@@ -129,10 +129,7 @@ namespace TarkovIRL
 
         void Update()
         {
-            WeaponsHandlingController.DeltaTime = DeltaTime;
-            WeaponsHandlingController.Time = Time;
             UtilsTIRL.Update(DeltaTime);
-            HandMovController.UpdateLerp(DeltaTime);
 
             DeltaTime += (UnityEngine.Time.unscaledDeltaTime - DeltaTime);
             Time += UnityEngine.Time.unscaledDeltaTime;

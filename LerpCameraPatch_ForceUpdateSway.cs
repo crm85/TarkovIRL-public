@@ -34,7 +34,7 @@ namespace TarkovIRL
             Player player = (Player)playerField.GetValue(firearmController);
             if ((Object)(object)player != (Object)null && player.IsYourPlayer)
             {
-
+                PlayerMovementController.UpdateMovement(player);
                 if (!player.IsInventoryOpened)
                 {
                     __instance.UpdateSwayFactors();
