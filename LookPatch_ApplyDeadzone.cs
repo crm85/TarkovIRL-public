@@ -12,9 +12,6 @@ namespace TarkovIRL
 {
     public class LookPatch_ApplyDeadzone : ModulePatch
     {
-        static FieldInfo _playerField;
-        static FieldInfo _fcField;
-
         static readonly float _lerpRate = 10f;
         static readonly int _turnState1 = -31136456;
         static readonly int _turnState2 = 287005718;
@@ -52,8 +49,9 @@ namespace TarkovIRL
 
                 float headDeltaRaw = __instance.MovementContext.DeltaRotation;
                 float headDeltaTaperMulti = Mathf.Abs(headDeltaRaw / 45f);
-                //headDeltaTaperMulti = PrimeMover.Instance.DeadZoneCurve.Evaluate(headDeltaTaperMulti);
                 float headDeltaAdjusted = DeadzoneController.ProcessHeadDelta(headDeltaRaw);
+
+                UtilsTIRL.Log(true, $"headRotThisFrame {headRotThisFrame}, headDeltaRaw {headDeltaRaw}, headDeltaTaperMulti {headDeltaTaperMulti}, headDeltaAdjusted {headDeltaAdjusted}");
 
                 float finalValue = headDeltaAdjusted * headDeltaTaperMulti;
                 float lerpRate = _lerpRate;
