@@ -35,7 +35,7 @@ namespace TarkovIRL
 
             if (!_updateDZ)
             {
-                _updateDZ = PlayerMovementController.IsPlayerMovement || PlayerMovementController.RotationDelta > _RotDeltaThresh;
+                _updateDZ = PlayerMotionController.IsPlayerMovement || PlayerMotionController.RotationDelta > _RotDeltaThresh;
             }
 
             Vector3 headRotThisFrame = player.HeadRotation;

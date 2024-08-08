@@ -57,7 +57,7 @@ namespace TarkovIRL
 
                 // vertical axis
                 newSwayFactors.x *= -0.3f * weaponWeight;
-                if (PlayerMovementController.VerticalTrend < 0 && !isPistol)
+                if (PlayerMotionController.VerticalTrend < 0 && !isPistol)
                 {
                     newSwayFactors.x *= -1f;
                 }
@@ -66,7 +66,7 @@ namespace TarkovIRL
                 newSwayFactors.y *= -.2f * weaponWeight;
 
                 // horizontal axis ***
-                float speedMulti = PlayerMovementController.IsPlayerMovement ? PlayerMovementController.GetNormalSpeed(player) : 0.25f;
+                float speedMulti = PlayerMotionController.IsPlayerMovement ? PlayerMotionController.GetNormalSpeed(player) : 0.25f;
                 float addedSway = _PrimarySwayValue * weaponWeight * speedMulti * WeaponsHandlingController.GetSwayModifier(player);
 
                 WeaponsHandlingController.IsStocked = isFolded || isPistol;
@@ -85,7 +85,7 @@ namespace TarkovIRL
                 }
                 else
                 {
-                    float rotDeltaEval = PrimeMover.Instance.WeapSwayCurve.Evaluate(PlayerMovementController.RotationDelta * 1000f);
+                    float rotDeltaEval = PrimeMover.Instance.WeapSwayCurve.Evaluate(PlayerMotionController.RotationDelta * 1000f);
                     addedSway *= rotDeltaEval;
                 }
                 addedSway *= PrimeMover.WeaponSwayGlobalMultiplier.Value;

@@ -8,7 +8,7 @@ using EFT;
 
 namespace TarkovIRL
 {
-    internal class PlayerMovementController
+    internal class PlayerMotionController
     {
         // readonlys
         static readonly float _RotationHistoryClamp = 0.015f;

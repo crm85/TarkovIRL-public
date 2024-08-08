@@ -38,7 +38,7 @@ namespace TarkovIRL
                 {
                     _pullInGateOpen = true;
                 }
-                float rotDelta = PlayerMovementController.RotationDelta;
+                float rotDelta = PlayerMotionController.RotationDelta;
                 if (rotDelta > _RotPullInDeltaThresh && _pullInGateOpen)
                 {
                     _pullInGateOpen = false;
@@ -54,7 +54,7 @@ namespace TarkovIRL
             }
             else
             {
-                if (PlayerMovementController.IsPlayerMovement)
+                if (PlayerMotionController.IsPlayerMovement)
                 {
                     _rotPullInTarget = _RotPullInValue;
                 }
@@ -70,7 +70,7 @@ namespace TarkovIRL
         public static Vector3 GetModifiedHandPosForUnstockedMovement(Player player)
         {
             float dt = player.DeltaTime;
-            if (WeaponsHandlingController.IsStocked && PlayerMovementController.IsPlayerMovement)
+            if (WeaponsHandlingController.IsStocked && PlayerMotionController.IsPlayerMovement)
             {
                 _stockedMovementAddedPosTarget = _StockMovementAddedPosValue;
             }
