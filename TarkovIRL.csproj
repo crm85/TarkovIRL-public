@@ -90,7 +90,7 @@
     <Compile Include="MotionController.cs" />
     <Compile Include="OnShotPatch_UpdateWpnWeight.cs" />
     <Compile Include="HandParallaxController.cs" />
-    <Compile Include="PlayerMovementController.cs" />
+    <Compile Include="PlayerMotionController.cs" />
     <Compile Include="UtilsTIRL.cs" />
     <Compile Include="WeaponsHandlingController.cs" />
     <Compile Include="LookPatch_ApplyDeadzone.cs" />

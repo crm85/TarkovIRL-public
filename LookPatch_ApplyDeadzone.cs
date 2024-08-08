@@ -75,6 +75,9 @@ namespace TarkovIRL
                 }
 
                 _deadZoneLerpTarget = Mathf.Lerp(_deadZoneLerpTarget, finalValue, Time.deltaTime * lerpRate);
+
+                UtilsTIRL.Log(true, $"_deadZoneLerpTarget {_deadZoneLerpTarget}, finalValue {finalValue}, lerpRate {lerpRate}");
+
                 headRotThisFrame.y += _deadZoneLerpTarget * PrimeMover.DeadzoneGlobalMultiplier.Value;
 
                 AccessTools.Field(typeof(ProceduralWeaponAnimation), "_headRotationVec").SetValue(__instance.ProceduralWeaponAnimation, headRotThisFrame);
