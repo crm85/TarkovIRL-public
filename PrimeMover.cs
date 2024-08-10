@@ -94,7 +94,7 @@ namespace TarkovIRL
 
             TryLoadPatch(new LerpCameraPatch_UpdateSway());
             TryLoadPatch(new UpdateSwayFactorsPatch());
-            TryLoadPatch(new LookPatch_ApplyDeadzone());
+            TryLoadPatch(new SetHeadRotationPatch_ApplyDeadzone());
             TryLoadPatch(new LateUpdatePatch_UpdateWpnStats());
             TryLoadPatch(new OnShotPatch_UpdateWpnWeight());
             TryLoadPatch(new CalculateCameraPositionPatch_HandsPositionLayers());

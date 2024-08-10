@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿﻿using UnityEngine;
 using EFT.Animations;
 using SPT.Reflection.Patching;
 using System.Reflection;
@@ -10,7 +10,7 @@ using static MultiFlareLight;
 
 namespace TarkovIRL
 {
-    public class LookPatch_ApplyDeadzone : ModulePatch
+    public class SetHeadRotationPatch_ApplyDeadzone : ModulePatch
     {
         static FieldInfo _playerField;
         static FieldInfo _fcField;
@@ -25,46 +25,63 @@ namespace TarkovIRL
 
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(Player).GetMethod("Look", BindingFlags.Instance | BindingFlags.Public);
+            _playerField = AccessTools.Field(typeof(Player.FirearmController), "_player");
+            _fcField = AccessTools.Field(typeof(ProceduralWeaponAnimation), "_firearmController");
+            return typeof(ProceduralWeaponAnimation).GetMethod("SetHeadRotation", BindingFlags.Instance | BindingFlags.Public);
         }
 
         [PatchPostfix]
-        private static void Postfix(Player __instance)
+        private static bool Prefix(ProceduralWeaponAnimation __instance, Vector3 headRot)
         {
-            if ((UnityEngine.Object)(object)__instance != (UnityEngine.Object)null && __instance.IsYourPlayer && __instance.MovementContext.CurrentState.Name != EPlayerState.Stationary)
+            if (!PrimeMover.IsWeaponDeadzone.Value)
             {
-                if (!PrimeMover.IsWeaponDeadzone.Value)
-                {
-                    return;
-                }
+                return true;
+            }
 
-                if (!_updateDZ)
-                {
-                    _updateDZ = WeaponHandlingController.IsPlayerMovement || WeaponHandlingController.RotationDelta > _rotDeltaThresh;
-                }
+            if (!_updateDZ)
+            {
+                _updateDZ = WeaponHandlingController.IsPlayerMovement || WeaponHandlingController.RotationDelta > _rotDeltaThresh;
+            }
 
-                Vector3 headRotThisFrame = __instance.HeadRotation;
+            if ((UnityEngine.Object)(object)__instance == (UnityEngine.Object)null)
+            {
+                return true;
+            }
+
+            Player.FirearmController firearmController = (Player.FirearmController)_fcField.GetValue(__instance);
+            if ((UnityEngine.Object)(object)firearmController == (UnityEngine.Object)null)
+            {
+                return true;
+            }
+
+            Player player = (Player)_playerField.GetValue(firearmController);
+            if ((UnityEngine.Object)(object)player != (UnityEngine.Object)null && player.IsYourPlayer && player.MovementContext.CurrentState.Name != EPlayerState.Stationary)
+            {
+                Vector3 headRotThisFrame = headRot;
                 headRotThisFrame.y *= 1.5f;
 
-                bool flag1 = __instance.MovementContext.CurrentState.AnimatorStateHash == _turnState1;
-                bool flag2 = __instance.MovementContext.CurrentState.AnimatorStateHash == _turnState2;
+                bool flag1 = player.MovementContext.CurrentState.AnimatorStateHash == _turnState1;
+                bool flag2 = player.MovementContext.CurrentState.AnimatorStateHash == _turnState2;
+                bool flag4 = WeaponHandlingController.RotationDelta > _rotDeltaThresh;
+
                 bool isChangeingStance = flag1 || flag2;
 
-                float headDeltaRaw = __instance.MovementContext.DeltaRotation;
+                float headDeltaRaw = player.MovementContext.DeltaRotation;
                 float headDeltaTaperMulti = Mathf.Abs(headDeltaRaw / 45f);
-                //headDeltaTaperMulti = PrimeMover.Instance.DeadZoneCurve.Evaluate(headDeltaTaperMulti);
+                headDeltaTaperMulti = PrimeMover.Instance.DeadZoneCurve.Evaluate(headDeltaTaperMulti);
                 float headDeltaAdjusted = WeaponHandlingController.ProcessHeadDelta(headDeltaRaw);
 
                 float finalValue = headDeltaAdjusted * headDeltaTaperMulti;
                 float lerpRate = _lerpRate;
 
+                
                 if (isChangeingStance)
                 {
                     finalValue = 0;
                     lerpRate *= 0.35f;
                 }
 
-                if (__instance.ProceduralWeaponAnimation.IsAiming)
+                if (__instance.IsAiming)
                 {
                     _updateDZ = false;
                     finalValue = 0;
@@ -76,11 +93,19 @@ namespace TarkovIRL
                     finalValue = 0;
                 }
 
+                if (flag4)
+                {
+                    lerpRate *= .25f;
+                }
+
                 _deadZoneLerpTarget = Mathf.Lerp(_deadZoneLerpTarget, finalValue, Time.deltaTime * lerpRate);
                 headRotThisFrame.y += _deadZoneLerpTarget * PrimeMover.DeadzoneGlobalMultiplier.Value;
 
-                AccessTools.Field(typeof(ProceduralWeaponAnimation), "_headRotationVec").SetValue(__instance.ProceduralWeaponAnimation, headRotThisFrame);
+                AccessTools.Field(typeof(ProceduralWeaponAnimation), "_headRotationVec").SetValue(__instance, headRotThisFrame);
+
+                return false;
             }
+            return true;
         }
     }
 }
