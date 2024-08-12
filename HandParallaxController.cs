@@ -4,19 +4,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using EFT;
 
 namespace TarkovIRL
 {
     public static class HandParallaxController
     {
-        public static Vector3 GetModifiedHandPosParallax()
+        private static float _rotAvgXSet = 0;
+        private static float _rotAvgYSet = 0;
+        private static float _rotAvgX = 0;
+        private static float _rotAvgY = 0;
+        private static Vector2 _rotAvgVector = Vector2.zero;
+
+        private static float _rotLerpX = 0;
+        private static float _rotLerpY = 0;
+        private static Vector2 _playerRotationLastFrame = Vector2.zero;
+
+        public static Vector3 GetModifiedHandPosParallax(Player player)
         {
 
 
             return Vector3.zero;
         }
 
-        public static Vector3 GetModifiedHandRotParallax()
+        public static Vector3 GetModifiedHandRotParallax(Player player)
         {
 
 
