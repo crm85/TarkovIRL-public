@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CalculateCameraPositionPatch_HandsPositionLayers.cs" />
+    <Compile Include="DeadzoneController.cs" />
     <Compile Include="HandsMovController.cs" />
     <Compile Include="LateUpdatePatch_UpdateWpnStats.cs" />
     <Compile Include="LerpCameraPatch_UpdateSway.cs" />
