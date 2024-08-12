@@ -12,6 +12,9 @@ namespace TarkovIRL
 {
     public class LookPatch_ApplyDeadzone : ModulePatch
     {
+        static FieldInfo _playerField;
+        static FieldInfo _fcField;
+
         static readonly float _lerpRate = 10f;
         static readonly int _turnState1 = -31136456;
         static readonly int _turnState2 = 287005718;
@@ -35,51 +38,7 @@ namespace TarkovIRL
                     return;
                 }
 
-                if (!_updateDZ)
-                {
-                    _updateDZ = PlayerMotionController.IsPlayerMovement || PlayerMotionController.RotationDelta > _rotDeltaThresh;
-                }
-
-                Vector3 headRotThisFrame = __instance.HeadRotation;
-                headRotThisFrame.y *= 1.5f;
-
-                bool flag1 = __instance.MovementContext.CurrentState.AnimatorStateHash == _turnState1;
-                bool flag2 = __instance.MovementContext.CurrentState.AnimatorStateHash == _turnState2;
-                bool isChangeingStance = flag1 || flag2;
-
-                float headDeltaRaw = __instance.MovementContext.DeltaRotation;
-                float headDeltaTaperMulti = Mathf.Abs(headDeltaRaw / 45f);
-                float headDeltaAdjusted = DeadzoneController.ProcessHeadDelta(headDeltaRaw);
-
-                UtilsTIRL.Log(true, $"headRotThisFrame {headRotThisFrame}, headDeltaRaw {headDeltaRaw}, headDeltaTaperMulti {headDeltaTaperMulti}, headDeltaAdjusted {headDeltaAdjusted}");
-
-                float finalValue = headDeltaAdjusted * headDeltaTaperMulti;
-                float lerpRate = _lerpRate;
-
-                if (isChangeingStance)
-                {
-                    finalValue = 0;
-                    lerpRate *= 0.35f;
-                }
-
-                if (__instance.ProceduralWeaponAnimation.IsAiming)
-                {
-                    _updateDZ = false;
-                    finalValue = 0;
-                    lerpRate = _lerpRate * (1f / (WeaponsHandlingController.CurrentWeaponErgo * WeaponsHandlingController.CurrentWeaponWeight * 2f));
-                }
-
-                if (!_updateDZ)
-                {
-                    finalValue = 0;
-                }
-
-                _deadZoneLerpTarget = Mathf.Lerp(_deadZoneLerpTarget, finalValue, Time.deltaTime * lerpRate);
-
-                UtilsTIRL.Log(true, $"_deadZoneLerpTarget {_deadZoneLerpTarget}, finalValue {finalValue}, lerpRate {lerpRate}");
-
-                headRotThisFrame.y += _deadZoneLerpTarget * PrimeMover.DeadzoneGlobalMultiplier.Value;
-
+                Vector3 headRotThisFrame = DeadzoneController.GetHeadRotationWithDeadzone(__instance);
                 AccessTools.Field(typeof(ProceduralWeaponAnimation), "_headRotationVec").SetValue(__instance.ProceduralWeaponAnimation, headRotThisFrame);
             }
         }

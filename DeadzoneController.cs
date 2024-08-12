@@ -1,41 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 using EFT;
 
 namespace TarkovIRL
 {
-    internal class DeadzoneController
+    public static class DeadzoneController
     {
-        //readonlys
         static readonly float _LerpRate = 10f;
         static readonly int _TurnState1 = -31136456;
         static readonly int _TurnState2 = 287005718;
         static readonly float _RotDeltaThresh = 0.0002f;
 
-        //vars
         static float _deadZoneLerpTarget = 0;
         static bool _updateDZ = true;
 
-        public static float ProcessHeadDelta(float rawHeadDelta)
+        public static Vector3 GetHeadRotationWithDeadzone(Player player)
         {
-            float adjustedHeadDelta = rawHeadDelta / WeaponsHandlingController.CurrentWeaponErgo / 10f * WeaponsHandlingController.CurrentWeaponWeight * 0.1f;
-            return adjustedHeadDelta;
-        }
-
-        public static Vector3 ProcessHeadDelta(Player player)
-        {
-            if (!PrimeMover.IsWeaponDeadzone.Value)
-            {
-                return Vector3.zero;
-            }
-
             if (!_updateDZ)
             {
-                _updateDZ = PlayerMotionController.IsPlayerMovement || PlayerMotionController.RotationDelta > _RotDeltaThresh;
+                _updateDZ = WeaponHandlingController.IsPlayerMovement || WeaponHandlingController.RotationDelta > _RotDeltaThresh;
             }
 
             Vector3 headRotThisFrame = player.HeadRotation;
@@ -47,31 +29,32 @@ namespace TarkovIRL
 
             float headDeltaRaw = player.MovementContext.DeltaRotation;
             float headDeltaTaperMulti = Mathf.Abs(headDeltaRaw / 45f);
-            float headDeltaAdjusted = headDeltaRaw / WeaponsHandlingController.CurrentWeaponErgo / 10f * WeaponsHandlingController.CurrentWeaponWeight * 0.1f;
+            float headDeltaAdjusted = WeaponHandlingController.ProcessHeadDelta(headDeltaRaw);
 
-            float finalValue = headDeltaAdjusted * headDeltaTaperMulti;
+            float finalHeadRotation = headDeltaAdjusted * headDeltaTaperMulti;
             float lerpRate = _LerpRate;
 
             if (isChangeingStance)
             {
-                finalValue = 0;
+                finalHeadRotation = 0;
                 lerpRate *= 0.35f;
             }
 
             if (player.ProceduralWeaponAnimation.IsAiming)
             {
                 _updateDZ = false;
-                finalValue = 0;
-                lerpRate = _LerpRate * (1f / (WeaponsHandlingController.CurrentWeaponErgo * WeaponsHandlingController.CurrentWeaponWeight * 2f));
+                finalHeadRotation = 0;
+                lerpRate = _LerpRate * (1f / (WeaponHandlingController.CurrentWeaponErgo * WeaponHandlingController.CurrentWeaponWeight * 2f));
             }
 
             if (!_updateDZ)
             {
-                finalValue = 0;
+                finalHeadRotation = 0;
             }
 
-            _deadZoneLerpTarget = Mathf.Lerp(_deadZoneLerpTarget, finalValue, Time.deltaTime * lerpRate);
+            _deadZoneLerpTarget = Mathf.Lerp(_deadZoneLerpTarget, finalHeadRotation, Time.deltaTime * lerpRate);
             headRotThisFrame.y += _deadZoneLerpTarget * PrimeMover.DeadzoneGlobalMultiplier.Value;
+
             return headRotThisFrame;
         }
     }
