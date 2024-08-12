@@ -25,7 +25,7 @@ public class LateUpdatePatch_UpdateWpnStats : ModulePatch
     [PatchPostfix]
 	private static void PatchPostfix(Player __instance)
     {
-        _updateWeightTimer += PrimeMover.Instance.DeltaTime;
+        _updateWeightTimer += Time.deltaTime;
         if (!__instance.IsYourPlayer)
         {
             return;
@@ -35,11 +35,15 @@ public class LateUpdatePatch_UpdateWpnStats : ModulePatch
         {
             if (fc != null)
             {
-                WeaponsHandlingController.UpdateWpnStats(fc);
+                WeaponsHandlingController.CurrentWeaponWeight = fc.Weapon.GetSingleItemTotalWeight();
+                WeaponsHandlingController.CurrentWeaponErgo = fc.TotalErgonomics / 100f;
+            }
+            else
+            {
+                WeaponsHandlingController.CurrentWeaponWeight = 0;
+                WeaponsHandlingController.CurrentWeaponErgo = 1f;
             }
             _updateWeightTimer = 0;
         }
-        WeaponsHandlingController.SwayThisFrame = false;
-        //PlayerMovementController.UpdateMovement(__instance);
     }
 }

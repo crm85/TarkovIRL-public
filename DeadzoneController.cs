@@ -17,7 +17,7 @@ namespace TarkovIRL
         {
             if (!_updateDZ)
             {
-                _updateDZ = WeaponHandlingController.IsPlayerMovement || WeaponHandlingController.RotationDelta > _RotDeltaThresh;
+                _updateDZ = PlayerMotionController.IsPlayerMovement || PlayerMotionController.RotationDelta > _RotDeltaThresh;
             }
 
             Vector3 headRotThisFrame = player.HeadRotation;
@@ -44,7 +44,7 @@ namespace TarkovIRL
             {
                 _updateDZ = false;
                 finalHeadRotation = 0;
-                lerpRate = _LerpRate * (1f / (WeaponHandlingController.CurrentWeaponErgo * WeaponHandlingController.CurrentWeaponWeight * 2f));
+                lerpRate = _LerpRate * (1f / (WeaponsHandlingController.CurrentWeaponErgo * WeaponsHandlingController.CurrentWeaponWeight * 2f));
             }
 
             if (!_updateDZ)
