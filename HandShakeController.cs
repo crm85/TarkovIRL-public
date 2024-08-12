@@ -11,8 +11,8 @@ namespace TarkovIRL
     internal class HandShakeController
     {
         // readonlys
-        static readonly float _ArmStamDTMulti = 0.25f;
-        static readonly float _ArmStamMultiFixed = 0.005f;
+        static readonly float _HandShakeCurveSpeedMulti = 0.25f;
+        static readonly float _HandShakeMultiGeneral = 0.005f;
 
         // vars
         static float _handShakeLoopTimeX = 0;
@@ -40,22 +40,24 @@ namespace TarkovIRL
             float strengthMulti = 1f - (strength / 15000);
             float poseLevelMulti = 1f + poseLevel;
 
-            _handShakeLoopTimeX += player.DeltaTime * _ArmStamDTMulti * 0.37f;
+            float wpnWeightMulti = WeaponsHandlingController.CurrentWeaponWeight;
+
+            _handShakeLoopTimeX += player.DeltaTime * _HandShakeCurveSpeedMulti * 0.37f;
             if (_handShakeLoopTimeX >= 1f)
             {
                 _handShakeLoopTimeX -= 1f;
             }
 
-            _handShakeLoopTimeY -= player.DeltaTime * _ArmStamDTMulti;
+            _handShakeLoopTimeY -= player.DeltaTime * _HandShakeCurveSpeedMulti;
             if (_handShakeLoopTimeY <= 0)
             {
                 _handShakeLoopTimeY += 1f;
             }
 
-            float finalMulti = armStamMulti * healthMulti * armHealthLMulti * armHealthRMulti * strengthMulti * poseLevelMulti;
+            float finalMulti = armStamMulti * healthMulti * armHealthLMulti * armHealthRMulti * strengthMulti * poseLevelMulti * wpnWeightMulti * PrimeMover.HandsShakeMulti.Value * _HandShakeMultiGeneral;
 
-            float handsShakeX = shakeCurve.Evaluate(_handShakeLoopTimeX) * finalMulti * PrimeMover.HandsShakeMulti.Value * _ArmStamMultiFixed;
-            float handsShakeY = shakeCurve.Evaluate(_handShakeLoopTimeY) * finalMulti * PrimeMover.HandsShakeMulti.Value * _ArmStamMultiFixed;
+            float handsShakeX = shakeCurve.Evaluate(_handShakeLoopTimeX) * finalMulti;
+            float handsShakeY = shakeCurve.Evaluate(_handShakeLoopTimeY) * finalMulti;
 
             return new Vector3(handsShakeX, handsShakeY, 0);
         }
