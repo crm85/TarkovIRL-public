@@ -14,13 +14,21 @@ namespace TarkovIRL
         public static bool IsStocked = false;
         public static bool SwayThisFrame = false;
         
-        public static void UpdateWpnStats(Player.FirearmController firearmController)
+        public static void UpdateWpnStats(Player.FirearmController fc)
         {
-            CurrentWeaponWeight = firearmController.Weapon.GetSingleItemTotalWeight();
-            CurrentWeaponErgo = firearmController.TotalErgonomics / 100f;
-            bool isFolded = firearmController.Weapon.GetFoldable() != null && firearmController.Weapon.Folded;
-            bool isPistol = firearmController.Weapon.WeapClass == "pistol";
-            IsStocked = isFolded || isPistol;
+            if (fc != null)
+            {
+                CurrentWeaponWeight = fc.Weapon.GetSingleItemTotalWeight();
+                CurrentWeaponErgo = fc.TotalErgonomics / 100f;
+                bool isFolded = fc.Weapon.GetFoldable() != null && fc.Weapon.Folded;
+                bool isPistol = fc.Weapon.WeapClass == "pistol";
+                IsStocked = isFolded || isPistol;
+            }
+            else
+            {
+                CurrentWeaponWeight = 0;
+                CurrentWeaponErgo = 1f;
+            }
         }
 
         public static float GetSwayModifier(Player player)

@@ -13,6 +13,12 @@ namespace TarkovIRL
         static float _deadZoneLerpTarget = 0;
         static bool _updateDZ = true;
 
+        static float ProcessHeadDelta(float rawHeadDelta)
+        {
+            float adjustedHeadDelta = rawHeadDelta / WeaponsHandlingController.CurrentWeaponErgo / 10f;
+            return adjustedHeadDelta * WeaponsHandlingController.CurrentWeaponWeight * 0.1f;
+        }
+
         public static Vector3 GetHeadRotationWithDeadzone(Player player)
         {
             if (!_updateDZ)
@@ -29,7 +35,7 @@ namespace TarkovIRL
 
             float headDeltaRaw = player.MovementContext.DeltaRotation;
             float headDeltaTaperMulti = Mathf.Abs(headDeltaRaw / 45f);
-            float headDeltaAdjusted = WeaponHandlingController.ProcessHeadDelta(headDeltaRaw);
+            float headDeltaAdjusted = ProcessHeadDelta(headDeltaRaw);
 
             float finalHeadRotation = headDeltaAdjusted * headDeltaTaperMulti;
             float lerpRate = _LerpRate;

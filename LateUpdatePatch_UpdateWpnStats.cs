@@ -33,16 +33,7 @@ public class LateUpdatePatch_UpdateWpnStats : ModulePatch
         Player.FirearmController fc = __instance.HandsController as Player.FirearmController;
         if (_updateWeightTimer > _UpdateStatsTime)
         {
-            if (fc != null)
-            {
-                WeaponsHandlingController.CurrentWeaponWeight = fc.Weapon.GetSingleItemTotalWeight();
-                WeaponsHandlingController.CurrentWeaponErgo = fc.TotalErgonomics / 100f;
-            }
-            else
-            {
-                WeaponsHandlingController.CurrentWeaponWeight = 0;
-                WeaponsHandlingController.CurrentWeaponErgo = 1f;
-            }
+            WeaponsHandlingController.UpdateWpnStats(fc);
             _updateWeightTimer = 0;
         }
     }
