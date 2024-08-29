@@ -12,6 +12,7 @@ namespace TarkovIRL
 
         public static bool IsSwayUpdatedThisFrame = false;
         public static bool IsStocked = false;
+        public static bool IsPistol = false;
         public static bool SwayThisFrame = false;
         
         public static void UpdateWpnStats(Player.FirearmController fc)
@@ -22,6 +23,7 @@ namespace TarkovIRL
                 CurrentWeaponErgo = fc.TotalErgonomics / 100f;
                 bool isFolded = fc.Weapon.GetFoldable() != null && fc.Weapon.Folded;
                 bool isPistol = fc.Weapon.WeapClass == "pistol";
+                IsPistol = isPistol;
                 IsStocked = isFolded || isPistol;
             }
             else
@@ -51,17 +53,6 @@ namespace TarkovIRL
 
             float generalEfficiency = strengthMulti * underweightReduction * healthMulti * armHealthRMulti * armHealthLMulti * stamMulti * handStamMulti;
             return generalEfficiency;
-        }
-
-        public static float GetEfficiencyNormalized(Player player, ref float healthCommonNorm, ref float armHealthNormR, ref float armHealthNormL, ref float stamNorm, ref float handStamNorm, ref float strengthNorm)
-        {
-            healthCommonNorm = player.HealthController.GetBodyPartHealth(EBodyPart.Common).Normalized;
-            armHealthNormR = player.HealthController.GetBodyPartHealth(EBodyPart.RightArm).Normalized;
-            armHealthNormL = player.HealthController.GetBodyPartHealth(EBodyPart.LeftArm).Normalized;
-            stamNorm = player.Physical.Stamina.Current / 104f;
-            handStamNorm = player.Physical.HandsStamina.Current / 80f;
-            strengthNorm = player.Skills.Strength.Current / 15000f;
-            return healthCommonNorm * armHealthNormR * armHealthNormL * stamNorm * handStamNorm * strengthNorm;
         }
     }
 }

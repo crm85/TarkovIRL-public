@@ -48,6 +48,7 @@ namespace TarkovIRL
                 Vector3 unstockedOffset = HandMovController.GetModifiedHandPosForUnstockedMovement(player);
 
 
+
                 bool isBreathPos = PrimeMover.IsBreathingEffect.Value;
                 bool isPosePos = PrimeMover.IsPoseEffect.Value;
                 bool isPoseChangePos = PrimeMover.IsPoseChangeEffect.Value;
@@ -59,6 +60,15 @@ namespace TarkovIRL
                 if (isArmShake) __instance.HandsContainer.WeaponRoot.localPosition += armStamOffset;
                 __instance.HandsContainer.WeaponRoot.localPosition += movementZOffsets;
                 __instance.HandsContainer.WeaponRoot.localPosition += unstockedOffset;
+
+
+
+                Vector3 parallaxPosition = __instance.HandsContainer.WeaponRoot.localPosition;
+                Quaternion parallaxRotation = __instance.HandsContainer.WeaponRoot.localRotation;
+                HandParallaxController.GetModifiedHandPosRotParallax(player, ref parallaxPosition, ref parallaxRotation);
+
+                __instance.HandsContainer.WeaponRoot.localPosition += parallaxPosition;
+                __instance.HandsContainer.WeaponRoot.localRotation *= parallaxRotation;
             }
         }
     }
