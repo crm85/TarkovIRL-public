@@ -40,8 +40,6 @@ namespace TarkovIRL
             float strengthMulti = 1f - (strength / 15000);
             float poseLevelMulti = 1f + poseLevel;
 
-            float wpnWeightMulti = WeaponsHandlingController.CurrentWeaponWeight;
-
             _handShakeLoopTimeX += player.DeltaTime * _HandShakeCurveSpeedMulti * 0.37f;
             if (_handShakeLoopTimeX >= 1f)
             {
@@ -54,7 +52,7 @@ namespace TarkovIRL
                 _handShakeLoopTimeY += 1f;
             }
 
-            float finalMulti = armStamMulti * healthMulti * armHealthLMulti * armHealthRMulti * strengthMulti * poseLevelMulti * wpnWeightMulti * PrimeMover.HandsShakeMulti.Value * _HandShakeMultiGeneral;
+            float finalMulti = armStamMulti * healthMulti * armHealthLMulti * armHealthRMulti * strengthMulti * poseLevelMulti * PrimeMover.HandsShakeMulti.Value * _HandShakeMultiGeneral;
 
             float handsShakeX = shakeCurve.Evaluate(_handShakeLoopTimeX) * finalMulti;
             float handsShakeY = shakeCurve.Evaluate(_handShakeLoopTimeY) * finalMulti;

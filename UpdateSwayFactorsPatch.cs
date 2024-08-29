@@ -12,7 +12,7 @@ namespace TarkovIRL
 
         private static FieldInfo playerField;
         private static FieldInfo fcField;
-        private static readonly float _PrimarySwayValue = -0.5f;
+        private static readonly float _BaseSwayValue = -0.5f;
 
         protected override MethodBase GetTargetMethod()
         {
@@ -67,7 +67,7 @@ namespace TarkovIRL
 
                 // horizontal axis ***
                 float speedMulti = PlayerMotionController.IsPlayerMovement ? PlayerMotionController.GetNormalSpeed(player) : 0.25f;
-                float addedSway = _PrimarySwayValue * weaponWeight * speedMulti * WeaponsHandlingController.GetSwayModifier(player);
+                float addedSway = _BaseSwayValue * PrimeMover.WeaponSwayGlobalMultiplier.Value * weaponWeight * speedMulti * WeaponsHandlingController.GetSwayModifier(player);
 
                 WeaponsHandlingController.IsStocked = isFolded || isPistol;
 
@@ -83,12 +83,6 @@ namespace TarkovIRL
                         addedSway *= -3f;
                     }
                 }
-                else
-                {
-                    float rotDeltaEval = PrimeMover.Instance.WeapSwayCurve.Evaluate(PlayerMotionController.RotationDelta * 1000f);
-                    addedSway *= rotDeltaEval;
-                }
-                addedSway *= PrimeMover.WeaponSwayGlobalMultiplier.Value;
 
                 // push values
                 newSwayFactors.z *= addedSway;

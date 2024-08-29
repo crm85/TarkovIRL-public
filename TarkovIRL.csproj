@@ -79,7 +79,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DeadzoneController.cs" />
-    <Compile Include="HandBodyMotionController.cs" />
     <Compile Include="HandPoseController.cs" />
     <Compile Include="HandShakeController.cs" />
     <Compile Include="HandBreathController.cs" />
@@ -91,6 +90,7 @@
     <Compile Include="OnShotPatch_UpdateWpnWeight.cs" />
     <Compile Include="HandParallaxController.cs" />
     <Compile Include="PlayerMotionController.cs" />
+    <Compile Include="SetHeadRotationPatch_ApplyDeadzone.cs" />
     <Compile Include="UtilsTIRL.cs" />
     <Compile Include="WeaponsHandlingController.cs" />
     <Compile Include="LookPatch_ApplyDeadzone.cs" />

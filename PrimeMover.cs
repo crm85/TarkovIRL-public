@@ -13,7 +13,6 @@ namespace TarkovIRL
         const string modGUID = "TarkovIRL";
         const string modName = "TarkovIRL";
         const string modVersion = "0.4";
-        readonly Harmony harmony = new Harmony(modGUID);
 
         public static PrimeMover Instance;
 
@@ -100,7 +99,8 @@ namespace TarkovIRL
             TryLoadPatch(new LateUpdatePatch_UpdateWpnStats());
             TryLoadPatch(new OnShotPatch_UpdateWpnWeight());
             TryLoadPatch(new CalculateCameraPositionPatch_HandLayers());
-            TryLoadPatch(new LookPatch_ApplyDeadzone());
+            //TryLoadPatch(new LookPatch_ApplyDeadzone());
+            TryLoadPatch(new SetHeadRotationPatch_ApplyDeadzone());
         }
 
         void LoadConfigValues()
