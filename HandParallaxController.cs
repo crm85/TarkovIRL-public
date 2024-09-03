@@ -39,21 +39,16 @@ namespace TarkovIRL
 
             _finalParallaxMulti = Mathf.Lerp(_finalParallaxMulti, player.ProceduralWeaponAnimation.IsAiming && WeaponsHandlingController.IsStocked ? 0.2f : 1f, Time.deltaTime);
 
-            float lerpRate = player.DeltaTime * PrimeMover.DevTestFloat3.Value;
-            float lerpRate2 = player.DeltaTime * PrimeMover.DevTestFloat5.Value;
+            float dt = player.DeltaTime;
 
-
-            _rotLerpX = Mathf.Lerp(_rotLerpX, _rotAvgX, lerpRate * PrimeMover.DevTestFloat3.Value);
-            _rotLerpX = Mathf.Lerp(_rotLerpX, _rotAvgX, lerpRate);
-            _rotLerpX = Mathf.Lerp(_rotLerpX, 0, lerpRate2);
-            //_rotLerpY = Mathf.Lerp(_rotLerpY, _rotAvgY, lerpRate);
+            _rotLerpX = Mathf.Lerp(_rotLerpX, _rotAvgX, dt * PrimeMover.DevTestFloat3.Value);
+            _rotLerpX = Mathf.Lerp(_rotLerpX, 0, dt);
             position = new Vector3(_rotLerpX * PrimeMover.DevTestFloat4.Value * _finalParallaxMulti, 0, 0);
             // this works ^ 
 
 
-            _rotLerpXforRot = Mathf.Lerp(_rotLerpXforRot, _rotAvgX, lerpRate * PrimeMover.DevTestFloat.Value);
-            _rotLerpXforRot = Mathf.Lerp(_rotLerpXforRot, 0, lerpRate2);
-            //__instance.HandsContainer.Weapon.localRotation = __instance.HandsContainer.Weapon.localRotation * Quaternion.Euler(0, PrimeMover.DevTestFloat1.Value, 0);
+            _rotLerpXforRot = Mathf.Lerp(_rotLerpXforRot, _rotAvgX, dt * PrimeMover.DevTestFloat.Value);
+            _rotLerpXforRot = Mathf.Lerp(_rotLerpXforRot, 0, dt);
             rotation = Quaternion.Euler(0, 0, -_rotLerpXforRot * PrimeMover.DevTestFloat2.Value * _finalParallaxMulti);
         }
 

@@ -69,8 +69,6 @@ namespace TarkovIRL
                 float speedMulti = PlayerMotionController.IsPlayerMovement ? PlayerMotionController.GetNormalSpeed(player) : 0.25f;
                 float addedSway = _BaseSwayValue * PrimeMover.WeaponSwayGlobalMultiplier.Value * weaponWeight * speedMulti * WeaponsHandlingController.GetSwayModifier(player);
 
-                WeaponsHandlingController.IsStocked = isFolded || isPistol;
-
                 if (__instance.IsAiming)
                 {
                     addedSway *= -2f;
