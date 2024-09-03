@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using EFT;
-using static EFT.Player;
 
 namespace TarkovIRL
 {
@@ -21,7 +20,9 @@ namespace TarkovIRL
         private static float _rotLerpY = 0;
         private static float _rotLerpXforRot = 0;
         private static Vector2 _playerRotationLastFrame = Vector2.zero;
-        private static float _finalParallaxMulti = 0;
+        private static float _finalParallaxMulti = 3f;
+
+        static float _avgSetSizeMulti = 0.5f;
 
         public static void GetModifiedHandPosRotParallax(Player player, ref Vector3 position, ref Quaternion rotation)
         {
@@ -32,24 +33,25 @@ namespace TarkovIRL
             _rotAvgYSet += rotationalMotionThisFrame.y;
             _rotAvgXSet -= _rotAvgX;
             _rotAvgYSet -= _rotAvgY;
-            _rotAvgXSet = Mathf.Clamp(_rotAvgXSet, -PrimeMover.DevTestFloat1.Value, PrimeMover.DevTestFloat1.Value);
-            _rotAvgYSet = Mathf.Clamp(_rotAvgYSet, -PrimeMover.DevTestFloat1.Value, PrimeMover.DevTestFloat1.Value);
+            _rotAvgXSet = Mathf.Clamp(_rotAvgXSet, -_avgSetSizeMulti, _avgSetSizeMulti);
+            _rotAvgYSet = Mathf.Clamp(_rotAvgYSet, -_avgSetSizeMulti, _avgSetSizeMulti);
             _rotAvgX = _rotAvgXSet * player.DeltaTime;
             _rotAvgY = _rotAvgYSet * player.DeltaTime;
 
-            _finalParallaxMulti = Mathf.Lerp(_finalParallaxMulti, player.ProceduralWeaponAnimation.IsAiming && WeaponsHandlingController.IsStocked ? 0.2f : 1f, Time.deltaTime);
+            //_finalParallaxMulti = Mathf.Lerp(_finalParallaxMulti, player.ProceduralWeaponAnimation.IsAiming && WeaponsHandlingController.IsStocked ? 0.2f : 1f, Time.deltaTime);
 
             float dt = player.DeltaTime;
+            float parallaxMulti = PrimeMover.ParallaxMulti.Value;
 
-            _rotLerpX = Mathf.Lerp(_rotLerpX, _rotAvgX, dt * PrimeMover.DevTestFloat3.Value);
+            _rotLerpX = Mathf.Lerp(_rotLerpX, _rotAvgX * parallaxMulti, dt);
             _rotLerpX = Mathf.Lerp(_rotLerpX, 0, dt);
-            position = new Vector3(_rotLerpX * PrimeMover.DevTestFloat4.Value * _finalParallaxMulti, 0, 0);
+            position = new Vector3(_rotLerpX * _finalParallaxMulti, 0, 0);
             // this works ^ 
 
 
-            _rotLerpXforRot = Mathf.Lerp(_rotLerpXforRot, _rotAvgX, dt * PrimeMover.DevTestFloat.Value);
+            _rotLerpXforRot = Mathf.Lerp(_rotLerpXforRot, _rotAvgX * parallaxMulti, dt);
             _rotLerpXforRot = Mathf.Lerp(_rotLerpXforRot, 0, dt);
-            rotation = Quaternion.Euler(0, 0, -_rotLerpXforRot * PrimeMover.DevTestFloat2.Value * _finalParallaxMulti);
+            rotation = Quaternion.Euler(0, 0, -_rotLerpXforRot * 100f);
         }
 
         /*

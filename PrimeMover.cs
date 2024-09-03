@@ -27,7 +27,7 @@ namespace TarkovIRL
 
         // config items
 
-        const string BASE_FEATURES_SECTION = "Toggle base features";
+        const string BASE_FEATURES_SECTION = "1 - Toggle base features";
         public static ConfigEntry<bool> IsWeaponDeadzone;
         public static ConfigEntry<bool> IsWeaponSway;
         public static ConfigEntry<bool> IsBreathingEffect;
@@ -35,14 +35,14 @@ namespace TarkovIRL
         public static ConfigEntry<bool> IsPoseChangeEffect;
         public static ConfigEntry<bool> IsArmShakeEffect;
 
-        const string ADJUST_VAR_SECTION = "Adjust feature values";
+        const string ADJUST_VAR_SECTION = "2 - Adjust feature values";
         public static ConfigEntry<float> DeadzoneGlobalMultiplier;
         public static ConfigEntry<float> WeaponSwayGlobalMultiplier;
         public static ConfigEntry<float> BreathingEffectMulti;
         public static ConfigEntry<float> HandsShakeMulti;
+        public static ConfigEntry<float> ParallaxMulti;
 
-        const string DEV_SECTION = "Only for dev/testing";
-        public static ConfigEntry<float> DevTestFloat;
+        const string DEV_SECTION = "3 - Only for dev/testing";
         public static ConfigEntry<float> DevTestFloat1;
         public static ConfigEntry<float> DevTestFloat2;
         public static ConfigEntry<float> DevTestFloat3;
@@ -54,6 +54,7 @@ namespace TarkovIRL
         float _swayMultiDefault = 0.5f;
         float _breathingMultiDefault = 1f;
         float _armJitterDefault = 1f;
+        float _parallaxMultiDefault = 1f;
 
         void Awake()
         {
@@ -114,14 +115,14 @@ namespace TarkovIRL
             IsArmShakeEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable extra arms shaking", "Adds additional arm shake as arm stam decreases");
 
             // sliders
-            DeadzoneGlobalMultiplier = ConstructFloatConfig(_deadzoneMultiDefault, ADJUST_VAR_SECTION, "Weapon deadzone intensity", "Set deadzone intensity.", 0, 5f);
-            WeaponSwayGlobalMultiplier = ConstructFloatConfig(_swayMultiDefault, ADJUST_VAR_SECTION, "Weapon sway intensity", "Set weapon sway intensity.", 0, 5f);
-            BreathingEffectMulti = ConstructFloatConfig(_breathingMultiDefault, ADJUST_VAR_SECTION, "Breathing effect intensity", "Set breathing effect intensity.", 0, 5f);
-            HandsShakeMulti = ConstructFloatConfig(_armJitterDefault, ADJUST_VAR_SECTION, "Arm shake intensity", "Set extra arm shake intensity.", 0, 5f);
+            DeadzoneGlobalMultiplier = ConstructFloatConfig(_deadzoneMultiDefault, ADJUST_VAR_SECTION, "Weapon deadzone multiplier", "Set deadzone intensity.", 0, 5f);
+            WeaponSwayGlobalMultiplier = ConstructFloatConfig(_swayMultiDefault, ADJUST_VAR_SECTION, "Weapon sway multiplier", "Set weapon sway intensity.", 0, 5f);
+            BreathingEffectMulti = ConstructFloatConfig(_breathingMultiDefault, ADJUST_VAR_SECTION, "Breathing effect multiplier", "Set breathing effect intensity.", 0, 5f);
+            HandsShakeMulti = ConstructFloatConfig(_armJitterDefault, ADJUST_VAR_SECTION, "Arm shake multiplier", "Set extra arm shake intensity.", 0, 5f);
+            ParallaxMulti = ConstructFloatConfig(_parallaxMultiDefault, ADJUST_VAR_SECTION,"Parallax multiplier", "Set weapon parallax effect intensity.", 0, 10f);
 
 
             // dev
-            DevTestFloat = ConstructFloatConfig(1f, DEV_SECTION, "Test value", "This is only for dev use, should not be connected to anything in production releases.", -10, 1000);
             DevTestFloat1 = ConstructFloatConfig(0.5f, DEV_SECTION, "Test value 1", "This is only for dev use, should not be connected to anything in production releases.", -10, 100);
             DevTestFloat2 = ConstructFloatConfig(100f, DEV_SECTION, "Test value 2", "This is only for dev use, should not be connected to anything in production releases.", -10, 100);
             DevTestFloat3 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 3", "This is only for dev use, should not be connected to anything in production releases.", -10, 100);
