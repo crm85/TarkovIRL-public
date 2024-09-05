@@ -7,11 +7,16 @@ using EFT.InventoryLogic;
 using HarmonyLib;
 using TarkovIRL;
 using UnityEngine;
+using EFT.Animations;
 
 public class LateUpdatePatch_UpdateWpnStats : ModulePatch
 {
+    // readyonlys
+    static readonly float _UpdateStatsTime = 1f;
+    
+    // vars
     static float _updateWeightTimer = 0;
-    static readonly float _updateStatsTime = 1f;
+
     protected override MethodBase GetTargetMethod()
     {
         return typeof(Player).GetMethod("LateUpdate", BindingFlags.Instance | BindingFlags.Public);
@@ -26,20 +31,10 @@ public class LateUpdatePatch_UpdateWpnStats : ModulePatch
             return;
         }
         Player.FirearmController fc = __instance.HandsController as Player.FirearmController;
-        if (_updateWeightTimer > _updateStatsTime)
+        if (_updateWeightTimer > _UpdateStatsTime)
         {
-            if (fc != null)
-            {
-                WeaponHandlingController.CurrentWeaponWeight = fc.Weapon.GetSingleItemTotalWeight();
-                WeaponHandlingController.CurrentWeaponErgo = fc.TotalErgonomics / 100f;
-            }
-            else
-            {
-                WeaponHandlingController.CurrentWeaponWeight = 0;
-                WeaponHandlingController.CurrentWeaponErgo = 1f;
-            }
+            WeaponController.UpdateWpnStats(fc);
             _updateWeightTimer = 0;
         }
-        WeaponHandlingController.SwayThisFrame = false;
     }
 }

@@ -78,19 +78,31 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CalculateCameraPositionPatch_HandsPositionLayers.cs" />
-    <Compile Include="HandsMovController.cs" />
+    <Compile Include="AdsTimer.cs" />
+    <Compile Include="DeadzoneController.cs" />
+    <Compile Include="HandPoseController.cs" />
+    <Compile Include="HandShakeController.cs" />
+    <Compile Include="HandBreathController.cs" />
+    <Compile Include="CalculateCameraPositionPatch_HandLayers.cs" />
+    <Compile Include="HandMovController.cs" />
     <Compile Include="LateUpdatePatch_UpdateWpnStats.cs" />
-    <Compile Include="LerpCameraPatch_UpdateSway.cs" />
+    <Compile Include="LerpCameraPatch_ForceUpdateSway.cs" />
+    <Compile Include="MotionController.cs" />
     <Compile Include="OnShotPatch_UpdateWpnWeight.cs" />
-    <Compile Include="Utils.cs" />
-    <Compile Include="WeaponHandlingController.cs" />
+    <Compile Include="HandParallaxController.cs" />
+    <Compile Include="PlayerMotionController.cs" />
+    <Compile Include="SetHeadRotationPatch_ApplyDeadzone.cs" />
+    <Compile Include="UtilsTIRL.cs" />
+    <Compile Include="WeaponController.cs" />
     <Compile Include="LookPatch_ApplyDeadzone.cs" />
     <Compile Include="UpdateSwayFactorsPatch.cs" />
     <Compile Include="PrimeMover.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

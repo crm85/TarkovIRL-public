@@ -2,6 +2,7 @@
 using EFT;
 using System.Reflection;
 using static EFT.Player;
+using UnityEngine;
 
 namespace TarkovIRL
 {
@@ -15,13 +16,17 @@ namespace TarkovIRL
         [PatchPostfix]
         private static void PatchPostfix(Player __instance)
         {
-            if ((UnityEngine.Object) (object)__instance != (UnityEngine.Object)null || __instance.IsYourPlayer)
+            if ((UnityEngine.Object)(object)__instance != (UnityEngine.Object)null && __instance.IsYourPlayer)
+            {
+                FirearmController fc = __instance.HandsController as FirearmController;
+                WeaponController.CurrentWeaponWeight = fc.Weapon.GetSingleItemTotalWeight();
+                float shotWeight = WeaponController.CurrentWeaponWeight * (1f - WeaponController.CurrentWeaponErgoNorm);
+                if (WeaponController.IsStocked && fc.IsAiming) AdsTimer.StartNewShot(fc.Weapon.AmmoCaliber);
+            }
+            else
             {
                 return;
             }
-
-            FirearmController fc = __instance.HandsController as FirearmController;
-            WeaponHandlingController.CurrentWeaponWeight = fc.Weapon.GetSingleItemTotalWeight();
         }
     }
 }

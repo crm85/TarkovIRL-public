@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TarkovIRL
 {
-    public class LerpCameraPatch_UpdateSway : ModulePatch
+    public class LerpCameraPatch_ForceUpdateSway : ModulePatch
     {
         private static FieldInfo playerField;
         private static FieldInfo fcField;
@@ -34,7 +34,7 @@ namespace TarkovIRL
             Player player = (Player)playerField.GetValue(firearmController);
             if ((Object)(object)player != (Object)null && player.IsYourPlayer)
             {
-
+                PlayerMotionController.UpdateMovement(player);
                 if (!player.IsInventoryOpened)
                 {
                     __instance.UpdateSwayFactors();
