@@ -54,23 +54,17 @@ namespace TarkovIRL
             }
             else
             {
-                if (PlayerMotionController.IsPlayerMovement)
-                {
-                    _rotPullInTarget = _RotPullInValue;
-                }
-                else
-                {
-                    _rotPullInTarget = 0;
-                }
+                _rotPullInTarget = 0;
             }
             _rotPullInLerp = Mathf.Lerp(_rotPullInLerp, _rotPullInTarget, dt * _LerpRate * 0.6f);
-            return new Vector3(0, 0, -_rotPullInLerp);
+            float finalValue = PrimeMover.Instance.PullInCurve.Evaluate(_rotPullInLerp / _RotPullInValue) * _RotPullInValue;
+            return new Vector3(0, 0, -finalValue);
         }
 
         public static Vector3 GetModifiedHandPosForUnstockedMovement(Player player)
         {
             float dt = player.DeltaTime;
-            if (WeaponsHandlingController.IsStocked && PlayerMotionController.IsPlayerMovement)
+            if (!WeaponController.IsStocked && PlayerMotionController.IsPlayerMovement)
             {
                 _stockedMovementAddedPosTarget = _StockMovementAddedPosValue;
             }

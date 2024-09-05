@@ -35,7 +35,7 @@ namespace TarkovIRL
                 return;
             }
 
-            if (WeaponsHandlingController.IsSwayUpdatedThisFrame)
+            if (WeaponController.IsSwayUpdatedThisFrame)
             {
                 return;
             }
@@ -49,7 +49,7 @@ namespace TarkovIRL
             Player player = (Player)playerField.GetValue(firearmController);
             if (player != null && player.IsYourPlayer && player.MovementContext.CurrentState.Name != EPlayerState.Stationary)
             {
-                float weaponWeight = WeaponsHandlingController.CurrentWeaponWeight;
+                float weaponWeight = WeaponController.CurrentWeaponWeight;
                 bool isFolded = firearmController.Weapon.GetFoldable() != null && firearmController.Weapon.Folded;
                 bool isPistol = firearmController.Weapon.WeapClass == "pistol";
 
@@ -67,7 +67,7 @@ namespace TarkovIRL
 
                 // horizontal axis ***
                 float speedMulti = PlayerMotionController.IsPlayerMovement ? PlayerMotionController.GetNormalSpeed(player) : 0.25f;
-                float addedSway = _BaseSwayValue * PrimeMover.WeaponSwayGlobalMultiplier.Value * weaponWeight * speedMulti * WeaponsHandlingController.GetSwayModifier(player);
+                float addedSway = _BaseSwayValue * PrimeMover.WeaponSwayGlobalMultiplier.Value * weaponWeight * speedMulti * WeaponController.GetEfficiencyModifier(player);
 
                 if (__instance.IsAiming)
                 {
@@ -85,7 +85,7 @@ namespace TarkovIRL
                 // push values
                 newSwayFactors.z *= addedSway;
                 __instance.MotionReact.SwayFactors = newSwayFactors;
-                WeaponsHandlingController.IsSwayUpdatedThisFrame = true;
+                WeaponController.IsSwayUpdatedThisFrame = true;
             }
             else
             {

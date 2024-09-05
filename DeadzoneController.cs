@@ -15,8 +15,8 @@ namespace TarkovIRL
 
         static float ProcessHeadDelta(float rawHeadDelta)
         {
-            float adjustedHeadDelta = rawHeadDelta / WeaponsHandlingController.CurrentWeaponErgo / 10f;
-            return adjustedHeadDelta * WeaponsHandlingController.CurrentWeaponWeight * 0.1f;
+            float adjustedHeadDelta = rawHeadDelta / WeaponController.CurrentWeaponErgoNorm / 10f;
+            return adjustedHeadDelta * WeaponController.CurrentWeaponWeight * 0.1f;
         }
 
         public static Vector3 GetHeadRotationWithDeadzone(Player player)
@@ -50,7 +50,7 @@ namespace TarkovIRL
             {
                 _updateDZ = false;
                 finalHeadRotation = 0;
-                lerpRate = _LerpRate * (1f / (WeaponsHandlingController.CurrentWeaponErgo * WeaponsHandlingController.CurrentWeaponWeight * 2f));
+                lerpRate = _LerpRate * (1f / (WeaponController.CurrentWeaponErgoNorm * WeaponController.CurrentWeaponWeight * 2f));
             }
 
             if (!_updateDZ)

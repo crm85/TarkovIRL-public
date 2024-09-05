@@ -78,6 +78,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdsTimer.cs" />
     <Compile Include="DeadzoneController.cs" />
     <Compile Include="HandPoseController.cs" />
     <Compile Include="HandShakeController.cs" />
@@ -92,13 +93,16 @@
     <Compile Include="PlayerMotionController.cs" />
     <Compile Include="SetHeadRotationPatch_ApplyDeadzone.cs" />
     <Compile Include="UtilsTIRL.cs" />
-    <Compile Include="WeaponsHandlingController.cs" />
+    <Compile Include="WeaponController.cs" />
     <Compile Include="LookPatch_ApplyDeadzone.cs" />
     <Compile Include="UpdateSwayFactorsPatch.cs" />
     <Compile Include="PrimeMover.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

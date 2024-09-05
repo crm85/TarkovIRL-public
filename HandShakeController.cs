@@ -37,7 +37,8 @@ namespace TarkovIRL
             float healthMulti = 1f + ((1f - healthCommon) * .2f);
             float armHealthRMulti = 1f + ((1f - armHealthR) * .2f);
             float armHealthLMulti = 1f + ((1f - armHealthL) * .2f);
-            float strengthMulti = 1f - (strength / 15000);
+            //float strengthMulti = 1f - (strength / 15000);
+            float strengthMulti = 1f;
             float poseLevelMulti = 1f + poseLevel;
 
             _handShakeLoopTimeX += player.DeltaTime * _HandShakeCurveSpeedMulti * 0.37f;

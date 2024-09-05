@@ -3,11 +3,14 @@ using EFT;
 
 namespace TarkovIRL
 {
-    public static class WeaponsHandlingController
+    public static class WeaponController
     {
+        public enum E_CALIBER { UNKNOWN, R_MINI, R_LOW, R_MID, R_HIGH, P_ } ;
+        public static E_CALIBER Caliber;
+
         // public vars
 
-        public static float CurrentWeaponErgo = 0;
+        public static float CurrentWeaponErgoNorm = 0;
         public static float CurrentWeaponWeight = 0;
 
         public static bool IsSwayUpdatedThisFrame = false;
@@ -20,27 +23,49 @@ namespace TarkovIRL
             if (fc != null)
             {
                 CurrentWeaponWeight = fc.Weapon.GetSingleItemTotalWeight();
-                CurrentWeaponErgo = fc.TotalErgonomics / 100f;
-                bool isFolded = fc.Weapon.GetFoldable() != null && fc.Weapon.Folded;
-                bool isPistol = fc.Weapon.WeapClass == "pistol";
-                IsPistol = isPistol;
-                IsStocked = isFolded || isPistol;
+                CurrentWeaponErgoNorm = fc.TotalErgonomics / 100f;
+                IsStocked = CheckForStock(fc.Weapon);
+                ProcessCaliber(fc.Weapon.AmmoCaliber);
             }
             else
             {
                 CurrentWeaponWeight = 0;
-                CurrentWeaponErgo = 1f;
+                CurrentWeaponErgoNorm = 1f;
             }
         }
 
-        public static float GetSwayModifier(Player player)
+        static bool CheckForStock(EFT.InventoryLogic.Weapon weapon)
+        {
+            bool isPistol = weapon.WeapClass == "pistol";
+            IsPistol = isPistol;
+            if (isPistol)
+            {
+                return false;
+            }
+            else
+            {
+                if (weapon.GetFoldable() != null)
+                {
+                    if (weapon.Folded)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        public static float GetEfficiencyModifier(Player player)
         {
             float healthCommon = player.HealthController.GetBodyPartHealth(EBodyPart.Common).Normalized;
             float armHealthR = player.HealthController.GetBodyPartHealth(EBodyPart.RightArm).Normalized;
             float armHealthL = player.HealthController.GetBodyPartHealth(EBodyPart.LeftArm).Normalized;
             float stamNormalized = player.Physical.Stamina.Current / 104f;
             float handStamNormalized = player.Physical.HandsStamina.Current / 80f;
-            float strength = player.Skills.Strength.Current;
+            //float strength = player.Skills.Strength.Current;
+            float strength = PrimeMover.DevTestFloat1.Value;
+            // i want this to cap out at 350, that removes 25% effect
+
             float currentWeight = player.Physical.PreviousWeight;
 
             float healthMulti = 1f + ((1f - healthCommon) * .2f);
@@ -53,6 +78,24 @@ namespace TarkovIRL
 
             float generalEfficiency = strengthMulti * underweightReduction * healthMulti * armHealthRMulti * armHealthLMulti * stamMulti * handStamMulti;
             return generalEfficiency;
+        }
+
+        static void ProcessCaliber(string cal)
+        {
+            if (cal == "556x45NATO")
+            {
+                //Caliber = E_CALIBER.R_556_545;
+            }
+            if (cal == "545x39")
+            {
+                //Caliber = E_CALIBER.R_556_545;
+            }
+
+            // unknown case
+            else
+            {
+                Caliber = E_CALIBER.UNKNOWN;
+            }
         }
     }
 }
