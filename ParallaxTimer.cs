@@ -46,7 +46,7 @@ namespace TarkovIRL
 
             if (_intoShot)
             {
-                _shotLerp = Mathf.Lerp(_shotLerp, _shotWeight, PrimeMover.Instance.DeltaTime * _shotWeight * PrimeMover.ShotParallaxTaperMulti.Value * PrimeMover.DevTestFloat2.Value);
+                _shotLerp = Mathf.Lerp(_shotLerp, _shotWeight, PrimeMover.Instance.DeltaTime * _shotWeight * PrimeMover.ShotParallaxTaperMulti.Value * 3f);
                 if (_shotLerp >= _shotWeight) _intoShot = false;
             }
             else

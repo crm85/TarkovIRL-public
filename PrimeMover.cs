@@ -58,9 +58,9 @@ namespace TarkovIRL
         float _swayMultiDefault = 0.5f;
         float _breathingMultiDefault = 1f;
         float _armJitterDefault = 1f;
-        float _parallaxMultiDefault = 1.5f;
+        float _parallaxMultiDefault = 0.7f;
         float _adsParallaxTaperMultiDefault = 2f;
-        float _shotParallaxTaperMultiDefault = 3f;
+        float _shotParallaxTaperMultiDefault = 10f;
 
         void Awake()
         {
@@ -124,7 +124,7 @@ namespace TarkovIRL
             ShotParallaxTaperMulti = ConstructFloatConfig(_shotParallaxTaperMultiDefault, ADJUST_VAR_SECTION, "Shot-parallax cooldown multiplier", "Set ads weight effect intensity.", 0, 10f);
             AdsParallaxTaperMulti = ConstructFloatConfig(_adsParallaxTaperMultiDefault, ADJUST_VAR_SECTION, "Ads-parallax cooldown multiplier", "Set ads weight effect intensity.", 0, 10f);
             ParallaxMulti = ConstructFloatConfig(_parallaxMultiDefault, ADJUST_VAR_SECTION,"Parallax multiplier", "Set weapon parallax effect intensity.", 0, 10f);
-            ShotParallaxMulti = ConstructFloatConfig(1f, ADJUST_VAR_SECTION, "Shot parallax clamp", "Set max parallax recoil.", 0, 10f);
+            ShotParallaxMulti = ConstructFloatConfig(0.4f, ADJUST_VAR_SECTION, "Shot parallax multi", "Set max parallax recoil.", 0, 10f);
             ParallaxSetSizeMulti = ConstructFloatConfig(0.2f, ADJUST_VAR_SECTION, "Parallax set size", "Set Parallax set size.", 0, 1f);
             EfficiencyLerpMulti = ConstructFloatConfig(1.2f, ADJUST_VAR_SECTION, "Efficiency lerp multiplier", "Set rate at which general player efficiency stat lerps.", 0, 10f);
 
