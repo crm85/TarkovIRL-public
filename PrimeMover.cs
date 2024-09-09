@@ -110,7 +110,7 @@ namespace TarkovIRL
             TryLoadPatch(new LateUpdatePatch_UpdateWpnStats());
             TryLoadPatch(new OnShotPatch_UpdateWpnWeight());
             TryLoadPatch(new CalculateCameraPositionPatch_HandLayers());
-            TryLoadPatch(new LookPatch_ApplyDeadzone());
+            //TryLoadPatch(new LookPatch_ApplyDeadzone());
             //TryLoadPatch(new SetHeadRotationPatch_ApplyDeadzone());
         }
 

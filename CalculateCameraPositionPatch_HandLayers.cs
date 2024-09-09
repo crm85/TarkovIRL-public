@@ -69,6 +69,16 @@ namespace TarkovIRL
 
                 __instance.HandsContainer.WeaponRoot.localPosition += parallaxPosition;
                 __instance.HandsContainer.WeaponRoot.localRotation *= parallaxRotation;
+
+
+
+                if (!PrimeMover.IsWeaponDeadzone.Value)
+                {
+                    return;
+                }
+
+                Vector3 headRotThisFrame = DeadzoneController.GetHeadRotationWithDeadzone(player);
+                AccessTools.Field(typeof(ProceduralWeaponAnimation), "_headRotationVec").SetValue(__instance, headRotThisFrame);
             }
         }
     }
