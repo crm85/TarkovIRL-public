@@ -7,7 +7,7 @@ using HarmonyLib;
 
 namespace TarkovIRL
 {
-    public class SetHeadRotationPatch_ApplyDeadzone : ModulePatch
+    public class Patch_SetHeadRotation_ApplyDeadzone : ModulePatch
     {
         static FieldInfo _playerField;
         static FieldInfo _fcField;

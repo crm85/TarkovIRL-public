@@ -7,7 +7,7 @@ using EFT.Animations;
 
 namespace TarkovIRL
 {
-    internal class UpdateSwayFactorsPatch : ModulePatch
+    internal class Patch_UpdateSwayFactors : ModulePatch
     {
 
         private static FieldInfo playerField;
@@ -66,8 +66,7 @@ namespace TarkovIRL
                 newSwayFactors.y *= -.2f * weaponWeight;
 
                 // horizontal axis ***
-                float speedMulti = PlayerMotionController.IsPlayerMovement ? PlayerMotionController.GetNormalSpeed(player) : 0.25f;
-                float addedSway = _BaseSwayValue * PrimeMover.WeaponSwayGlobalMultiplier.Value * weaponWeight * speedMulti * WeaponController.GetEfficiencyModifier(player);
+                float addedSway = _BaseSwayValue * PrimeMover.WeaponSwayGlobalMultiplier.Value * WeaponController.GetWeaponMulti() * EfficiencyController.GetEfficiencyModifier;
 
                 if (__instance.IsAiming)
                 {

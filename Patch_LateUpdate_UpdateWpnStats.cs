@@ -9,7 +9,7 @@ using TarkovIRL;
 using UnityEngine;
 using EFT.Animations;
 
-public class LateUpdatePatch_UpdateWpnStats : ModulePatch
+public class Patch_LateUpdate_UpdateWpnStats : ModulePatch
 {
     // readyonlys
     static readonly float _UpdateStatsTime = 1f;

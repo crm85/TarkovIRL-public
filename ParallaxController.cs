@@ -9,7 +9,7 @@ using EFT.InventoryLogic;
 
 namespace TarkovIRL
 {
-    public static class HandParallaxController
+    public static class ParallaxController
     {
         private static float _rotAvgXSet = 0;
         private static float _rotAvgYSet = 0;
@@ -23,17 +23,14 @@ namespace TarkovIRL
         private static Vector2 _playerRotationLastFrame = Vector2.zero;
         private static float _parallaxWeightADS = 1f;
 
-        static float _avgSetSizeMulti = 0.5f;
         static bool _aimingLastFrame = false;
 
         public static void GetModifiedHandPosRotParallax(Player player, ref Vector3 position, ref Quaternion rotation)
         {
             float weaponMulti = WeaponController.CurrentWeaponWeight * (1f - WeaponController.CurrentWeaponErgoNorm);
-            float efficiencyMulti = WeaponController.GetEfficiencyModifier(player);
-            float poseLevel = Mathf.Clamp(player.PoseLevel, 0.5f, 1f);
-            float speedMulti = PlayerMotionController.IsPlayerMovement ? PlayerMotionController.GetNormalSpeed(player) : 0.5f;
+            float efficiencyMulti = EfficiencyController.GetEfficiencyModifier;
 
-            AdsTimer.UpdateLerps();
+            ParallaxTimer.UpdateLerps();
 
             if (WeaponController.IsStocked)
             {
@@ -42,33 +39,34 @@ namespace TarkovIRL
                 _aimingLastFrame = player.ProceduralWeaponAnimation.IsAiming;
 
                 float adsEfficiencyMulti = 1f / efficiencyMulti;
-                float adsMulti = weaponMulti * adsEfficiencyMulti * poseLevel * speedMulti;
+                float adsMulti = weaponMulti * adsEfficiencyMulti;
                 if (isNewAds)
                 {
-                    AdsTimer.StartNewAds(true, adsMulti);
+                    ParallaxTimer.StartNewAds(true, adsMulti);
                 }
                 else if (isFinishAds)
                 {
-                    AdsTimer.StartNewAds(false, adsMulti);
+                    ParallaxTimer.StartNewAds(false, adsMulti);
                 }
             }
 
             Vector2 rotationalMotionThisFrame = _playerRotationLastFrame - player.Rotation;
             _playerRotationLastFrame = player.Rotation;
+            float sizeMultiFinal = PrimeMover.ParallaxSetSizeMulti.Value * weaponMulti;
 
             _rotAvgXSet += rotationalMotionThisFrame.x;
             _rotAvgYSet += rotationalMotionThisFrame.y;
             _rotAvgXSet -= _rotAvgX;
             _rotAvgYSet -= _rotAvgY;
-            _rotAvgXSet = Mathf.Clamp(_rotAvgXSet, -_avgSetSizeMulti, _avgSetSizeMulti);
-            _rotAvgYSet = Mathf.Clamp(_rotAvgYSet, -_avgSetSizeMulti, _avgSetSizeMulti);
+            _rotAvgXSet = Mathf.Clamp(_rotAvgXSet, -sizeMultiFinal, sizeMultiFinal);
+            _rotAvgYSet = Mathf.Clamp(_rotAvgYSet, -sizeMultiFinal, sizeMultiFinal);
             _rotAvgX = _rotAvgXSet * player.DeltaTime;
             _rotAvgY = _rotAvgYSet * player.DeltaTime;
 
-            _parallaxWeightADS = AdsTimer.ParallaxWeight;
+            _parallaxWeightADS = ParallaxTimer.ParallaxWeight;
 
             float dt = player.DeltaTime;
-            float parallaxMulti = PrimeMover.ParallaxMulti.Value * weaponMulti * efficiencyMulti * poseLevel * speedMulti;
+            float parallaxMulti = PrimeMover.ParallaxMulti.Value * weaponMulti * efficiencyMulti;
 
             //
             // calc the position lerps

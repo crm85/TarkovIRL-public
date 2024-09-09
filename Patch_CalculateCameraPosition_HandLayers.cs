@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace TarkovIRL
 {
-    internal class CalculateCameraPositionPatch_HandLayers : ModulePatch
+    internal class Patch_CalculateCameraPosition_HandLayers : ModulePatch
     {
         private static FieldInfo playerField;
         private static FieldInfo fcField;
@@ -39,6 +39,8 @@ namespace TarkovIRL
             Player player = (Player)playerField.GetValue(firearmController);
             if ((UnityEngine.Object)(object)player != (UnityEngine.Object)null && player.IsYourPlayer)
             {
+                EfficiencyController.UpdateEfficiency(player);
+
                 Vector3 breathOffset = HandBreathController.GetModifiedHandPosForBreath(player);
                 Vector3 armStamOffset = HandShakeController.GetHandsShakePosition(player);
                 Vector3 poseOffset = HandPoseController.GetModifiedHandPosWithPose(player);
@@ -65,7 +67,7 @@ namespace TarkovIRL
 
                 Vector3 parallaxPosition = __instance.HandsContainer.WeaponRoot.localPosition;
                 Quaternion parallaxRotation = __instance.HandsContainer.WeaponRoot.localRotation;
-                HandParallaxController.GetModifiedHandPosRotParallax(player, ref parallaxPosition, ref parallaxRotation);
+                ParallaxController.GetModifiedHandPosRotParallax(player, ref parallaxPosition, ref parallaxRotation);
 
                 __instance.HandsContainer.WeaponRoot.localPosition += parallaxPosition;
                 __instance.HandsContainer.WeaponRoot.localRotation *= parallaxRotation;

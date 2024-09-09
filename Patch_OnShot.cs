@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TarkovIRL
 {
-    public class OnShotPatch_UpdateWpnWeight : ModulePatch
+    public class Patch_OnShot : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {
@@ -21,7 +21,8 @@ namespace TarkovIRL
                 FirearmController fc = __instance.HandsController as FirearmController;
                 WeaponController.CurrentWeaponWeight = fc.Weapon.GetSingleItemTotalWeight();
                 float shotWeight = WeaponController.CurrentWeaponWeight * (1f - WeaponController.CurrentWeaponErgoNorm);
-                if (WeaponController.IsStocked && fc.IsAiming) AdsTimer.StartNewShot(fc.Weapon.AmmoCaliber);
+                if (WeaponController.IsStocked && fc.IsAiming) ParallaxTimer.StartNewShot(fc.Weapon);
+                UtilsTIRL.Log(true, $"weapon weight {fc.Weapon.GetSingleItemTotalWeight()}, cartridge type {fc.Weapon.AmmoCaliber}, cartridge weight {fc.Weapon.CurrentAmmoTemplate.BulletMassGram}");  
             }
             else
             {
