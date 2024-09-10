@@ -39,11 +39,6 @@ namespace TarkovIRL
 
         static void LerpShot()
         {
-            if (!_shotSwitch)
-            {
-                return;
-            }
-
             if (_intoShot)
             {
                 _shotLerp = Mathf.Lerp(_shotLerp, _shotWeight, PrimeMover.Instance.DeltaTime * _shotWeight * PrimeMover.ShotParallaxTaperMulti.Value * 3f);
@@ -51,11 +46,8 @@ namespace TarkovIRL
             }
             else
             {
-                _shotLerp = Mathf.Lerp(_shotLerp, _adsLerpWeight, PrimeMover.Instance.DeltaTime * (1f / _shotWeight) * PrimeMover.ShotParallaxTaperMulti.Value);
-            }
-            if (_shotLerp <= _adsLerpWeight)
-            {
-                _shotSwitch = false;
+                _shotLerp = Mathf.Lerp(_shotLerp, 0, PrimeMover.Instance.DeltaTime * (1f / _shotWeight) * PrimeMover.ShotParallaxTaperMulti.Value);
+                if (_shotLerp <= _adsLerpWeight) _shotSwitch = false;
             }
         }
 

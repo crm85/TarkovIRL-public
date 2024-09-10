@@ -54,13 +54,16 @@ namespace TarkovIRL
         public static ConfigEntry<float> DevTestFloat5;
 
         // config defaults
-        float _deadzoneMultiDefault = 2f;
-        float _swayMultiDefault = 0.5f;
-        float _breathingMultiDefault = 1f;
-        float _armJitterDefault = 1f;
-        float _parallaxMultiDefault = 0.7f;
-        float _adsParallaxTaperMultiDefault = 2f;
-        float _shotParallaxTaperMultiDefault = 10f;
+        readonly float _deadzoneMultiDefault = 2f;
+        readonly float _swayMultiDefault = 0.5f;
+        readonly float _breathingMultiDefault = 1f;
+        readonly float _armJitterDefault = 1f;
+        readonly float _parallaxMultiDefault = 0.7f;
+        readonly float _adsParallaxTaperMultiDefault = 2f;
+        readonly float _shotParallaxTaperMultiDefault = 10f;
+        readonly float ShotParallaxMultiDefault = 0.6f;
+        readonly float ParallaxSetSizeMultiDefault = 0.2f;
+        readonly float EfficiencyLerpMultiDefault = 0.8f;
 
         void Awake()
         {
@@ -102,7 +105,7 @@ namespace TarkovIRL
             TryLoadPatch(new Patch_OnShot());
             TryLoadPatch(new Patch_CalculateCameraPosition_HandLayers());
             TryLoadPatch(new Patch_Look_ApplyDeadzone());
-            TryLoadPatch(new Patch_SetFootStep());
+            TryLoadPatch(new Patch_PlayStepSound());
             //TryLoadPatch(new SetHeadRotationPatch_ApplyDeadzone());
         }
 
@@ -117,24 +120,24 @@ namespace TarkovIRL
             IsArmShakeEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable extra arms shaking", "Adds additional arm shake as arm stam decreases");
 
             // sliders
-            DeadzoneGlobalMultiplier = ConstructFloatConfig(_deadzoneMultiDefault, ADJUST_VAR_SECTION, "Weapon deadzone multiplier", "Set deadzone intensity.", 0, 5f);
-            WeaponSwayGlobalMultiplier = ConstructFloatConfig(_swayMultiDefault, ADJUST_VAR_SECTION, "Weapon sway multiplier", "Set weapon sway intensity.", 0, 5f);
-            BreathingEffectMulti = ConstructFloatConfig(_breathingMultiDefault, ADJUST_VAR_SECTION, "Breathing effect multiplier", "Set breathing effect intensity.", 0, 5f);
-            HandsShakeMulti = ConstructFloatConfig(_armJitterDefault, ADJUST_VAR_SECTION, "Arm shake multiplier", "Set extra arm shake intensity.", 0, 5f);
-            ShotParallaxTaperMulti = ConstructFloatConfig(_shotParallaxTaperMultiDefault, ADJUST_VAR_SECTION, "Shot-parallax cooldown multiplier", "Set ads weight effect intensity.", 0, 10f);
-            AdsParallaxTaperMulti = ConstructFloatConfig(_adsParallaxTaperMultiDefault, ADJUST_VAR_SECTION, "Ads-parallax cooldown multiplier", "Set ads weight effect intensity.", 0, 10f);
-            ParallaxMulti = ConstructFloatConfig(_parallaxMultiDefault, ADJUST_VAR_SECTION,"Parallax multiplier", "Set weapon parallax effect intensity.", 0, 10f);
-            ShotParallaxMulti = ConstructFloatConfig(0.4f, ADJUST_VAR_SECTION, "Shot parallax multi", "Set max parallax recoil.", 0, 10f);
-            ParallaxSetSizeMulti = ConstructFloatConfig(0.2f, ADJUST_VAR_SECTION, "Parallax set size", "Set Parallax set size.", 0, 1f);
-            EfficiencyLerpMulti = ConstructFloatConfig(1.2f, ADJUST_VAR_SECTION, "Efficiency lerp multiplier", "Set rate at which general player efficiency stat lerps.", 0, 10f);
+            DeadzoneGlobalMultiplier = ConstructFloatConfig(_deadzoneMultiDefault, ADJUST_VAR_SECTION, "Weapon deadzone multiplier", "", 0, 5f);
+            WeaponSwayGlobalMultiplier = ConstructFloatConfig(_swayMultiDefault, ADJUST_VAR_SECTION, "Weapon sway multiplier", "", 0, 5f);
+            BreathingEffectMulti = ConstructFloatConfig(_breathingMultiDefault, ADJUST_VAR_SECTION, "Breathing effect multiplier", "", 0, 5f);
+            HandsShakeMulti = ConstructFloatConfig(_armJitterDefault, ADJUST_VAR_SECTION, "Arm shake multiplier", "", 0, 5f);
+            ShotParallaxTaperMulti = ConstructFloatConfig(_shotParallaxTaperMultiDefault, ADJUST_VAR_SECTION, "Shot-parallax cooldown multiplier", "", 0, 10f);
+            AdsParallaxTaperMulti = ConstructFloatConfig(_adsParallaxTaperMultiDefault, ADJUST_VAR_SECTION, "Ads-parallax cooldown multiplier", "", 0, 10f);
+            ParallaxMulti = ConstructFloatConfig(_parallaxMultiDefault, ADJUST_VAR_SECTION,"Parallax multiplier", "", 0, 10f);
+            ShotParallaxMulti = ConstructFloatConfig(ShotParallaxMultiDefault, ADJUST_VAR_SECTION, "Shot parallax multi", "", 0, 10f);
+            ParallaxSetSizeMulti = ConstructFloatConfig(ParallaxSetSizeMultiDefault, ADJUST_VAR_SECTION, "Parallax set size", "", 0, 1f);
+            EfficiencyLerpMulti = ConstructFloatConfig(EfficiencyLerpMultiDefault, ADJUST_VAR_SECTION, "Efficiency lerp multiplier", "", 0, 10f);
 
 
             // dev
-            DevTestFloat1 = ConstructFloatConfig(0.5f, DEV_SECTION, "Test value 1", "This is only for dev use, should not be connected to anything in production releases.", 0, 15000);
-            DevTestFloat2 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 2", "This is only for dev use, should not be connected to anything in production releases.", -10, 100);
-            DevTestFloat3 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 3", "This is only for dev use, should not be connected to anything in production releases.", -10, 100);
-            DevTestFloat4 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 4", "This is only for dev use, should not be connected to anything in production releases.", -10, 100);
-            DevTestFloat5 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 5", "This is only for dev use, should not be connected to anything in production releases.", -10, 100);
+            //DevTestFloat1 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 1", "This is only for dev use, should not be connected to anything in production releases.", 0, 1000f);
+            //DevTestFloat2 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 1", "This is only for dev use, should not be connected to anything in production releases.", 0, 1000f);
+            //DevTestFloat3 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 1", "This is only for dev use, should not be connected to anything in production releases.", 0, 1000f);
+            //DevTestFloat4 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 1", "This is only for dev use, should not be connected to anything in production releases.", 0, 1000f);
+            //DevTestFloat5 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 1", "This is only for dev use, should not be connected to anything in production releases.", 0, 1000f);
         }
 
         void Update()

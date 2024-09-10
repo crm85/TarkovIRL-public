@@ -92,7 +92,7 @@
     <Compile Include="Patch_OnShot.cs" />
     <Compile Include="ParallaxController.cs" />
     <Compile Include="PlayerMotionController.cs" />
-    <Compile Include="Patch_SetFootStep.cs" />
+    <Compile Include="Patch_PlayStepSound.cs" />
     <Compile Include="Patch_SetHeadRotation_ApplyDeadzone.cs" />
     <Compile Include="SwayController.cs" />
     <Compile Include="UtilsTIRL.cs" />
