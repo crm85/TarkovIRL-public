@@ -10,7 +10,7 @@ namespace TarkovIRL
         static float _parallaxWeight = 1f;
 
         static bool _intoAds = false;
-        static float _weaponMulti = 1f;
+        static float _adsSpeedMod = 1f;
         static float _adsLerpWeight = 1f;
 
         static bool _shotSwitch = false;
@@ -28,13 +28,13 @@ namespace TarkovIRL
         public static void StartNewAds(bool intoAds, float wpnMulti)
         {
             _intoAds = intoAds;
-            _weaponMulti = wpnMulti;
+            _adsSpeedMod = wpnMulti;
         }
 
         static void LerpAds()
         {
             float targetWeight = _intoAds ? _MinWeight : 1f;
-            _adsLerpWeight = Mathf.Lerp(_adsLerpWeight, targetWeight, PrimeMover.Instance.DeltaTime * _weaponMulti * PrimeMover.AdsParallaxTaperMulti.Value);
+            _adsLerpWeight = Mathf.Lerp(_adsLerpWeight, targetWeight, PrimeMover.Instance.DeltaTime * _adsSpeedMod * PrimeMover.AdsParallaxTaperMulti.Value);
         }
 
         static void LerpShot()

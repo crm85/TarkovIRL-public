@@ -39,7 +39,8 @@ namespace TarkovIRL
                 _aimingLastFrame = player.ProceduralWeaponAnimation.IsAiming;
 
                 float adsEfficiencyMulti = 1f / efficiencyMulti;
-                float adsMulti = weaponMulti * adsEfficiencyMulti;
+                float weaponMultiAdjusted = 1f / weaponMulti;
+                float adsMulti = weaponMultiAdjusted * adsEfficiencyMulti;
                 if (isNewAds)
                 {
                     ParallaxTimer.StartNewAds(true, adsMulti);

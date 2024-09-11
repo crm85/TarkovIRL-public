@@ -123,9 +123,9 @@ namespace TarkovIRL
             TryLoadPatch(new Patch_LateUpdate_UpdateWpnStats());
             TryLoadPatch(new Patch_OnShot());
             TryLoadPatch(new Patch_CalculateCameraPosition_HandLayers());
-            TryLoadPatch(new Patch_Look_ApplyDeadzone());
             TryLoadPatch(new Patch_PlayStepSound());
             //TryLoadPatch(new SetHeadRotationPatch_ApplyDeadzone());
+            //TryLoadPatch(new Patch_Look_ApplyDeadzone());
         }
 
         void LoadConfigValues()
@@ -153,7 +153,7 @@ namespace TarkovIRL
             ParallaxSetSizeMulti = ConstructFloatConfig(ParallaxSetSizeMultiDefault, ADJUST_VAR_SECTION, "Parallax set size", "", 0, 1f);
             EfficiencyLerpMulti = ConstructFloatConfig(EfficiencyLerpMultiDefault, ADJUST_VAR_SECTION, "Efficiency lerp multiplier", "", 0, 10f);
             CameraUpdateMulti = ConstructFloatConfig(CameraUpdateMultiDefault, ADJUST_VAR_SECTION, "Camera update rate multiplier", "", 0, 10f);
-            FootstepLerpMulti = ConstructFloatConfig(FootstepIntesnityMultiDefault, ADJUST_VAR_SECTION, "Footstep lerp speed multiplier", "", 0, 10f);
+            FootstepLerpMulti = ConstructFloatConfig(FootstepLerpMultiDefault, ADJUST_VAR_SECTION, "Footstep lerp speed multiplier", "", 0, 10f);
             FootstepIntesnityMulti = ConstructFloatConfig(FootstepIntesnityMultiDefault, ADJUST_VAR_SECTION, "Footstep effect multiplier", "", 0, 10f);
 
 
