@@ -41,22 +41,24 @@ namespace TarkovIRL
         {
             if (_intoShot)
             {
-                _shotLerp = Mathf.Lerp(_shotLerp, _shotWeight, PrimeMover.Instance.DeltaTime * _shotWeight * PrimeMover.ShotParallaxTaperMulti.Value * 3f);
-                if (_shotLerp >= _shotWeight) _intoShot = false;
+                _shotLerp = Mathf.Lerp(_shotLerp, _shotWeight * 1.05f, PrimeMover.Instance.DeltaTime * _shotWeight * PrimeMover.ShotParallaxTaperMulti.Value * 3f);
+                if (_shotLerp >= _shotWeight * 0.95f) _intoShot = false;
             }
             else
             {
-                _shotLerp = Mathf.Lerp(_shotLerp, 0, PrimeMover.Instance.DeltaTime * (1f / _shotWeight) * PrimeMover.ShotParallaxTaperMulti.Value);
+                _shotLerp = Mathf.Lerp(_shotLerp, _adsLerpWeight * 0.95f, PrimeMover.Instance.DeltaTime * (1f / _shotWeight) * PrimeMover.ShotParallaxTaperMulti.Value);
                 if (_shotLerp <= _adsLerpWeight) _shotSwitch = false;
             }
+
+            if (_shotSwitch) UtilsTIRL.Log(true, $"intoShot is {_intoShot}, shotLerp is {_shotLerp}, shotweight is {_shotWeight}");
         }
 
         static public void StartNewShot(Weapon weapon)
         {
-            float weaponWeight = weapon.GetSingleItemTotalWeight();
+            float weaponWeight = weapon.GetSingleItemTotalWeight() * PrimeMover.ShotParallaxWeaponWeightMulti.Value;
             float cartridgeWeight = weapon.CurrentAmmoTemplate.BulletMassGram;
             float newShotWeight = cartridgeWeight / weaponWeight;
-            _shotWeight = newShotWeight * PrimeMover.ShotParallaxMulti.Value;
+            _shotWeight = newShotWeight;
             _shotSwitch = true;
             _intoShot = true;
         }

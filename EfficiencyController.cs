@@ -36,7 +36,7 @@ namespace TarkovIRL
             float stamNormalized = player.Physical.Stamina.Current / 104f;
             float handStamNormalized = player.Physical.HandsStamina.Current / 80f;
             //float strength = player.Skills.Strength.Current;
-            float strength = PrimeMover.DevTestFloat1.Value;
+            float strength = PrimeMover.FootstepLerpMulti.Value;
             // i want this to cap out at 350, that removes 25% effect
 
             float currentWeight = player.Physical.PreviousWeight;

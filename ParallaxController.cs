@@ -27,7 +27,7 @@ namespace TarkovIRL
 
         public static void GetModifiedHandPosRotParallax(Player player, ref Vector3 position, ref Quaternion rotation)
         {
-            float weaponMulti = WeaponController.CurrentWeaponWeight * (1f - WeaponController.CurrentWeaponErgoNorm);
+            float weaponMulti = WeaponController.GetWeaponMulti();
             float efficiencyMulti = EfficiencyController.GetEfficiencyModifier;
 
             ParallaxTimer.UpdateLerps();

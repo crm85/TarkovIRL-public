@@ -75,7 +75,8 @@ namespace TarkovIRL
 
         public static float GetWeaponMulti()
         {
-            float weaponMulti = WeaponController.CurrentWeaponWeight * (1f - WeaponController.CurrentWeaponErgoNorm);
+            float ergoAdjusted = PrimeMover.Instance.ErgoAttenuationCurve.Evaluate(CurrentWeaponErgoNorm);
+            float weaponMulti = WeaponController.CurrentWeaponWeight * (1f - ergoAdjusted);
             return weaponMulti;
         }
     }

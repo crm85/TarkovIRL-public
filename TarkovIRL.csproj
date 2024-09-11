@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EfficiencyController.cs" />
+    <Compile Include="FootstepController.cs" />
     <Compile Include="ParallaxTimer.cs" />
     <Compile Include="DeadzoneController.cs" />
     <Compile Include="HandPoseController.cs" />

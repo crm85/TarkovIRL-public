@@ -16,7 +16,7 @@ namespace TarkovIRL
         {
             if ((UnityEngine.Object)(object)__instance != (UnityEngine.Object)null && __instance.IsYourPlayer)
             {
-                UtilsTIRL.Log(true, $"footstep played");
+                FootstepController.NewStep(__instance);
             }
         }
     }

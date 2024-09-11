@@ -20,6 +20,8 @@ namespace TarkovIRL
         public AnimationCurve PoseChangeCurve;
         public AnimationCurve HandsShakeCurve;
         public AnimationCurve PullInCurve;
+        public AnimationCurve FootStepCurve;
+        public AnimationCurve ErgoAttenuationCurve;
 
         public float DeltaTime = 0;
         public float Time = 0;
@@ -33,6 +35,9 @@ namespace TarkovIRL
         public static ConfigEntry<bool> IsPoseEffect;
         public static ConfigEntry<bool> IsPoseChangeEffect;
         public static ConfigEntry<bool> IsArmShakeEffect;
+        public static ConfigEntry<bool> IsSmallMovementsEffect;
+        public static ConfigEntry<bool> IsFootstepEffect;
+        public static ConfigEntry<bool> IsParallaxEffect;
 
         const string ADJUST_VAR_SECTION = "2 - Adjust feature values";
         public static ConfigEntry<float> DeadzoneGlobalMultiplier;
@@ -43,12 +48,13 @@ namespace TarkovIRL
         public static ConfigEntry<float> AdsParallaxTaperMulti;
         public static ConfigEntry<float> ShotParallaxTaperMulti;
         public static ConfigEntry<float> EfficiencyLerpMulti;
-        public static ConfigEntry<float> ShotParallaxMulti;
+        public static ConfigEntry<float> ShotParallaxWeaponWeightMulti;
         public static ConfigEntry<float> ParallaxSetSizeMulti;
+        public static ConfigEntry<float> CameraUpdateMulti;
+        public static ConfigEntry<float> FootstepLerpMulti;
+        public static ConfigEntry<float> FootstepIntesnityMulti;
 
         const string DEV_SECTION = "3 - Only for dev/testing";
-        public static ConfigEntry<float> DevTestFloat1;
-        public static ConfigEntry<float> DevTestFloat2;
         public static ConfigEntry<float> DevTestFloat3;
         public static ConfigEntry<float> DevTestFloat4;
         public static ConfigEntry<float> DevTestFloat5;
@@ -58,12 +64,15 @@ namespace TarkovIRL
         readonly float _swayMultiDefault = 0.5f;
         readonly float _breathingMultiDefault = 1f;
         readonly float _armJitterDefault = 1f;
-        readonly float _parallaxMultiDefault = 0.7f;
+        readonly float _parallaxMultiDefault = 0.8f;
         readonly float _adsParallaxTaperMultiDefault = 2f;
         readonly float _shotParallaxTaperMultiDefault = 10f;
-        readonly float ShotParallaxMultiDefault = 0.6f;
+        readonly float ShotParallaxWeaponWeightMultiDefault = 1.75f;
         readonly float ParallaxSetSizeMultiDefault = 0.2f;
         readonly float EfficiencyLerpMultiDefault = 0.8f;
+        readonly float CameraUpdateMultiDefault = 1f;
+        readonly float FootstepLerpMultiDefault = 0.4f;
+        readonly float FootstepIntesnityMultiDefault = 1.25f;
 
         void Awake()
         {
@@ -99,6 +108,16 @@ namespace TarkovIRL
                 new Keyframe(0f, 0f), new Keyframe(0.01f, 0.0001326637f), new Keyframe(0.02f, 0.0004161092f), new Keyframe(0.03f, 0.0008607136f), new Keyframe(0.04f, 0.001476854f), new Keyframe(0.05f, 0.002274909f), new Keyframe(0.05999999f, 0.003265254f), new Keyframe(0.06999999f, 0.004458267f), new Keyframe(0.07999999f, 0.005864326f), new Keyframe(0.08999999f, 0.007493807f), new Keyframe(0.09999999f, 0.00935709f), new Keyframe(0.11f, 0.01146455f), new Keyframe(0.12f, 0.01382656f), new Keyframe(0.13f, 0.01645351f), new Keyframe(0.14f, 0.01935577f), new Keyframe(0.15f, 0.02254371f), new Keyframe(0.16f, 0.02602772f), new Keyframe(0.17f, 0.02981817f), new Keyframe(0.18f, 0.03392544f), new Keyframe(0.19f, 0.03835991f), new Keyframe(0.2f, 0.04313195f), new Keyframe(0.21f, 0.04825195f), new Keyframe(0.22f, 0.05373026f), new Keyframe(0.23f, 0.05957729f), new Keyframe(0.24f, 0.0658034f), new Keyframe(0.25f, 0.07241896f), new Keyframe(0.26f, 0.07943435f), new Keyframe(0.27f, 0.08685997f), new Keyframe(0.28f, 0.09470617f), new Keyframe(0.29f, 0.1029833f), new Keyframe(0.3f, 0.1117019f), new Keyframe(0.31f, 0.1208721f), new Keyframe(0.32f, 0.1305044f), new Keyframe(0.33f, 0.1406093f), new Keyframe(0.3399999f, 0.1511969f), new Keyframe(0.3499999f, 0.1622778f), new Keyframe(0.3599999f, 0.1738624f), new Keyframe(0.3699999f, 0.1859608f), new Keyframe(0.3799999f, 0.1985837f), new Keyframe(0.3899999f, 0.2117413f), new Keyframe(0.3999999f, 0.225444f), new Keyframe(0.4099999f, 0.2406231f), new Keyframe(0.4199999f, 0.258181f), new Keyframe(0.4299999f, 0.2778718f), new Keyframe(0.4399998f, 0.2994483f), new Keyframe(0.4499998f, 0.3226634f), new Keyframe(0.4599998f, 0.34727f), new Keyframe(0.4699998f, 0.3730207f), new Keyframe(0.4799998f, 0.3996685f), new Keyframe(0.4899998f, 0.4269661f), new Keyframe(0.4999998f, 0.4546664f), new Keyframe(0.5099998f, 0.4825224f), new Keyframe(0.5199998f, 0.5102865f), new Keyframe(0.5299998f, 0.5377118f), new Keyframe(0.5399998f, 0.5645511f), new Keyframe(0.5499998f, 0.5905572f), new Keyframe(0.5599998f, 0.6154829f), new Keyframe(0.5699998f, 0.6390811f), new Keyframe(0.5799997f, 0.6611046f), new Keyframe(0.5899997f, 0.6813061f), new Keyframe(0.5999997f, 0.6994448f), new Keyframe(0.6099997f, 0.7163168f), new Keyframe(0.6199997f, 0.7326097f), new Keyframe(0.6299997f, 0.7483313f), new Keyframe(0.6399997f, 0.7634894f), new Keyframe(0.6499997f, 0.7780919f), new Keyframe(0.6599997f, 0.7921466f), new Keyframe(0.6699997f, 0.8056613f), new Keyframe(0.6799996f, 0.8186439f), new Keyframe(0.6899996f, 0.8311023f), new Keyframe(0.6999996f, 0.843044f), new Keyframe(0.7099996f, 0.8544773f), new Keyframe(0.7199996f, 0.8654097f), new Keyframe(0.7299996f, 0.8758491f), new Keyframe(0.7399996f, 0.8858035f), new Keyframe(0.7499996f, 0.8952805f), new Keyframe(0.7599996f, 0.9042881f), new Keyframe(0.7699996f, 0.9128339f), new Keyframe(0.7799996f, 0.9209261f), new Keyframe(0.7899995f, 0.9285723f), new Keyframe(0.7999995f, 0.9357804f), new Keyframe(0.8099995f, 0.9425582f), new Keyframe(0.8199995f, 0.9489135f), new Keyframe(0.8299995f, 0.9548541f), new Keyframe(0.8399995f, 0.9603881f), new Keyframe(0.8499995f, 0.965523f), new Keyframe(0.8599995f, 0.9702669f), new Keyframe(0.8699995f, 0.9746274f), new Keyframe(0.8799995f, 0.9786125f), new Keyframe(0.8899994f, 0.98223f), new Keyframe(0.8999994f, 0.9854877f), new Keyframe(0.9099994f, 0.9883934f), new Keyframe(0.9199994f, 0.9909551f), new Keyframe(0.9299994f, 0.9931804f), new Keyframe(0.9399994f, 0.9950773f), new Keyframe(0.9499994f, 0.9966536f), new Keyframe(0.9599994f, 0.9979171f), new Keyframe(0.9699994f, 0.9988757f), new Keyframe(0.9799994f, 0.9995371f), new Keyframe(0.9899994f, 0.9999093f), new Keyframe(0.9999993f, 1f)
             );
 
+            FootStepCurve = new AnimationCurve
+            (
+                new Keyframe(0f, 0f), new Keyframe(0.01f, 0.001186567f), new Keyframe(0.02f, 0.001699638f), new Keyframe(0.03f, 0.001349453f), new Keyframe(0.04f, -5.374909E-05f), new Keyframe(0.05f, -0.002699727f), new Keyframe(0.05999999f, -0.00677824f), new Keyframe(0.06999999f, -0.01247905f), new Keyframe(0.07999999f, -0.01999192f), new Keyframe(0.08999999f, -0.0295066f), new Keyframe(0.09999999f, -0.04121286f), new Keyframe(0.11f, -0.05530046f), new Keyframe(0.12f, -0.07195916f), new Keyframe(0.13f, -0.09137871f), new Keyframe(0.14f, -0.1137489f), new Keyframe(0.15f, -0.1392595f), new Keyframe(0.16f, -0.1681002f), new Keyframe(0.17f, -0.2004608f), new Keyframe(0.18f, -0.2365311f), new Keyframe(0.19f, -0.2765008f), new Keyframe(0.2f, -0.3205597f), new Keyframe(0.21f, -0.3688975f), new Keyframe(0.22f, -0.4217041f), new Keyframe(0.23f, -0.4791691f), new Keyframe(0.24f, -0.5415273f), new Keyframe(0.25f, -0.6106973f), new Keyframe(0.26f, -0.6841346f), new Keyframe(0.27f, -0.7570006f), new Keyframe(0.28f, -0.8244567f), new Keyframe(0.29f, -0.8816645f), new Keyframe(0.3f, -0.9237853f), new Keyframe(0.31f, -0.9459807f), new Keyframe(0.32f, -0.9457671f), new Keyframe(0.33f, -0.9420502f), new Keyframe(0.3399999f, -0.9398027f), new Keyframe(0.3499999f, -0.9387752f), new Keyframe(0.3599999f, -0.9387186f), new Keyframe(0.3699999f, -0.9393833f), new Keyframe(0.3799999f, -0.9405201f), new Keyframe(0.3899999f, -0.9418796f), new Keyframe(0.3999999f, -0.9432126f), new Keyframe(0.4099999f, -0.9442697f), new Keyframe(0.4199999f, -0.9448016f), new Keyframe(0.4299999f, -0.9445589f), new Keyframe(0.4399998f, -0.9432923f), new Keyframe(0.4499998f, -0.9407417f), new Keyframe(0.4599998f, -0.9348046f), new Keyframe(0.4699998f, -0.924293f), new Keyframe(0.4799998f, -0.9095647f), new Keyframe(0.4899998f, -0.8909773f), new Keyframe(0.4999998f, -0.8688885f), new Keyframe(0.5099998f, -0.8436559f), new Keyframe(0.5199998f, -0.8156375f), new Keyframe(0.5299998f, -0.7851906f), new Keyframe(0.5399998f, -0.7526731f), new Keyframe(0.5499998f, -0.7184428f), new Keyframe(0.5599998f, -0.6828572f), new Keyframe(0.5699998f, -0.6462739f), new Keyframe(0.5799997f, -0.6090508f), new Keyframe(0.5899997f, -0.5715455f), new Keyframe(0.5999997f, -0.5341157f), new Keyframe(0.6099997f, -0.4971191f), new Keyframe(0.6199997f, -0.4609134f), new Keyframe(0.6299997f, -0.4258562f), new Keyframe(0.6399997f, -0.3923054f), new Keyframe(0.6499997f, -0.3606184f), new Keyframe(0.6599997f, -0.3311531f), new Keyframe(0.6699997f, -0.304267f), new Keyframe(0.6799996f, -0.2803181f), new Keyframe(0.6899996f, -0.2596638f), new Keyframe(0.6999996f, -0.2422674f), new Keyframe(0.7099996f, -0.2258926f), new Keyframe(0.7199996f, -0.2101259f), new Keyframe(0.7299996f, -0.1949634f), new Keyframe(0.7399996f, -0.1804012f), new Keyframe(0.7499996f, -0.1664355f), new Keyframe(0.7599996f, -0.1530626f), new Keyframe(0.7699996f, -0.1402785f), new Keyframe(0.7799996f, -0.1280795f), new Keyframe(0.7899995f, -0.1164618f), new Keyframe(0.7999995f, -0.1054215f), new Keyframe(0.8099995f, -0.09495488f), new Keyframe(0.8199995f, -0.08505803f), new Keyframe(0.8299995f, -0.07572719f), new Keyframe(0.8399995f, -0.06695852f), new Keyframe(0.8499995f, -0.0587482f), new Keyframe(0.8599995f, -0.05109242f), new Keyframe(0.8699995f, -0.04398733f), new Keyframe(0.8799995f, -0.03742918f), new Keyframe(0.8899994f, -0.03141412f), new Keyframe(0.8999994f, -0.02593829f), new Keyframe(0.9099994f, -0.02099796f), new Keyframe(0.9199994f, -0.01658919f), new Keyframe(0.9299994f, -0.01270828f), new Keyframe(0.9399994f, -0.009351373f), new Keyframe(0.9499994f, -0.006514624f), new Keyframe(0.9599994f, -0.004194245f), new Keyframe(0.9699994f, -0.002386391f), new Keyframe(0.9799994f, -0.001087278f), new Keyframe(0.9899994f, -0.0002930462f), new Keyframe(0.9999993f, 8.940697E-08f)
+            );
+
+            ErgoAttenuationCurve = new AnimationCurve
+            (
+                new Keyframe(0f, 0.25f), new Keyframe(0.5f, 0.5f), new Keyframe(1f, 0.85f)
+            );
+
             TryLoadPatch(new Patch_LerpCamera_ForceUpdateSway());
             TryLoadPatch(new Patch_UpdateSwayFactors());
             TryLoadPatch(new Patch_LateUpdate_UpdateWpnStats());
@@ -117,7 +136,10 @@ namespace TarkovIRL
             IsBreathingEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable breathing effect", "Adds a visual oscillation to your character's weapon, the intensity of which depends on your current stamina.");
             IsPoseEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable stance-dependent weapon position", "When you crouch, your weapon position is pulled in closer to your character.");
             IsPoseChangeEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable stance transition effect", "When you change your crouch position, you see a dip in your sight picture, the speed and intensity of which is driven by how much you change your stance (e.g. incrimental change versus full change.");
-            IsArmShakeEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable extra arms shaking", "Adds additional arm shake as arm stam decreases");
+            IsArmShakeEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable extra arms shaking", "Adds additional arm shake as arm stam decreases.");
+            IsSmallMovementsEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable small visual effects", "Toggles small details: pulling the weapon in on rotation, lowering with unstocked weapon.");
+            IsFootstepEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable footstep effect", "Player's weapon will bounce a bit more when taking steps, effect intesnity depends on several factors.");
+            IsParallaxEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable parallax feature", "Extensive feature when causes the weapon to rotate in the player's hand and thus un-align the sights, when the player is rotating. The intensity of the effect depends on many factors: is in ADS?; player health and stam, weight and ergo of the weapon. This effect is wired into the sway effect.");
 
             // sliders
             DeadzoneGlobalMultiplier = ConstructFloatConfig(_deadzoneMultiDefault, ADJUST_VAR_SECTION, "Weapon deadzone multiplier", "", 0, 5f);
@@ -127,17 +149,18 @@ namespace TarkovIRL
             ShotParallaxTaperMulti = ConstructFloatConfig(_shotParallaxTaperMultiDefault, ADJUST_VAR_SECTION, "Shot-parallax cooldown multiplier", "", 0, 10f);
             AdsParallaxTaperMulti = ConstructFloatConfig(_adsParallaxTaperMultiDefault, ADJUST_VAR_SECTION, "Ads-parallax cooldown multiplier", "", 0, 10f);
             ParallaxMulti = ConstructFloatConfig(_parallaxMultiDefault, ADJUST_VAR_SECTION,"Parallax multiplier", "", 0, 10f);
-            ShotParallaxMulti = ConstructFloatConfig(ShotParallaxMultiDefault, ADJUST_VAR_SECTION, "Shot parallax multi", "", 0, 10f);
+            ShotParallaxWeaponWeightMulti = ConstructFloatConfig(ShotParallaxWeaponWeightMultiDefault, ADJUST_VAR_SECTION, "Shot parallax weapon weight factor multiplier", "", 0, 10f);
             ParallaxSetSizeMulti = ConstructFloatConfig(ParallaxSetSizeMultiDefault, ADJUST_VAR_SECTION, "Parallax set size", "", 0, 1f);
             EfficiencyLerpMulti = ConstructFloatConfig(EfficiencyLerpMultiDefault, ADJUST_VAR_SECTION, "Efficiency lerp multiplier", "", 0, 10f);
+            CameraUpdateMulti = ConstructFloatConfig(CameraUpdateMultiDefault, ADJUST_VAR_SECTION, "Camera update rate multiplier", "", 0, 10f);
+            FootstepLerpMulti = ConstructFloatConfig(FootstepIntesnityMultiDefault, ADJUST_VAR_SECTION, "Footstep lerp speed multiplier", "", 0, 10f);
+            FootstepIntesnityMulti = ConstructFloatConfig(FootstepIntesnityMultiDefault, ADJUST_VAR_SECTION, "Footstep effect multiplier", "", 0, 10f);
 
 
             // dev
-            //DevTestFloat1 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 1", "This is only for dev use, should not be connected to anything in production releases.", 0, 1000f);
-            //DevTestFloat2 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 1", "This is only for dev use, should not be connected to anything in production releases.", 0, 1000f);
-            //DevTestFloat3 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 1", "This is only for dev use, should not be connected to anything in production releases.", 0, 1000f);
-            //DevTestFloat4 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 1", "This is only for dev use, should not be connected to anything in production releases.", 0, 1000f);
-            //DevTestFloat5 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 1", "This is only for dev use, should not be connected to anything in production releases.", 0, 1000f);
+            //DevTestFloat3 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 3", "This is only for dev use, should not be connected to anything in production releases.", 0, 10f);
+            //DevTestFloat4 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 4", "This is only for dev use, should not be connected to anything in production releases.", 0, 10f);
+            //DevTestFloat5 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 5", "This is only for dev use, should not be connected to anything in production releases.", 0, 10f);
         }
 
         void Update()
@@ -147,6 +170,7 @@ namespace TarkovIRL
 
             UtilsTIRL.Update(DeltaTime);
             EfficiencyController.UpdateEfficiencyLerp(DeltaTime);
+            FootstepController.UpdateStep(DeltaTime);
         }
 
         void LateUpdate()
