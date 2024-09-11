@@ -35,7 +35,7 @@ namespace TarkovIRL
                 return;
             }
 
-            if (WeaponController.IsSwayUpdatedThisFrame)
+            if (SwayController.IsSwayUpdatedThisFrame)
             {
                 return;
             }
@@ -49,42 +49,9 @@ namespace TarkovIRL
             Player player = (Player)playerField.GetValue(firearmController);
             if (player != null && player.IsYourPlayer && player.MovementContext.CurrentState.Name != EPlayerState.Stationary)
             {
-                float weaponWeight = WeaponController.CurrentWeaponWeight;
-                bool isFolded = firearmController.Weapon.GetFoldable() != null && firearmController.Weapon.Folded;
-                bool isPistol = firearmController.Weapon.WeapClass == "pistol";
-
-                Vector3 newSwayFactors = __instance.MotionReact.SwayFactors;
-
-                // vertical axis
-                newSwayFactors.x *= -0.3f * weaponWeight;
-                if (PlayerMotionController.VerticalTrend < 0 && !isPistol)
-                {
-                    newSwayFactors.x *= -1f;
-                }
-
-                // z axis
-                newSwayFactors.y *= -.2f * weaponWeight;
-
-                // horizontal axis ***
-                float addedSway = _BaseSwayValue * PrimeMover.WeaponSwayGlobalMultiplier.Value * WeaponController.GetWeaponMulti() * EfficiencyController.GetEfficiencyModifier;
-
-                if (__instance.IsAiming)
-                {
-                    addedSway *= -2f;
-                    if (isFolded)
-                    {
-                        addedSway *= -0.7f;
-                    }
-                    else if (isPistol)
-                    {
-                        addedSway *= -3f;
-                    }
-                }
-
-                // push values
-                newSwayFactors.z *= addedSway;
+                Vector3 newSwayFactors = SwayController.GetNewSway(__instance.MotionReact.SwayFactors, __instance.IsAiming);
                 __instance.MotionReact.SwayFactors = newSwayFactors;
-                WeaponController.IsSwayUpdatedThisFrame = true;
+                SwayController.IsSwayUpdatedThisFrame = true;
             }
             else
             {

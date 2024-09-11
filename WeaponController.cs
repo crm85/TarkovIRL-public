@@ -5,15 +5,11 @@ namespace TarkovIRL
 {
     public static class WeaponController
     {
-        public enum E_CALIBER { UNKNOWN, R_MINI, R_LOW, R_MID, R_HIGH, P_ } ;
-        public static E_CALIBER Caliber;
-
         // public vars
 
         public static float CurrentWeaponErgoNorm = 0;
         public static float CurrentWeaponWeight = 0;
 
-        public static bool IsSwayUpdatedThisFrame = false;
         public static bool IsStocked = false;
         public static bool IsPistol = false;
         public static bool SwayThisFrame = false;
@@ -25,7 +21,6 @@ namespace TarkovIRL
                 CurrentWeaponWeight = fc.Weapon.GetSingleItemTotalWeight();
                 CurrentWeaponErgoNorm = fc.TotalErgonomics / 100f;
                 IsStocked = CheckForStock(fc.Weapon);
-                ProcessCaliber(fc.Weapon.AmmoCaliber);
             }
             else
             {
@@ -53,24 +48,6 @@ namespace TarkovIRL
                 }
             }
             return true;
-        }
-
-        static void ProcessCaliber(string cal)
-        {
-            if (cal == "556x45NATO")
-            {
-                //Caliber = E_CALIBER.R_556_545;
-            }
-            if (cal == "545x39")
-            {
-                //Caliber = E_CALIBER.R_556_545;
-            }
-
-            // unknown case
-            else
-            {
-                Caliber = E_CALIBER.UNKNOWN;
-            }
         }
 
         public static float GetWeaponMulti()

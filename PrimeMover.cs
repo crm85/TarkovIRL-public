@@ -65,7 +65,7 @@ namespace TarkovIRL
         readonly float _breathingMultiDefault = 1f;
         readonly float _armJitterDefault = 1f;
         readonly float _parallaxMultiDefault = 0.8f;
-        readonly float _adsParallaxTaperMultiDefault = 2f;
+        readonly float _adsParallaxTaperMultiDefault = 4f;
         readonly float _shotParallaxTaperMultiDefault = 10f;
         readonly float ShotParallaxWeaponWeightMultiDefault = 1.75f;
         readonly float ParallaxSetSizeMultiDefault = 0.2f;
@@ -171,11 +171,12 @@ namespace TarkovIRL
             UtilsTIRL.Update(DeltaTime);
             EfficiencyController.UpdateEfficiencyLerp(DeltaTime);
             FootstepController.UpdateStep(DeltaTime);
+            SwayController.UpdateLerp(DeltaTime);
         }
 
         void LateUpdate()
         {
-            WeaponController.IsSwayUpdatedThisFrame = false;
+            SwayController.IsSwayUpdatedThisFrame = false;
         }
 
         void TryLoadPatch(ModulePatch patch)
