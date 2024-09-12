@@ -11,6 +11,8 @@ namespace TarkovIRL
 {
     public static class ParallaxController
     {
+        private static readonly float _ParallaxSetSizeFixed = 0.2f;
+
         private static float _rotAvgXSet = 0;
         private static float _rotAvgYSet = 0;
         private static float _rotAvgX = 0;
@@ -53,7 +55,7 @@ namespace TarkovIRL
 
             Vector2 rotationalMotionThisFrame = _playerRotationLastFrame - player.Rotation;
             _playerRotationLastFrame = player.Rotation;
-            float sizeMultiFinal = PrimeMover.ParallaxSetSizeMulti.Value * weaponMulti;
+            float sizeMultiFinal = _ParallaxSetSizeFixed * PrimeMover.ParallaxSetSizeMulti.Value * weaponMulti;
 
             _rotAvgXSet += rotationalMotionThisFrame.x;
             _rotAvgYSet += rotationalMotionThisFrame.y;

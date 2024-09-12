@@ -49,8 +49,6 @@ namespace TarkovIRL
                 _shotLerp = Mathf.Lerp(_shotLerp, _adsLerpWeight * 0.95f, PrimeMover.Instance.DeltaTime * (1f / _shotWeight) * PrimeMover.ShotParallaxTaperMulti.Value);
                 if (_shotLerp <= _adsLerpWeight) _shotSwitch = false;
             }
-
-            if (_shotSwitch) UtilsTIRL.Log(true, $"intoShot is {_intoShot}, shotLerp is {_shotLerp}, shotweight is {_shotWeight}");
         }
 
         static public void StartNewShot(Weapon weapon)
