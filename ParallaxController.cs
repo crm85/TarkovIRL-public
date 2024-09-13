@@ -65,7 +65,7 @@ namespace TarkovIRL
 
             Vector2 rotationalMotionThisFrame = _playerRotationLastFrame - player.Rotation;
             _playerRotationLastFrame = player.Rotation;
-            float sizeMultiFinal = _ParallaxSetSizeFixed * PrimeMover.ParallaxSetSizeMulti.Value * weaponMulti;
+            float sizeMultiFinal = _ParallaxSetSizeFixed * PrimeMover.ParallaxSetSizeMulti.Value;
 
             _rotAvgXSet += rotationalMotionThisFrame.x;
             _rotAvgYSet += rotationalMotionThisFrame.y;

@@ -24,6 +24,14 @@ namespace TarkovIRL
         public static void UpdateEfficiency(Player player)
         {
             //
+            // TODO : incorporate player.ErgonomicsPenalty into efficiency
+            //
+
+            //
+            // TODO : incorporate strength correctly
+            //
+
+            //
             // Higher result = LESS efficient
             // divide by 1 to reverse result
             //
