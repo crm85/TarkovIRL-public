@@ -12,7 +12,7 @@ namespace TarkovIRL
     {
         const string modGUID = "TarkovIRL";
         const string modName = "TarkovIRL - WHM";
-        const string modVersion = "0.4.5";
+        const string modVersion = "0.4.5.1";
 
         public static PrimeMover Instance;
 
@@ -67,10 +67,10 @@ namespace TarkovIRL
         readonly float _swayMultiDefault = 0.5f;
         readonly float _breathingMultiDefault = 1f;
         readonly float _armJitterDefault = 1f;
-        readonly float _parallaxMultiDefault = 1f;
+        readonly float _parallaxMultiDefault = 2f;
         readonly float _adsParallaxTaperMultiDefault = 20f;
         readonly float _shotParallaxTaperMultiDefault = 10f;
-        readonly float ShotParallaxWeaponWeightMultiDefault = 2.5f;
+        readonly float ShotParallaxWeaponWeightMultiDefault = 5f;
         readonly float ParallaxSetSizeMultiDefault = 2f;
         readonly float EfficiencyLerpMultiDefault = 0.8f;
         readonly float CameraUpdateMultiDefault = 1f;
@@ -158,7 +158,7 @@ namespace TarkovIRL
             AdsParallaxTaperMulti = ConstructFloatConfig(_adsParallaxTaperMultiDefault, ADJUST_VAR_SECTION, "Ads-parallax cooldown multiplier", "", 0, 40f);
             ParallaxMulti = ConstructFloatConfig(_parallaxMultiDefault, ADJUST_VAR_SECTION,"Parallax multiplier", "", 0, 10f);
             ShotParallaxWeaponWeightMulti = ConstructFloatConfig(ShotParallaxWeaponWeightMultiDefault, ADJUST_VAR_SECTION, "Shot parallax weapon weight factor multiplier", "", 0, 10f);
-            ParallaxSetSizeMulti = ConstructFloatConfig(ParallaxSetSizeMultiDefault, ADJUST_VAR_SECTION, "Parallax set size", "", 0, 2f);
+            ParallaxSetSizeMulti = ConstructFloatConfig(ParallaxSetSizeMultiDefault, ADJUST_VAR_SECTION, "Parallax set size", "", 0, 5f);
             EfficiencyLerpMulti = ConstructFloatConfig(EfficiencyLerpMultiDefault, ADJUST_VAR_SECTION, "Efficiency lerp multiplier", "", 0, 10f);
             CameraUpdateMulti = ConstructFloatConfig(CameraUpdateMultiDefault, ADJUST_VAR_SECTION, "Camera update rate multiplier", "", 0, 10f);
             FootstepLerpMulti = ConstructFloatConfig(FootstepLerpMultiDefault, ADJUST_VAR_SECTION, "Footstep lerp speed multiplier", "", 0, 10f);
