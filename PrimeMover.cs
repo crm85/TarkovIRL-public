@@ -71,13 +71,13 @@ namespace TarkovIRL
         readonly float _adsParallaxTaperMultiDefault = 20f;
         readonly float _shotParallaxTaperMultiDefault = 10f;
         readonly float ShotParallaxWeaponWeightMultiDefault = 2.5f;
-        readonly float ParallaxSetSizeMultiDefault = 1f;
+        readonly float ParallaxSetSizeMultiDefault = 2f;
         readonly float EfficiencyLerpMultiDefault = 0.8f;
         readonly float CameraUpdateMultiDefault = 1f;
         readonly float FootstepLerpMultiDefault = 0.6f;
         readonly float FootstepIntesnityMultiDefault = 0.9f;
         readonly float ParallaxInAdsDefault = 0.2f;
-        readonly float PistolSpecificParallaxDefault = 3f;
+        readonly float PistolSpecificParallaxDefault = 1f;
         readonly float ParallaxSnapOutMultiDefault = 5f;
 
         void Awake()
