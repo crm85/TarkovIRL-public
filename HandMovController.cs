@@ -15,7 +15,7 @@ namespace TarkovIRL
         // readonlys
         static readonly float _RotPullInDeltaThresh = 0.0002f;
         static readonly float _RotPullInValue = 0.05f;
-        static readonly float _LerpRate = 4f;
+        static readonly float _LerpRate = 2.2f;
         static readonly float _PullInGateTime = 0.1f;
         static readonly float _StockMovementAddedPosValue = 0.01f;
 
@@ -57,14 +57,14 @@ namespace TarkovIRL
                 _rotPullInTarget = 0;
             }
             _rotPullInLerp = Mathf.Lerp(_rotPullInLerp, _rotPullInTarget, dt * _LerpRate * 0.6f);
-            float finalValue = PrimeMover.Instance.PullInCurve.Evaluate(_rotPullInLerp / _RotPullInValue) * _RotPullInValue;
+            float finalValue = PrimeMover.Instance.SmoothEdgesCurve.Evaluate(_rotPullInLerp / _RotPullInValue) * _RotPullInValue;
             return new Vector3(0, 0, -finalValue);
         }
 
         public static Vector3 GetModifiedHandPosForUnstockedMovement(Player player)
         {
             float dt = player.DeltaTime;
-            if (!WeaponController.IsStocked && PlayerMotionController.IsPlayerMovement)
+            if (!WeaponController.IsStocked && !WeaponController.IsPistol && PlayerMotionController.IsPlayerMovement)
             {
                 _stockedMovementAddedPosTarget = _StockMovementAddedPosValue;
             }
@@ -72,7 +72,7 @@ namespace TarkovIRL
             {
                 _stockedMovementAddedPosTarget = 0;
             }
-            _stockedMovementAddedPosLerp = Mathf.Lerp(_stockedMovementAddedPosLerp, _stockedMovementAddedPosTarget, dt * _LerpRate * 0.4f);
+            _stockedMovementAddedPosLerp = Mathf.Lerp(_stockedMovementAddedPosLerp, _stockedMovementAddedPosTarget, dt * _LerpRate);
             return new Vector3(0, -_stockedMovementAddedPosLerp, 0);
         }
     }

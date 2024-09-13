@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace TarkovIRL
 {
-    internal class CalculateCameraPositionPatch_HandLayers : ModulePatch
+    internal class Patch_CalculateCameraPosition_HandLayers : ModulePatch
     {
         private static FieldInfo playerField;
         private static FieldInfo fcField;
@@ -39,36 +39,53 @@ namespace TarkovIRL
             Player player = (Player)playerField.GetValue(firearmController);
             if ((UnityEngine.Object)(object)player != (UnityEngine.Object)null && player.IsYourPlayer)
             {
+                EfficiencyController.UpdateEfficiency(player);
+
                 Vector3 breathOffset = HandBreathController.GetModifiedHandPosForBreath(player);
                 Vector3 armStamOffset = HandShakeController.GetHandsShakePosition(player);
                 Vector3 poseOffset = HandPoseController.GetModifiedHandPosWithPose(player);
                 Vector3 changePoseOffset = HandPoseController.GetModifiedHandPosWithPoseChange(player);
-
                 Vector3 movementZOffsets = HandMovController.GetModifiedHandPosZMovement(player);
                 Vector3 unstockedOffset = HandMovController.GetModifiedHandPosForUnstockedMovement(player);
-
-
+                Vector3 footstepOffset = FootstepController.GetModifiedHandPosFootstep;
+                Vector3 parallaxPosition = __instance.HandsContainer.WeaponRoot.localPosition;
+                Quaternion parallaxRotation = __instance.HandsContainer.WeaponRoot.localRotation;
+                ParallaxController.GetModifiedHandPosRotParallax(player, ref parallaxPosition, ref parallaxRotation);
 
                 bool isBreathPos = PrimeMover.IsBreathingEffect.Value;
                 bool isPosePos = PrimeMover.IsPoseEffect.Value;
                 bool isPoseChangePos = PrimeMover.IsPoseChangeEffect.Value;
                 bool isArmShake = PrimeMover.IsArmShakeEffect.Value;
+                bool isSmallEffects = PrimeMover.IsSmallMovementsEffect.Value;
+                bool isFootstep = PrimeMover.IsFootstepEffect.Value;
+                bool isParallax = PrimeMover.IsParallaxEffect.Value;
 
                 if (isBreathPos) __instance.HandsContainer.WeaponRoot.localPosition += breathOffset;
                 if (isPosePos) __instance.HandsContainer.WeaponRoot.localPosition += poseOffset;
                 if (isPoseChangePos) __instance.HandsContainer.WeaponRoot.localPosition += changePoseOffset;
                 if (isArmShake) __instance.HandsContainer.WeaponRoot.localPosition += armStamOffset;
-                __instance.HandsContainer.WeaponRoot.localPosition += movementZOffsets;
-                __instance.HandsContainer.WeaponRoot.localPosition += unstockedOffset;
+                if (isSmallEffects)
+                {
+                    __instance.HandsContainer.WeaponRoot.localPosition += movementZOffsets;
+                    __instance.HandsContainer.WeaponRoot.localPosition += unstockedOffset;
+                }
+                if (isFootstep) __instance.HandsContainer.WeaponRoot.localPosition += footstepOffset;
+                if (isParallax)
+                {
+                    __instance.HandsContainer.WeaponRoot.localPosition += parallaxPosition;
+                    __instance.HandsContainer.WeaponRoot.localRotation *= parallaxRotation;
+                }
 
+                if (player.MovementContext.CurrentState.Name != EPlayerState.Stationary)
+                {
+                    if (!PrimeMover.IsWeaponDeadzone.Value)
+                    {
+                        return;
+                    }
 
-
-                Vector3 parallaxPosition = __instance.HandsContainer.WeaponRoot.localPosition;
-                Quaternion parallaxRotation = __instance.HandsContainer.WeaponRoot.localRotation;
-                HandParallaxController.GetModifiedHandPosRotParallax(player, ref parallaxPosition, ref parallaxRotation);
-
-                __instance.HandsContainer.WeaponRoot.localPosition += parallaxPosition;
-                __instance.HandsContainer.WeaponRoot.localRotation *= parallaxRotation;
+                    Vector3 headRotThisFrame = DeadzoneController.GetHeadRotationWithDeadzone(player);
+                    AccessTools.Field(typeof(ProceduralWeaponAnimation), "_headRotationVec").SetValue(player.ProceduralWeaponAnimation, headRotThisFrame);
+                }
             }
         }
     }

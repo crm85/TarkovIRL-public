@@ -7,7 +7,7 @@ using HarmonyLib;
 
 namespace TarkovIRL
 {
-    public class LookPatch_ApplyDeadzone : ModulePatch
+    public class Patch_Look_ApplyDeadzone : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {

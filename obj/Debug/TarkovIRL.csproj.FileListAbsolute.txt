@@ -232,12 +232,3 @@ E:\tirl\TarkovIRL\TarkovIRL\obj\Debug\TarkovIRL.csproj.CopyComplete
 E:\tirl\TarkovIRL\TarkovIRL\obj\Debug\TarkovIRL.dll
 E:\tirl\TarkovIRL\TarkovIRL\obj\Debug\TarkovIRL.pdb
 E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\spt-common.dll
-E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\spt-core.dll
-E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\spt-reflection.dll
-E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\0Harmony.dll
-E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\AnimationSystem.Types.dll
-E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\Assembly-CSharp.dll
-E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\BepInEx.dll
-E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\Comfort.dll
-E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\UnityEngine.CoreModule.dll
-E:\tirl\TarkovIRL\TarkovIRL\bin\Debug\UnityEngine.dll

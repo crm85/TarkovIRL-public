@@ -38,7 +38,7 @@ namespace TarkovIRL
             float headDeltaAdjusted = ProcessHeadDelta(headDeltaRaw);
 
             float finalHeadRotation = headDeltaAdjusted * headDeltaTaperMulti;
-            float lerpRate = _LerpRate;
+            float lerpRate = _LerpRate * PrimeMover.CameraUpdateMulti.Value;
 
             if (isChangeingStance)
             {
