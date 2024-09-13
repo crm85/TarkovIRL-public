@@ -57,7 +57,7 @@ namespace TarkovIRL
                 _rotPullInTarget = 0;
             }
             _rotPullInLerp = Mathf.Lerp(_rotPullInLerp, _rotPullInTarget, dt * _LerpRate * 0.6f);
-            float finalValue = PrimeMover.Instance.PullInCurve.Evaluate(_rotPullInLerp / _RotPullInValue) * _RotPullInValue;
+            float finalValue = PrimeMover.Instance.SmoothEdgesCurve.Evaluate(_rotPullInLerp / _RotPullInValue) * _RotPullInValue;
             return new Vector3(0, 0, -finalValue);
         }
 

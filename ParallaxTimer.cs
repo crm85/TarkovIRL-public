@@ -5,8 +5,6 @@ namespace TarkovIRL
 {
     public static class ParallaxTimer
     {
-        static readonly float _MinWeight = 0.2f;
-
         static float _parallaxWeight = 1f;
 
         static bool _intoAds = false;
@@ -33,7 +31,7 @@ namespace TarkovIRL
 
         static void LerpAds()
         {
-            float targetWeight = _intoAds ? _MinWeight : 1f;
+            float targetWeight = _intoAds ? PrimeMover.ParallaxInAds.Value : 1f;
             _adsLerpWeight = Mathf.Lerp(_adsLerpWeight, targetWeight, PrimeMover.Instance.DeltaTime * _adsSpeedMod * PrimeMover.AdsParallaxTaperMulti.Value);
         }
 

@@ -16,7 +16,7 @@ namespace TarkovIRL
         {
             if ((UnityEngine.Object)(object)__instance != (UnityEngine.Object)null && __instance.IsYourPlayer)
             {
-                FootstepController.NewStep(__instance);
+                if (__instance.ProceduralWeaponAnimation.IsAiming) FootstepController.NewStep(__instance);
             }
         }
     }
