@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace TarkovIRL
 {
-    public static class ParallaxTimer
+    public static class ParallaxAdsController
     {
         static float _parallaxWeight = 1f;
 
@@ -32,19 +32,19 @@ namespace TarkovIRL
         static void LerpAds()
         {
             float targetWeight = _intoAds ? PrimeMover.ParallaxInAds.Value : 1f;
-            _adsLerpWeight = Mathf.Lerp(_adsLerpWeight, targetWeight, PrimeMover.Instance.DeltaTime * _adsSpeedMod * PrimeMover.AdsParallaxTaperMulti.Value);
+            _adsLerpWeight = Mathf.Lerp(_adsLerpWeight, targetWeight, PrimeMover.Instance.DeltaTime * _adsSpeedMod * PrimeMover.AdsParallaxTimeMulti.Value);
         }
 
         static void LerpShot()
         {
             if (_intoShot)
             {
-                _shotLerp = Mathf.Lerp(_shotLerp, _shotWeight * 1.05f, PrimeMover.Instance.DeltaTime * _shotWeight * PrimeMover.ShotParallaxTaperMulti.Value * 3f);
+                _shotLerp = Mathf.Lerp(_shotLerp, _shotWeight * 1.05f, PrimeMover.Instance.DeltaTime * _shotWeight * PrimeMover.ShotParallaxResetTimeMulti.Value * 3f);
                 if (_shotLerp >= _shotWeight * 0.95f) _intoShot = false;
             }
             else
             {
-                _shotLerp = Mathf.Lerp(_shotLerp, _adsLerpWeight * 0.95f, PrimeMover.Instance.DeltaTime * (1f / _shotWeight) * PrimeMover.ShotParallaxTaperMulti.Value);
+                _shotLerp = Mathf.Lerp(_shotLerp, _adsLerpWeight * 0.95f, PrimeMover.Instance.DeltaTime * (1f / _shotWeight) * PrimeMover.ShotParallaxResetTimeMulti.Value);
                 if (_shotLerp <= _adsLerpWeight) _shotSwitch = false;
             }
         }

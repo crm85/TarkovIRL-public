@@ -41,7 +41,7 @@ namespace TarkovIRL
             newSwayFactors.y *= -.2f * weaponWeight;
 
             // horizontal axis ***
-            _addedSwayTarget = _BaseSwayValue * PrimeMover.WeaponSwayGlobalMultiplier.Value * WeaponController.GetWeaponMulti() * EfficiencyController.GetEfficiencyModifier;
+            _addedSwayTarget = _BaseSwayValue * PrimeMover.WeaponSwayMulti.Value * WeaponController.GetWeaponMulti() * EfficiencyController.GetEfficiencyModifier;
 
             if (isAiming)
             {
