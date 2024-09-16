@@ -21,7 +21,7 @@ namespace TarkovIRL
                 FirearmController fc = __instance.HandsController as FirearmController;
                 WeaponController.CurrentWeaponWeight = fc.Weapon.GetSingleItemTotalWeight();
                 float shotWeight = WeaponController.CurrentWeaponWeight * (1f - WeaponController.CurrentWeaponErgoNorm);
-                if (WeaponController.IsStocked && fc.IsAiming) ParallaxTimer.StartNewShot(fc.Weapon);
+                if (WeaponController.IsStocked && fc.IsAiming) ParallaxAdsController.StartNewShot(fc.Weapon);
             }
             else
             {

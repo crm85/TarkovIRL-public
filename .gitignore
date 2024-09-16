@@ -2,3 +2,5 @@
 *.pdb
 *.pdb
 *.cache
+obj/Debug/TarkovIRL.pdb
+*.dll

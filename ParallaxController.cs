@@ -40,12 +40,12 @@ namespace TarkovIRL
         {
             float weaponMulti = WeaponController.GetWeaponMulti();
             float efficiencyMulti = EfficiencyController.GetEfficiencyModifier;
-            float adsEfficiencyMulti = 1f / efficiencyMulti;
-            float weaponMultiAdjusted = 1f / weaponMulti;
-            float parallaxEfficiencyMulti = weaponMultiAdjusted * adsEfficiencyMulti;
+            float inverseEfficiencyMulti = 1f / efficiencyMulti;
+            float inverseWeaponMulti = 1f / weaponMulti;
+            float parallaxEfficiencyMulti = inverseWeaponMulti * inverseEfficiencyMulti;
             bool isAiming = player.ProceduralWeaponAnimation.IsAiming;
 
-            ParallaxTimer.UpdateLerps();
+            ParallaxAdsController.UpdateLerps();
 
             if (WeaponController.IsStocked)
             {
@@ -55,11 +55,11 @@ namespace TarkovIRL
 
                 if (isNewAds)
                 {
-                    ParallaxTimer.StartNewAds(true, parallaxEfficiencyMulti);
+                    ParallaxAdsController.StartNewAds(true, parallaxEfficiencyMulti);
                 }
                 else if (isFinishAds)
                 {
-                    ParallaxTimer.StartNewAds(false, parallaxEfficiencyMulti);
+                    ParallaxAdsController.StartNewAds(false, parallaxEfficiencyMulti);
                 }
             }
 
@@ -76,44 +76,38 @@ namespace TarkovIRL
             _rotAvgX = _rotAvgXSet * player.DeltaTime;
             _rotAvgY = _rotAvgYSet * player.DeltaTime;
 
-            _parallaxWeightADS = ParallaxTimer.ParallaxWeight;
+            _parallaxWeightADS = ParallaxAdsController.ParallaxWeight;
 
             float dt = player.DeltaTime;
             float extraPistolParallax = WeaponController.IsPistol ? PrimeMover.PistolSpecificParallax.Value : 1f;
-            float parallaxMulti = PrimeMover.ParallaxMulti.Value * weaponMulti * efficiencyMulti * extraPistolParallax;
+            float parallaxMulti = PrimeMover.ParallaxMulti.Value * weaponMulti * extraPistolParallax;
+            float zeroDt = dt * PrimeMover.ParallaxReturnToCenterMulti.Value * inverseEfficiencyMulti;
 
             //
             // calc the position lerps
             //
             _posLerpXTarget = Mathf.Lerp(_posLerpXTarget, _rotAvgX * parallaxMulti, dt);
-            _posLerpXTarget = Mathf.Lerp(_posLerpXTarget, 0, dt);
+            _posLerpXTarget = Mathf.Lerp(_posLerpXTarget, 0, zeroDt);
             //
             _posLerpYTarget = Mathf.Lerp(_posLerpYTarget, _rotAvgY * parallaxMulti, dt);
-            _posLerpYTarget = Mathf.Lerp(_posLerpYTarget, 0, dt);
+            _posLerpYTarget = Mathf.Lerp(_posLerpYTarget, 0, zeroDt);
 
             //
             // calc the rotation lerps
             //
             _rotLerpXTarget = Mathf.Lerp(_rotLerpXTarget, _rotAvgX * parallaxMulti, dt);
-            _rotLerpXTarget = Mathf.Lerp(_rotLerpXTarget, 0, dt);
-            //
+            _rotLerpXTarget = Mathf.Lerp(_rotLerpXTarget, 0, zeroDt);
             _rotLerpYTarget = Mathf.Lerp(_rotLerpYTarget, _rotAvgY * parallaxMulti, dt);
-            _rotLerpYTarget = Mathf.Lerp(_rotLerpYTarget, 0, dt);
+            _rotLerpYTarget = Mathf.Lerp(_rotLerpYTarget, 0, zeroDt);
 
             //
             // final lerp
             //
-            float rotDeltaAdjusted = Mathf.Round(PlayerMotionController.RotationDelta * 10000f);
-            bool canLerpToZero = rotDeltaAdjusted <= 1f && isAiming;
-            float lerpTo = canLerpToZero ? 0 : 1f;
-            float finalLerpDt = dt * PrimeMover.ParallaxSnapOutMulti.Value * parallaxEfficiencyMulti;
-
+            _rotLerpX = Mathf.Lerp(_rotLerpX, _rotLerpXTarget, dt);
+            _rotLerpY = Mathf.Lerp(_rotLerpY, _rotLerpYTarget, dt);
             //
-            _rotLerpX = Mathf.Lerp(_rotLerpX, _rotLerpXTarget * lerpTo, finalLerpDt);
-            _rotLerpY = Mathf.Lerp(_rotLerpY, _rotLerpYTarget * lerpTo, finalLerpDt);
-            //
-            _posLerpX = Mathf.Lerp(_posLerpX, _posLerpXTarget * lerpTo, finalLerpDt);
-            _posLerpY = Mathf.Lerp(_posLerpY, _posLerpYTarget * lerpTo, finalLerpDt);
+            _posLerpX = Mathf.Lerp(_posLerpX, _posLerpXTarget, dt);
+            _posLerpY = Mathf.Lerp(_posLerpY, _posLerpYTarget, dt);
 
             //
             // smooth out final values here!
