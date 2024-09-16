@@ -59,7 +59,7 @@ namespace TarkovIRL
             }
 
             _deadZoneLerpTarget = Mathf.Lerp(_deadZoneLerpTarget, finalHeadRotation, Time.deltaTime * lerpRate);
-            headRotThisFrame.y += _deadZoneLerpTarget * PrimeMover.DeadzoneGlobalMultiplier.Value;
+            headRotThisFrame.y += _deadZoneLerpTarget * PrimeMover.WeaponDeadzoneMulti.Value;
 
             return headRotThisFrame;
         }

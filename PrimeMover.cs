@@ -12,7 +12,7 @@ namespace TarkovIRL
     {
         const string modGUID = "TarkovIRL";
         const string modName = "TarkovIRL - WHM";
-        const string modVersion = "0.4.5.1";
+        const string modVersion = "0.4.6";
 
         public static PrimeMover Instance;
 
@@ -40,13 +40,13 @@ namespace TarkovIRL
         public static ConfigEntry<bool> IsParallaxEffect;
 
         const string ADJUST_VAR_SECTION = "2 - Adjust feature values";
-        public static ConfigEntry<float> DeadzoneGlobalMultiplier;
-        public static ConfigEntry<float> WeaponSwayGlobalMultiplier;
+        public static ConfigEntry<float> WeaponDeadzoneMulti;
+        public static ConfigEntry<float> WeaponSwayMulti;
         public static ConfigEntry<float> BreathingEffectMulti;
-        public static ConfigEntry<float> HandsShakeMulti;
+        public static ConfigEntry<float> ArmShakeMulti;
         public static ConfigEntry<float> ParallaxMulti;
-        public static ConfigEntry<float> AdsParallaxTaperMulti;
-        public static ConfigEntry<float> ShotParallaxTaperMulti;
+        public static ConfigEntry<float> AdsParallaxTimeMulti;
+        public static ConfigEntry<float> ShotParallaxResetTimeMulti;
         public static ConfigEntry<float> EfficiencyLerpMulti;
         public static ConfigEntry<float> ShotParallaxWeaponWeightMulti;
         public static ConfigEntry<float> ParallaxSetSizeMulti;
@@ -55,30 +55,30 @@ namespace TarkovIRL
         public static ConfigEntry<float> FootstepIntesnityMulti;
         public static ConfigEntry<float> ParallaxInAds;
         public static ConfigEntry<float> PistolSpecificParallax;
-        public static ConfigEntry<float> ParallaxSnapOutMulti;
+        public static ConfigEntry<float> ParallaxReturnToCenterMulti;
+        public static ConfigEntry<float> DevTestFloat3;
 
         const string DEV_SECTION = "3 - Only for dev/testing";
-        public static ConfigEntry<float> DevTestFloat3;
         public static ConfigEntry<float> DevTestFloat4;
         public static ConfigEntry<float> DevTestFloat5;
 
         // config defaults
-        readonly float _deadzoneMultiDefault = 2f;
-        readonly float _swayMultiDefault = 0.5f;
-        readonly float _breathingMultiDefault = 1f;
-        readonly float _armJitterDefault = 1f;
-        readonly float _parallaxMultiDefault = 2f;
-        readonly float _adsParallaxTaperMultiDefault = 20f;
-        readonly float _shotParallaxTaperMultiDefault = 10f;
-        readonly float ShotParallaxWeaponWeightMultiDefault = 5f;
-        readonly float ParallaxSetSizeMultiDefault = 2f;
-        readonly float EfficiencyLerpMultiDefault = 0.8f;
+        readonly float AdsParallaxTimeMultiDefault = 30f;
+        readonly float ArmShakeMultiDefault = 1f;
+        readonly float BreathingEffectMultiDefault = 1f;
         readonly float CameraUpdateMultiDefault = 1f;
+        readonly float EfficiencyLerpMultiDefault = 0.8f;
         readonly float FootstepLerpMultiDefault = 0.6f;
         readonly float FootstepIntesnityMultiDefault = 0.9f;
         readonly float ParallaxInAdsDefault = 0.2f;
         readonly float PistolSpecificParallaxDefault = 1f;
-        readonly float ParallaxSnapOutMultiDefault = 5f;
+        readonly float ParallaxMultiDefault = 7.5f;
+        readonly float ParallaxReturnToCenterMultiDefault = 10f;
+        readonly float ParallaxSetSizeMultiDefault = 2f;
+        readonly float ShotParallaxWeaponWeightMultiDefault = 5f;
+        readonly float ShotParallaxResetTimeMultiDefault = 10f;
+        readonly float WeaponDeadzoneMultiDefault = 2f;
+        readonly float WeaponSwayMultiDefault = 0.5f;
 
         void Awake()
         {
@@ -150,27 +150,27 @@ namespace TarkovIRL
             IsParallaxEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable parallax feature", "Extensive feature when causes the weapon to rotate in the player's hand and thus un-align the sights, when the player is rotating. The intensity of the effect depends on many factors: is in ADS?; player health and stam, weight and ergo of the weapon. This effect is wired into the sway effect.");
 
             // sliders
-            DeadzoneGlobalMultiplier = ConstructFloatConfig(_deadzoneMultiDefault, ADJUST_VAR_SECTION, "Weapon deadzone multiplier", "", 0, 5f);
-            WeaponSwayGlobalMultiplier = ConstructFloatConfig(_swayMultiDefault, ADJUST_VAR_SECTION, "Weapon sway multiplier", "", 0, 5f);
-            BreathingEffectMulti = ConstructFloatConfig(_breathingMultiDefault, ADJUST_VAR_SECTION, "Breathing effect multiplier", "", 0, 5f);
-            HandsShakeMulti = ConstructFloatConfig(_armJitterDefault, ADJUST_VAR_SECTION, "Arm shake multiplier", "", 0, 5f);
-            ShotParallaxTaperMulti = ConstructFloatConfig(_shotParallaxTaperMultiDefault, ADJUST_VAR_SECTION, "Shot-parallax cooldown multiplier", "", 0, 20f);
-            AdsParallaxTaperMulti = ConstructFloatConfig(_adsParallaxTaperMultiDefault, ADJUST_VAR_SECTION, "Ads-parallax cooldown multiplier", "", 0, 40f);
-            ParallaxMulti = ConstructFloatConfig(_parallaxMultiDefault, ADJUST_VAR_SECTION,"Parallax multiplier", "", 0, 10f);
+            WeaponDeadzoneMulti = ConstructFloatConfig(WeaponDeadzoneMultiDefault, ADJUST_VAR_SECTION, "Weapon deadzone multiplier", "", 0, 5f);
+            WeaponSwayMulti = ConstructFloatConfig(WeaponSwayMultiDefault, ADJUST_VAR_SECTION, "Weapon sway multiplier", "", 0, 5f);
+            BreathingEffectMulti = ConstructFloatConfig(BreathingEffectMultiDefault, ADJUST_VAR_SECTION, "Breathing effect multiplier", "", 0, 5f);
+            ArmShakeMulti = ConstructFloatConfig(ArmShakeMultiDefault, ADJUST_VAR_SECTION, "Arm shake multiplier", "", 0, 5f);
+            ShotParallaxResetTimeMulti = ConstructFloatConfig(ShotParallaxResetTimeMultiDefault, ADJUST_VAR_SECTION, "Shot-parallax cooldown multiplier", "Higher = d", 0, 20f);
+            AdsParallaxTimeMulti = ConstructFloatConfig(AdsParallaxTimeMultiDefault, ADJUST_VAR_SECTION, "Ads-parallax cooldown multiplier", "", 0, 160f);
+            ParallaxMulti = ConstructFloatConfig(ParallaxMultiDefault, ADJUST_VAR_SECTION,"Parallax multiplier", "", 0, 20f);
             ShotParallaxWeaponWeightMulti = ConstructFloatConfig(ShotParallaxWeaponWeightMultiDefault, ADJUST_VAR_SECTION, "Shot parallax weapon weight factor multiplier", "", 0, 10f);
-            ParallaxSetSizeMulti = ConstructFloatConfig(ParallaxSetSizeMultiDefault, ADJUST_VAR_SECTION, "Parallax set size", "", 0, 5f);
+            ParallaxSetSizeMulti = ConstructFloatConfig(ParallaxSetSizeMultiDefault, ADJUST_VAR_SECTION, "Parallax set size", "", 0, 20f);
             EfficiencyLerpMulti = ConstructFloatConfig(EfficiencyLerpMultiDefault, ADJUST_VAR_SECTION, "Efficiency lerp multiplier", "", 0, 10f);
-            CameraUpdateMulti = ConstructFloatConfig(CameraUpdateMultiDefault, ADJUST_VAR_SECTION, "Camera update rate multiplier", "", 0, 10f);
-            FootstepLerpMulti = ConstructFloatConfig(FootstepLerpMultiDefault, ADJUST_VAR_SECTION, "Footstep lerp speed multiplier", "", 0, 10f);
-            FootstepIntesnityMulti = ConstructFloatConfig(FootstepIntesnityMultiDefault, ADJUST_VAR_SECTION, "Footstep effect multiplier", "", 0, 10f);
-            ParallaxInAds = ConstructFloatConfig(ParallaxInAdsDefault, ADJUST_VAR_SECTION, "Parallax effect in ADS", "", 0, 10f);
+            CameraUpdateMulti = ConstructFloatConfig(CameraUpdateMultiDefault, ADJUST_VAR_SECTION, "Camera update rate multiplier", "Really a nothing-burger", 0, 10f);
+            FootstepLerpMulti = ConstructFloatConfig(FootstepLerpMultiDefault, ADJUST_VAR_SECTION, "Footstep lerp speed multiplier", "How quickly the footstep animation plays", 0, 10f);
+            FootstepIntesnityMulti = ConstructFloatConfig(FootstepIntesnityMultiDefault, ADJUST_VAR_SECTION, "Footstep intensity multiplier", "", 0, 10f);
+            ParallaxInAds = ConstructFloatConfig(ParallaxInAdsDefault, ADJUST_VAR_SECTION, "Parallax effect in ADS", "The % of parallax effect that you see in ADS (with a stocked weapon)", 0, 1f);
             PistolSpecificParallax = ConstructFloatConfig(PistolSpecificParallaxDefault, ADJUST_VAR_SECTION, "Parallax effect value specifically for pistols", "", 0, 10f);
-            ParallaxSnapOutMulti = ConstructFloatConfig(ParallaxSnapOutMultiDefault, ADJUST_VAR_SECTION, "Parallax snap-to-zero multiplier", "", 0, 20f);
+            ParallaxReturnToCenterMulti = ConstructFloatConfig(ParallaxReturnToCenterMultiDefault, ADJUST_VAR_SECTION, "Parallax return-to-center multiplier", "Higher = a faster return to center of the parallax", 0, 20f);
 
 
             // dev
-            //DevTestFloat3 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 3", "This is only for dev use, should not be connected to anything in production releases.", 0, 10f);
-            //DevTestFloat4 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 4", "This is only for dev use, should not be connected to anything in production releases.", 0, 10f);
+            //DevTestFloat3 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 3", "This is only for dev use, should not be connected to anything in production releases.", 1f, 30f);
+            //DevTestFloat4 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 4", "This is only for dev use, should not be connected to anything in production releases.", 1f, 10f);
             //DevTestFloat5 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 5", "This is only for dev use, should not be connected to anything in production releases.", 0, 10f);
         }
 
@@ -183,6 +183,7 @@ namespace TarkovIRL
             EfficiencyController.UpdateEfficiencyLerp(DeltaTime);
             FootstepController.UpdateStep(DeltaTime);
             SwayController.UpdateLerp(DeltaTime);
+            ParallaxFadeController.UpdateLerp(DeltaTime);
         }
 
         void LateUpdate()

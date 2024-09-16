@@ -53,7 +53,7 @@ namespace TarkovIRL
                 _handShakeLoopTimeY += 1f;
             }
 
-            float finalMulti = armStamMulti * healthMulti * armHealthLMulti * armHealthRMulti * strengthMulti * poseLevelMulti * PrimeMover.HandsShakeMulti.Value * _HandShakeMultiGeneral;
+            float finalMulti = armStamMulti * healthMulti * armHealthLMulti * armHealthRMulti * strengthMulti * poseLevelMulti * PrimeMover.ArmShakeMulti.Value * _HandShakeMultiGeneral;
 
             float handsShakeX = shakeCurve.Evaluate(_handShakeLoopTimeX) * finalMulti;
             float handsShakeY = shakeCurve.Evaluate(_handShakeLoopTimeY) * finalMulti;
