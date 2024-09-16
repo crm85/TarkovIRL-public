@@ -160,7 +160,7 @@ namespace TarkovIRL
             ShotParallaxWeaponWeightMulti = ConstructFloatConfig(ShotParallaxWeaponWeightMultiDefault, ADJUST_VAR_SECTION, "Shot parallax weapon weight factor multiplier", "", 0, 10f);
             ParallaxSetSizeMulti = ConstructFloatConfig(ParallaxSetSizeMultiDefault, ADJUST_VAR_SECTION, "Parallax set size", "", 0, 20f);
             EfficiencyLerpMulti = ConstructFloatConfig(EfficiencyLerpMultiDefault, ADJUST_VAR_SECTION, "Efficiency lerp multiplier", "", 0, 10f);
-            CameraUpdateMulti = ConstructFloatConfig(CameraUpdateMultiDefault, ADJUST_VAR_SECTION, "Camera update rate multiplier", "Really a nothing-burger", 0, 10f);
+            //CameraUpdateMulti = ConstructFloatConfig(CameraUpdateMultiDefault, ADJUST_VAR_SECTION, "Camera update rate multiplier", "Really a nothing-burger", 0, 10f);
             FootstepLerpMulti = ConstructFloatConfig(FootstepLerpMultiDefault, ADJUST_VAR_SECTION, "Footstep lerp speed multiplier", "How quickly the footstep animation plays", 0, 10f);
             FootstepIntesnityMulti = ConstructFloatConfig(FootstepIntesnityMultiDefault, ADJUST_VAR_SECTION, "Footstep intensity multiplier", "", 0, 10f);
             ParallaxInAds = ConstructFloatConfig(ParallaxInAdsDefault, ADJUST_VAR_SECTION, "Parallax effect in ADS", "The % of parallax effect that you see in ADS (with a stocked weapon)", 0, 1f);

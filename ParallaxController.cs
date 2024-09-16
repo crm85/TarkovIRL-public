@@ -110,10 +110,6 @@ namespace TarkovIRL
             _posLerpY = Mathf.Lerp(_posLerpY, _posLerpYTarget, dt);
 
             //
-            // smooth out final values here!
-            //
-
-            //
             // fill the references
             //
             rotation = Quaternion.Euler(0, -_rotLerpY * 100f * _parallaxWeightADS, -_rotLerpX * 100f * _parallaxWeightADS);
