@@ -12,7 +12,7 @@ namespace TarkovIRL
     {
         const string modGUID = "TarkovIRL";
         const string modName = "TarkovIRL - WHM";
-        const string modVersion = "0.4.6";
+        const string modVersion = "0.4.6.1";
 
         public static PrimeMover Instance;
 
@@ -130,10 +130,7 @@ namespace TarkovIRL
             TryLoadPatch(new Patch_OnShot());
             TryLoadPatch(new Patch_CalculateCameraPosition_HandLayers());
             TryLoadPatch(new Patch_PlayStepSound());
-
-            //TryLoadPatch(new SetHeadRotationPatch_ApplyDeadzone());
-            //TryLoadPatch(new Patch_Look_ApplyDeadzone());
-            //never-ending deadzone bug fix attempts ^
+            TryLoadPatch(new Patch_SetHeadRotation());
         }
 
         void LoadConfigValues()
@@ -183,7 +180,7 @@ namespace TarkovIRL
             EfficiencyController.UpdateEfficiencyLerp(DeltaTime);
             FootstepController.UpdateStep(DeltaTime);
             SwayController.UpdateLerp(DeltaTime);
-            ParallaxFadeController.UpdateLerp(DeltaTime);
+            //DeadzoneController.UpdateLerp(DeltaTime);
         }
 
         void LateUpdate()
