@@ -39,6 +39,8 @@ namespace TarkovIRL
         public static ConfigEntry<bool> IsFootstepEffect;
         public static ConfigEntry<bool> IsParallaxEffect;
 
+        public static ConfigEntry<bool> IsLogging;
+
         const string ADJUST_VAR_SECTION = "2 - Adjust feature values";
         public static ConfigEntry<float> WeaponDeadzoneMulti;
         public static ConfigEntry<float> WeaponSwayMulti;
@@ -166,6 +168,7 @@ namespace TarkovIRL
 
 
             // dev
+            IsLogging = ConstructBoolConfig(false, DEV_SECTION, "Enable debug logging", "");
             //DevTestFloat3 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 3", "This is only for dev use, should not be connected to anything in production releases.", 1f, 30f);
             //DevTestFloat4 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 4", "This is only for dev use, should not be connected to anything in production releases.", 1f, 10f);
             //DevTestFloat5 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 5", "This is only for dev use, should not be connected to anything in production releases.", 0, 10f);
@@ -180,7 +183,6 @@ namespace TarkovIRL
             EfficiencyController.UpdateEfficiencyLerp(DeltaTime);
             FootstepController.UpdateStep(DeltaTime);
             SwayController.UpdateLerp(DeltaTime);
-            //DeadzoneController.UpdateLerp(DeltaTime);
         }
 
         void LateUpdate()

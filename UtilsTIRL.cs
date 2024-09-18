@@ -17,10 +17,16 @@ namespace TarkovIRL
 
         public static void Log(bool everyFrame, string toPrint)
         {
+            if (!PrimeMover.IsLogging.Value)
+            {
+                return;
+            }
+
             if (everyFrame)
             {
                 Logger.LogError((object)toPrint);
             }
+
             else
             {
                 if (_dt > _updateResolution)

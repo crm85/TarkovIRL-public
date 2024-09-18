@@ -20,14 +20,16 @@ namespace TarkovIRL
             return adjustedHeadDelta * WeaponController.CurrentWeaponWeight * 0.1f;
         }
 
-        public static Vector3 GetHeadRotationWithDeadzone(Player player, float deadzoneSetting)
+        public static Vector3 GetHeadRotationWithDeadzone(Player player, float deadzoneSetting, Vector3 headRotInitial)
         {
+            UtilsTIRL.Log(true, $"stage 2");
+
             if (!_updateDZ)
             {
                 _updateDZ = PlayerMotionController.IsPlayerMovement || PlayerMotionController.RotationDelta > _RotDeltaThresh;
             }
 
-            Vector3 headRotThisFrame = player.HeadRotation;
+            Vector3 headRotThisFrame = headRotInitial;
             headRotThisFrame.y *= 1.5f;
 
             bool flag1 = player.MovementContext.CurrentState.AnimatorStateHash == _TurnState1;
@@ -60,6 +62,8 @@ namespace TarkovIRL
 
             _deadZoneLerp = Mathf.Lerp(_deadZoneLerp, finalHeadRotation, Time.deltaTime * lerpRate);
             headRotThisFrame.y += _deadZoneLerp;
+
+            UtilsTIRL.Log(true, $"initial head rot {headRotInitial}, final output {headRotThisFrame}");
 
             return headRotThisFrame;
         }
