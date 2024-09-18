@@ -133,6 +133,7 @@ namespace TarkovIRL
             TryLoadPatch(new Patch_CalculateCameraPosition_HandLayers());
             TryLoadPatch(new Patch_PlayStepSound());
             TryLoadPatch(new Patch_SetHeadRotation());
+            TryLoadPatch(new Patch_ThrowGrenade());
         }
 
         void LoadConfigValues()
