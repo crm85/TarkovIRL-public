@@ -62,9 +62,14 @@ namespace TarkovIRL
             _efficiencyLerpTarget = strengthMulti * underweightReduction * healthMulti * armHealthRMulti * armHealthLMulti * stamMulti * handStamMulti * playerSpeed * poseLevel;
         }
 
-        public static float GetEfficiencyModifier
+        public static float EfficiencyModifier
         {
             get { return _efficiencyLerp; }
+        }
+
+        public static float EfficiencyModifierInverse
+        {
+            get { return 1f / _efficiencyLerp; }
         }
     }
 }

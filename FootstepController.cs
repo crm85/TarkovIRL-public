@@ -21,7 +21,7 @@ namespace TarkovIRL
 
         public static void UpdateStep(float dt)
         {
-            float efficiencyInvert = 1f / EfficiencyController.GetEfficiencyModifier;
+            float efficiencyInvert = 1f / EfficiencyController.EfficiencyModifier;
             float speedAdjusted = 1f + _currentSpeed;
             _stepLerp = Mathf.Lerp(_stepLerp, 1f, dt * _UpdateMulti * efficiencyInvert * speedAdjusted * PrimeMover.FootstepLerpMulti.Value);
         }
@@ -37,7 +37,7 @@ namespace TarkovIRL
             get 
             {
                 float speedAdjusted = 0.2f + _currentSpeed;
-                float stepValue = PrimeMover.Instance.FootStepCurve.Evaluate(_stepLerp) * _StepIntensityMulti * PrimeMover.FootstepIntesnityMulti.Value * EfficiencyController.GetEfficiencyModifier * speedAdjusted;
+                float stepValue = PrimeMover.Instance.FootStepCurve.Evaluate(_stepLerp) * _StepIntensityMulti * PrimeMover.FootstepIntesnityMulti.Value * EfficiencyController.EfficiencyModifier * speedAdjusted;
                 return new Vector3(0, stepValue, 0); 
             }
         }

@@ -94,8 +94,8 @@ namespace TarkovIRL
         readonly float ShotParallaxResetTimeMultiDefault = 10f;
         readonly float WeaponDeadzoneMultiDefault = 2f;
         readonly float WeaponSwayMultiDefault = 0.5f;
-        readonly float ThrowStrengthMultiDefault = 1f;
-        readonly float ThrowSpeedMultiDefault = 1f;
+        readonly float ThrowStrengthMultiDefault = 18f;
+        readonly float ThrowSpeedMultiDefault = 2.3f;
 
         void Awake()
         {

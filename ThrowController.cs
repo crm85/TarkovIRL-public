@@ -10,7 +10,7 @@ namespace TarkovIRL
     internal static class ThrowController
     {
         // readonlys
-        static readonly float _ThrowStrengthMulti = 1f;
+        static readonly float _ThrowStrengthMulti = -1f;
         static readonly float _ThrowSpeedMulti = 1f;
 
         // vars
@@ -31,10 +31,10 @@ namespace TarkovIRL
         {
             get
             {
-                float xOffsetThisFrame = PrimeMover.Instance.ThrowVisualCurveX.Evaluate(_throwLerp) * _ThrowStrengthMulti * PrimeMover.ThrowStrengthMulti.Value;
-                float yOffsetThisFrame = PrimeMover.Instance.ThrowVisualCurveY.Evaluate(_throwLerp) * _ThrowStrengthMulti * PrimeMover.ThrowStrengthMulti.Value;
+                float xOffsetThisFrame = PrimeMover.Instance.ThrowVisualCurveX.Evaluate(_throwLerp) * EfficiencyController.EfficiencyModifierInverse * PrimeMover.ThrowStrengthMulti.Value;
+                float yOffsetThisFrame = PrimeMover.Instance.ThrowVisualCurveY.Evaluate(_throwLerp) * EfficiencyController.EfficiencyModifierInverse * 4 * PrimeMover.ThrowStrengthMulti.Value;
                 UtilsTIRL.Log(true, $"throw | xOffsetThisFrame {xOffsetThisFrame} | yOffsetThisFrame {yOffsetThisFrame}");
-                return new Vector3(-xOffsetThisFrame, yOffsetThisFrame, 0);
+                return new Vector3(-xOffsetThisFrame, -yOffsetThisFrame, 0);
             }
         }
     }

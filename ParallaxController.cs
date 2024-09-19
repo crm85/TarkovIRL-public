@@ -39,7 +39,7 @@ namespace TarkovIRL
         public static void GetModifiedHandPosRotParallax(Player player, ref Vector3 position, ref Quaternion rotation)
         {
             float weaponMulti = WeaponController.GetWeaponMulti();
-            float efficiencyMulti = EfficiencyController.GetEfficiencyModifier;
+            float efficiencyMulti = EfficiencyController.EfficiencyModifier;
             float inverseEfficiencyMulti = 1f / efficiencyMulti;
             float inverseWeaponMulti = 1f / weaponMulti;
             float parallaxEfficiencyMulti = inverseWeaponMulti * inverseEfficiencyMulti;
