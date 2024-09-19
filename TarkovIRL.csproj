@@ -93,9 +93,11 @@
     <Compile Include="Patch_OnShot.cs" />
     <Compile Include="ParallaxController.cs" />
     <Compile Include="Patch_SetHeadRotation.cs" />
+    <Compile Include="Patch_ThrowGrenade.cs" />
     <Compile Include="PlayerMotionController.cs" />
     <Compile Include="Patch_PlayStepSound.cs" />
     <Compile Include="SwayController.cs" />
+    <Compile Include="ThrowController.cs" />
     <Compile Include="UtilsTIRL.cs" />
     <Compile Include="WeaponController.cs" />
     <Compile Include="Patch_UpdateSwayFactors.cs" />
