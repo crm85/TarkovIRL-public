@@ -22,19 +22,12 @@ namespace TarkovIRL
                 return;
             }
 
-            if (everyFrame)
+            if (everyFrame && !PrimeMover.DebugSpam.Value)
             {
-                Logger.LogError((object)toPrint);
+                return;
             }
 
-            else
-            {
-                if (_dt > _updateResolution)
-                {
-                    _dt = 0;
-                    Logger.LogError((object)toPrint);
-                }
-            }
+            Logger.LogError((object)toPrint);
         }
 
         public static void Update(float dt)

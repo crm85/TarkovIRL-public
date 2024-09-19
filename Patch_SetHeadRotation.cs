@@ -22,8 +22,6 @@ namespace TarkovIRL
         [PatchPrefix]
         private static bool Prefix(ProceduralWeaponAnimation __instance, Vector3 headRot)
         {
-            UtilsTIRL.Log(true, $"stage 1");
-
             if (!PrimeMover.IsWeaponDeadzone.Value)
             {
                 return true;
@@ -37,14 +35,14 @@ namespace TarkovIRL
             Player.FirearmController firearmController = (Player.FirearmController)_fcField.GetValue(__instance);
             if ((UnityEngine.Object)(object)firearmController == (UnityEngine.Object)null)
             {
-                return true;
+                //return true;
             }
 
             Player player = (Player)_playerField.GetValue(firearmController);
             if ((UnityEngine.Object)(object)player != (UnityEngine.Object)null && player.IsYourPlayer && player.MovementContext.CurrentState.Name != EPlayerState.Stationary)
             {
-                UtilsTIRL.Log(true, $"stage 1");
                 Vector3 headRotModified = DeadzoneController.GetHeadRotationWithDeadzone(player, PrimeMover.WeaponDeadzoneMulti.Value, headRot);
+                headRotModified += ThrowController.GetThrowOffset;
                 AccessTools.Field(typeof(ProceduralWeaponAnimation), "_headRotationVec").SetValue(__instance, headRotModified);
 
                 return false;

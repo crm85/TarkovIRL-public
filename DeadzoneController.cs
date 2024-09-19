@@ -22,8 +22,6 @@ namespace TarkovIRL
 
         public static Vector3 GetHeadRotationWithDeadzone(Player player, float deadzoneSetting, Vector3 headRotInitial)
         {
-            UtilsTIRL.Log(true, $"stage 2");
-
             if (!_updateDZ)
             {
                 _updateDZ = PlayerMotionController.IsPlayerMovement || PlayerMotionController.RotationDelta > _RotDeltaThresh;
@@ -60,7 +58,7 @@ namespace TarkovIRL
                 finalHeadRotation = 0;
             }
 
-            _deadZoneLerp = Mathf.Lerp(_deadZoneLerp, finalHeadRotation, Time.deltaTime * lerpRate);
+            _deadZoneLerp = Mathf.Lerp(_deadZoneLerp, finalHeadRotation, player.DeltaTime * lerpRate);
             headRotThisFrame.y += _deadZoneLerp;
 
             UtilsTIRL.Log(true, $"initial head rot {headRotInitial}, final output {headRotThisFrame}");

@@ -21,7 +21,8 @@ namespace TarkovIRL
         {
             if ((UnityEngine.Object)(object)__instance != (UnityEngine.Object)null && __instance.IsYourPlayer)
             {
-                UtilsTIRL.Log(true, $"grenade thrown");
+                UtilsTIRL.Log(false, $"grenade thrown");
+                ThrowController.NewThrow(true);
             }
         }
     }

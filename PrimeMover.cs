@@ -12,22 +12,32 @@ namespace TarkovIRL
     {
         const string modGUID = "TarkovIRL";
         const string modName = "TarkovIRL - WHM";
-        const string modVersion = "0.4.6.1";
+        const string modVersion = "0.4.7";
 
         public static PrimeMover Instance;
 
+        //
+        // Curves
+        //
         public AnimationCurve BreathCurve;
         public AnimationCurve PoseChangeCurve;
         public AnimationCurve HandsShakeCurve;
         public AnimationCurve SmoothEdgesCurve;
         public AnimationCurve FootStepCurve;
         public AnimationCurve ErgoAttenuationCurve;
+        public AnimationCurve ThrowVisualCurveX;
+        public AnimationCurve ThrowVisualCurveY;
 
+        //
+        // Dts
+        //
         public float DeltaTime = 0;
         public float Time = 0;
+        public float FixedDeltaTime = 0;
 
+        //
         // config items
-
+        //
         const string BASE_FEATURES_SECTION = "1 - Toggle base features";
         public static ConfigEntry<bool> IsWeaponDeadzone;
         public static ConfigEntry<bool> IsWeaponSway;
@@ -40,6 +50,7 @@ namespace TarkovIRL
         public static ConfigEntry<bool> IsParallaxEffect;
 
         public static ConfigEntry<bool> IsLogging;
+        public static ConfigEntry<bool> DebugSpam;
 
         const string ADJUST_VAR_SECTION = "2 - Adjust feature values";
         public static ConfigEntry<float> WeaponDeadzoneMulti;
@@ -58,9 +69,11 @@ namespace TarkovIRL
         public static ConfigEntry<float> ParallaxInAds;
         public static ConfigEntry<float> PistolSpecificParallax;
         public static ConfigEntry<float> ParallaxReturnToCenterMulti;
-        public static ConfigEntry<float> DevTestFloat3;
+        public static ConfigEntry<float> ThrowStrengthMulti;
+        public static ConfigEntry<float> ThrowSpeedMulti;
 
         const string DEV_SECTION = "3 - Only for dev/testing";
+        public static ConfigEntry<float> DevTestFloat3;
         public static ConfigEntry<float> DevTestFloat4;
         public static ConfigEntry<float> DevTestFloat5;
 
@@ -81,6 +94,8 @@ namespace TarkovIRL
         readonly float ShotParallaxResetTimeMultiDefault = 10f;
         readonly float WeaponDeadzoneMultiDefault = 2f;
         readonly float WeaponSwayMultiDefault = 0.5f;
+        readonly float ThrowStrengthMultiDefault = 1f;
+        readonly float ThrowSpeedMultiDefault = 1f;
 
         void Awake()
         {
@@ -126,6 +141,17 @@ namespace TarkovIRL
                 new Keyframe(0f, 0.25f), new Keyframe(0.01f, 0.2506315f), new Keyframe(0.02f, 0.2517748f), new Keyframe(0.03f, 0.2534092f), new Keyframe(0.04f, 0.2555136f), new Keyframe(0.05f, 0.2580674f), new Keyframe(0.05999999f, 0.2610497f), new Keyframe(0.06999999f, 0.2644395f), new Keyframe(0.07999999f, 0.2682161f), new Keyframe(0.08999999f, 0.2723586f), new Keyframe(0.09999999f, 0.2768462f), new Keyframe(0.11f, 0.281658f), new Keyframe(0.12f, 0.2867732f), new Keyframe(0.13f, 0.2921709f), new Keyframe(0.14f, 0.2978303f), new Keyframe(0.15f, 0.3037306f), new Keyframe(0.16f, 0.3098509f), new Keyframe(0.17f, 0.3161703f), new Keyframe(0.18f, 0.322668f), new Keyframe(0.19f, 0.3293232f), new Keyframe(0.2f, 0.336115f), new Keyframe(0.21f, 0.3430226f), new Keyframe(0.22f, 0.3500251f), new Keyframe(0.23f, 0.3571016f), new Keyframe(0.24f, 0.3642314f), new Keyframe(0.25f, 0.3713936f), new Keyframe(0.26f, 0.3785673f), new Keyframe(0.27f, 0.3857317f), new Keyframe(0.28f, 0.392866f), new Keyframe(0.29f, 0.3999492f), new Keyframe(0.3f, 0.4069606f), new Keyframe(0.31f, 0.4138794f), new Keyframe(0.32f, 0.4206846f), new Keyframe(0.33f, 0.4273554f), new Keyframe(0.3399999f, 0.433871f), new Keyframe(0.3499999f, 0.4402105f), new Keyframe(0.3599999f, 0.4463531f), new Keyframe(0.3699999f, 0.452278f), new Keyframe(0.3799999f, 0.4579642f), new Keyframe(0.3899999f, 0.463391f), new Keyframe(0.3999999f, 0.4685375f), new Keyframe(0.4099999f, 0.4733828f), new Keyframe(0.4199999f, 0.4779062f), new Keyframe(0.4299999f, 0.4820867f), new Keyframe(0.4399998f, 0.4859036f), new Keyframe(0.4499998f, 0.4893359f), new Keyframe(0.4599998f, 0.4923628f), new Keyframe(0.4699998f, 0.4949635f), new Keyframe(0.4799998f, 0.4971172f), new Keyframe(0.4899998f, 0.4988029f), new Keyframe(0.4999998f, 0.4999999f), new Keyframe(0.5099998f, 0.5012925f), new Keyframe(0.5199998f, 0.5032603f), new Keyframe(0.5299998f, 0.5058756f), new Keyframe(0.5399998f, 0.509111f), new Keyframe(0.5499998f, 0.5129387f), new Keyframe(0.5599998f, 0.5173312f), new Keyframe(0.5699998f, 0.5222607f), new Keyframe(0.5799997f, 0.5276995f), new Keyframe(0.5899997f, 0.5336201f), new Keyframe(0.5999997f, 0.5399949f), new Keyframe(0.6099997f, 0.5467961f), new Keyframe(0.6199997f, 0.5539961f), new Keyframe(0.6299997f, 0.5615673f), new Keyframe(0.6399997f, 0.5694821f), new Keyframe(0.6499997f, 0.5777127f), new Keyframe(0.6599997f, 0.5862316f), new Keyframe(0.6699997f, 0.5950111f), new Keyframe(0.6799996f, 0.6040236f), new Keyframe(0.6899996f, 0.6132413f), new Keyframe(0.6999996f, 0.6226368f), new Keyframe(0.7099996f, 0.6321822f), new Keyframe(0.7199996f, 0.6418501f), new Keyframe(0.7299996f, 0.6516127f), new Keyframe(0.7399996f, 0.6614424f), new Keyframe(0.7499996f, 0.6713115f), new Keyframe(0.7599996f, 0.6811924f), new Keyframe(0.7699996f, 0.6910575f), new Keyframe(0.7799996f, 0.7008791f), new Keyframe(0.7899995f, 0.7106296f), new Keyframe(0.7999995f, 0.7202812f), new Keyframe(0.8099995f, 0.7298065f), new Keyframe(0.8199995f, 0.7391778f), new Keyframe(0.8299995f, 0.7483672f), new Keyframe(0.8399995f, 0.7573473f), new Keyframe(0.8499995f, 0.7660906f), new Keyframe(0.8599995f, 0.774569f), new Keyframe(0.8699995f, 0.7827553f), new Keyframe(0.8799995f, 0.7906216f), new Keyframe(0.8899994f, 0.7981403f), new Keyframe(0.8999994f, 0.8052838f), new Keyframe(0.9099994f, 0.8120244f), new Keyframe(0.9199994f, 0.8183345f), new Keyframe(0.9299994f, 0.8241866f), new Keyframe(0.9399994f, 0.8295527f), new Keyframe(0.9499994f, 0.8344054f), new Keyframe(0.9599994f, 0.8387171f), new Keyframe(0.9699994f, 0.84246f), new Keyframe(0.9799994f, 0.8456065f), new Keyframe(0.9899994f, 0.848129f), new Keyframe(0.9999993f, 0.8499999f)
             );
 
+            ThrowVisualCurveX = new AnimationCurve
+            (
+                new Keyframe(0f, 0f), new Keyframe(0.01f, 0.0003331936f), new Keyframe(0.02f, 0.001134439f), new Keyframe(0.03f, 0.002378305f), new Keyframe(0.04f, 0.004039357f), new Keyframe(0.05f, 0.006092164f), new Keyframe(0.05999999f, 0.008511292f), new Keyframe(0.06999999f, 0.01127131f), new Keyframe(0.07999999f, 0.01434678f), new Keyframe(0.08999999f, 0.01771228f), new Keyframe(0.09999999f, 0.02134237f), new Keyframe(0.11f, 0.02521162f), new Keyframe(0.12f, 0.0292946f), new Keyframe(0.13f, 0.03356586f), new Keyframe(0.14f, 0.038f), new Keyframe(0.15f, 0.04257156f), new Keyframe(0.16f, 0.04725512f), new Keyframe(0.17f, 0.05202524f), new Keyframe(0.18f, 0.0568565f), new Keyframe(0.19f, 0.06172345f), new Keyframe(0.2f, 0.06660067f), new Keyframe(0.21f, 0.07146273f), new Keyframe(0.22f, 0.07628417f), new Keyframe(0.23f, 0.08103959f), new Keyframe(0.24f, 0.08570355f), new Keyframe(0.25f, 0.09017399f), new Keyframe(0.26f, 0.07704315f), new Keyframe(0.27f, 0.03879387f), new Keyframe(0.28f, -0.01621794f), new Keyframe(0.29f, -0.07963639f), new Keyframe(0.3f, -0.1431055f), new Keyframe(0.31f, -0.1982696f), new Keyframe(0.32f, -0.2367725f), new Keyframe(0.33f, -0.2540687f), new Keyframe(0.3399999f, -0.2680247f), new Keyframe(0.3499999f, -0.2820987f), new Keyframe(0.3599999f, -0.2961941f), new Keyframe(0.3699999f, -0.3102143f), new Keyframe(0.3799999f, -0.3240626f), new Keyframe(0.3899999f, -0.3376424f), new Keyframe(0.3999999f, -0.3508569f), new Keyframe(0.4099999f, -0.3636096f), new Keyframe(0.4199999f, -0.3758038f), new Keyframe(0.4299999f, -0.3873428f), new Keyframe(0.4399998f, -0.3981299f), new Keyframe(0.4499998f, -0.4080686f), new Keyframe(0.4599998f, -0.4166969f), new Keyframe(0.4699998f, -0.421218f), new Keyframe(0.4799998f, -0.4213647f), new Keyframe(0.4899998f, -0.4175025f), new Keyframe(0.4999998f, -0.409997f), new Keyframe(0.5099998f, -0.3992138f), new Keyframe(0.5199998f, -0.3855185f), new Keyframe(0.5299998f, -0.3692767f), new Keyframe(0.5399998f, -0.3508539f), new Keyframe(0.5499998f, -0.3306158f), new Keyframe(0.5599998f, -0.3089279f), new Keyframe(0.5699998f, -0.2861559f), new Keyframe(0.5799997f, -0.2626652f), new Keyframe(0.5899997f, -0.2388216f), new Keyframe(0.5999997f, -0.2149904f), new Keyframe(0.6099997f, -0.1915374f), new Keyframe(0.6199997f, -0.1688282f), new Keyframe(0.6299997f, -0.1472283f), new Keyframe(0.6399997f, -0.1271033f), new Keyframe(0.6499997f, -0.1088188f), new Keyframe(0.6599997f, -0.09274042f), new Keyframe(0.6699997f, -0.07923362f), new Keyframe(0.6799996f, -0.06806243f), new Keyframe(0.6899996f, -0.0580097f), new Keyframe(0.6999996f, -0.04897579f), new Keyframe(0.7099996f, -0.04090995f), new Keyframe(0.7199996f, -0.03376145f), new Keyframe(0.7299996f, -0.02747951f), new Keyframe(0.7399996f, -0.02201341f), new Keyframe(0.7499996f, -0.0173124f), new Keyframe(0.7599996f, -0.01332571f), new Keyframe(0.7699996f, -0.01000262f), new Keyframe(0.7799996f, -0.00729236f), new Keyframe(0.7899995f, -0.005144186f), new Keyframe(0.7999995f, -0.003507353f), new Keyframe(0.8099995f, -0.002331115f), new Keyframe(0.8199995f, -0.001564726f), new Keyframe(0.8299995f, -0.001157425f), new Keyframe(0.8399995f, -0.001058489f), new Keyframe(0.8499995f, -0.001217134f), new Keyframe(0.8599995f, -0.00158263f), new Keyframe(0.8699995f, -0.002104238f), new Keyframe(0.8799995f, -0.002731204f), new Keyframe(0.8899994f, -0.003412768f), new Keyframe(0.8999994f, -0.004098199f), new Keyframe(0.9099994f, -0.004736744f), new Keyframe(0.9199994f, -0.005277641f), new Keyframe(0.9299994f, -0.005670153f), new Keyframe(0.9399994f, -0.005863532f), new Keyframe(0.9499994f, -0.00580702f), new Keyframe(0.9599994f, -0.005449906f), new Keyframe(0.9699994f, -0.004741386f), new Keyframe(0.9799994f, -0.00363075f), new Keyframe(0.9899994f, -0.002067223f), new Keyframe(0.9999993f, -1.117587E-07f)
+            );
+
+            ThrowVisualCurveY = new AnimationCurve
+            (
+                new Keyframe(0f, 0f), new Keyframe(0.01f, 0.002029394f), new Keyframe(0.02f, 0.004007732f), new Keyframe(0.03f, 0.005941967f), new Keyframe(0.04f, 0.007839058f), new Keyframe(0.05f, 0.009705957f), new Keyframe(0.05999999f, 0.01154962f), new Keyframe(0.06999999f, 0.01337701f), new Keyframe(0.07999999f, 0.01519508f), new Keyframe(0.08999999f, 0.01701077f), new Keyframe(0.09999999f, 0.01883106f), new Keyframe(0.11f, 0.0206629f), new Keyframe(0.12f, 0.02251323f), new Keyframe(0.13f, 0.02438902f), new Keyframe(0.14f, 0.02629723f), new Keyframe(0.15f, 0.02824481f), new Keyframe(0.16f, 0.03023871f), new Keyframe(0.17f, 0.03228589f), new Keyframe(0.18f, 0.03439331f), new Keyframe(0.19f, 0.03656791f), new Keyframe(0.2f, 0.03881667f), new Keyframe(0.21f, 0.04114653f), new Keyframe(0.22f, 0.04356445f), new Keyframe(0.23f, 0.04607739f), new Keyframe(0.24f, 0.04869229f), new Keyframe(0.25f, 0.05141613f), new Keyframe(0.26f, 0.05351786f), new Keyframe(0.27f, 0.05426258f), new Keyframe(0.28f, 0.05374648f), new Keyframe(0.29f, 0.0520661f), new Keyframe(0.3f, 0.04931797f), new Keyframe(0.31f, 0.04559862f), new Keyframe(0.32f, 0.04100458f), new Keyframe(0.33f, 0.03563239f), new Keyframe(0.3399999f, 0.02957857f), new Keyframe(0.3499999f, 0.02293966f), new Keyframe(0.3599999f, 0.01581218f), new Keyframe(0.3699999f, 0.00829269f), new Keyframe(0.3799999f, 0.0004776865f), new Keyframe(0.3899999f, -0.007536277f), new Keyframe(0.3999999f, -0.01565267f), new Keyframe(0.4099999f, -0.02377498f), new Keyframe(0.4199999f, -0.03180665f), new Keyframe(0.4299999f, -0.03965117f), new Keyframe(0.4399998f, -0.047212f), new Keyframe(0.4499998f, -0.05439258f), new Keyframe(0.4599998f, -0.06109643f), new Keyframe(0.4699998f, -0.06722696f), new Keyframe(0.4799998f, -0.07268773f), new Keyframe(0.4899998f, -0.07738209f), new Keyframe(0.4999998f, -0.08121358f), new Keyframe(0.5099998f, -0.08408567f), new Keyframe(0.5199998f, -0.08590184f), new Keyframe(0.5299998f, -0.08661342f), new Keyframe(0.5399998f, -0.08689239f), new Keyframe(0.5499998f, -0.08698826f), new Keyframe(0.5599998f, -0.08690707f), new Keyframe(0.5699998f, -0.08665491f), new Keyframe(0.5799997f, -0.08623782f), new Keyframe(0.5899997f, -0.08566185f), new Keyframe(0.5999997f, -0.08493307f), new Keyframe(0.6099997f, -0.08405752f), new Keyframe(0.6199997f, -0.08304128f), new Keyframe(0.6299997f, -0.08189039f), new Keyframe(0.6399997f, -0.0806109f), new Keyframe(0.6499997f, -0.07920889f), new Keyframe(0.6599997f, -0.07769039f), new Keyframe(0.6699997f, -0.07606147f), new Keyframe(0.6799996f, -0.07432819f), new Keyframe(0.6899996f, -0.0724966f), new Keyframe(0.6999996f, -0.07057276f), new Keyframe(0.7099996f, -0.06856272f), new Keyframe(0.7199996f, -0.06647254f), new Keyframe(0.7299996f, -0.06430828f), new Keyframe(0.7399996f, -0.06207599f), new Keyframe(0.7499996f, -0.05978173f), new Keyframe(0.7599996f, -0.05743156f), new Keyframe(0.7699996f, -0.05503154f), new Keyframe(0.7799996f, -0.05258771f), new Keyframe(0.7899995f, -0.05010614f), new Keyframe(0.7999995f, -0.04759287f), new Keyframe(0.8099995f, -0.04505398f), new Keyframe(0.8199995f, -0.04249552f), new Keyframe(0.8299995f, -0.03992354f), new Keyframe(0.8399995f, -0.03734408f), new Keyframe(0.8499995f, -0.03476323f), new Keyframe(0.8599995f, -0.03218703f), new Keyframe(0.8699995f, -0.02962153f), new Keyframe(0.8799995f, -0.0270728f), new Keyframe(0.8899994f, -0.02454689f), new Keyframe(0.8999994f, -0.02204986f), new Keyframe(0.9099994f, -0.01958775f), new Keyframe(0.9199994f, -0.01716664f), new Keyframe(0.9299994f, -0.01479258f), new Keyframe(0.9399994f, -0.01247162f), new Keyframe(0.9499994f, -0.01020981f), new Keyframe(0.9599994f, -0.008013211f), new Keyframe(0.9699994f, -0.005887888f), new Keyframe(0.9799994f, -0.003839895f), new Keyframe(0.9899994f, -0.001875289f), new Keyframe(0.9999993f, -1.192093E-07f)
+            );
+
+
             TryLoadPatch(new Patch_LerpCamera_ForceUpdateSway());
             TryLoadPatch(new Patch_UpdateSwayFactors());
             TryLoadPatch(new Patch_LateUpdate_UpdateWpnStats());
@@ -166,13 +192,29 @@ namespace TarkovIRL
             ParallaxInAds = ConstructFloatConfig(ParallaxInAdsDefault, ADJUST_VAR_SECTION, "Parallax effect in ADS", "The % of parallax effect that you see in ADS (with a stocked weapon)", 0, 1f);
             PistolSpecificParallax = ConstructFloatConfig(PistolSpecificParallaxDefault, ADJUST_VAR_SECTION, "Parallax effect value specifically for pistols", "", 0, 10f);
             ParallaxReturnToCenterMulti = ConstructFloatConfig(ParallaxReturnToCenterMultiDefault, ADJUST_VAR_SECTION, "Parallax return-to-center multiplier", "Higher = a faster return to center of the parallax", 0, 20f);
+            ParallaxReturnToCenterMulti = ConstructFloatConfig(ParallaxReturnToCenterMultiDefault, ADJUST_VAR_SECTION, "Parallax return-to-center multiplier", "Higher = a faster return to center of the parallax", 0, 20f);
+            ThrowStrengthMulti = ConstructFloatConfig(ThrowStrengthMultiDefault, ADJUST_VAR_SECTION, "Throw visual effect multi", "", 0, 100f);
+            ThrowSpeedMulti = ConstructFloatConfig(ThrowSpeedMultiDefault, ADJUST_VAR_SECTION, "Throw effect speed", "", 0, 10f);
 
 
             // dev
             IsLogging = ConstructBoolConfig(false, DEV_SECTION, "Enable debug logging", "");
+            DebugSpam = ConstructBoolConfig(false, DEV_SECTION, "Enable debug spam", "");
             //DevTestFloat3 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 3", "This is only for dev use, should not be connected to anything in production releases.", 1f, 30f);
             //DevTestFloat4 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 4", "This is only for dev use, should not be connected to anything in production releases.", 1f, 10f);
             //DevTestFloat5 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 5", "This is only for dev use, should not be connected to anything in production releases.", 0, 10f);
+        }
+
+        //
+        // drive lerps
+        //
+        void DriveLerps()
+        {
+            UtilsTIRL.Update(DeltaTime);
+            EfficiencyController.UpdateEfficiencyLerp(DeltaTime);
+            FootstepController.UpdateStep(DeltaTime);
+            SwayController.UpdateLerp(DeltaTime);
+            ThrowController.UpdateLerp(DeltaTime);
         }
 
         void Update()
@@ -180,10 +222,12 @@ namespace TarkovIRL
             DeltaTime += (UnityEngine.Time.unscaledDeltaTime - DeltaTime);
             Time += UnityEngine.Time.unscaledDeltaTime;
 
-            UtilsTIRL.Update(DeltaTime);
-            EfficiencyController.UpdateEfficiencyLerp(DeltaTime);
-            FootstepController.UpdateStep(DeltaTime);
-            SwayController.UpdateLerp(DeltaTime);
+            DriveLerps();
+        }
+
+        void FixedUpdate()
+        {
+            FixedDeltaTime += (UnityEngine.Time.unscaledDeltaTime - FixedDeltaTime);
         }
 
         void LateUpdate()
