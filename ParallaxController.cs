@@ -81,7 +81,8 @@ namespace TarkovIRL
             float dt = player.DeltaTime;
             float extraPistolParallax = WeaponController.IsPistol ? PrimeMover.PistolSpecificParallax.Value : 1f;
             float parallaxMulti = PrimeMover.ParallaxMulti.Value * weaponMulti * extraPistolParallax;
-            float zeroDt = dt * PrimeMover.ParallaxReturnToCenterMulti.Value * inverseEfficiencyMulti;
+            float pistolZeroFactor = (WeaponController.IsPistol && PlayerMotionController.RotationDelta >= _RotationTrigger) ? 0.5f : 1f;
+            float zeroDt = dt * PrimeMover.ParallaxReturnToCenterMulti.Value * inverseEfficiencyMulti * pistolZeroFactor;
 
             //
             // calc the position lerps

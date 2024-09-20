@@ -41,19 +41,21 @@ namespace TarkovIRL
             float strengthMulti = 1f;
             float poseLevelMulti = 1f + poseLevel;
 
-            _handShakeLoopTimeX += player.DeltaTime * _HandShakeCurveSpeedMulti * 0.37f;
+            float effectSpeedMulti = _HandShakeCurveSpeedMulti * PrimeMover.ArmShakeRateMulti.Value;
+            _handShakeLoopTimeX += player.DeltaTime * effectSpeedMulti * 0.37f;
             if (_handShakeLoopTimeX >= 1f)
             {
                 _handShakeLoopTimeX -= 1f;
             }
 
-            _handShakeLoopTimeY -= player.DeltaTime * _HandShakeCurveSpeedMulti;
+            _handShakeLoopTimeY -= player.DeltaTime * effectSpeedMulti;
             if (_handShakeLoopTimeY <= 0)
             {
                 _handShakeLoopTimeY += 1f;
             }
 
-            float finalMulti = armStamMulti * healthMulti * armHealthLMulti * armHealthRMulti * strengthMulti * poseLevelMulti * PrimeMover.ArmShakeMulti.Value * _HandShakeMultiGeneral;
+            float pistolFactor = WeaponController.IsPistol ? 2f : 1f;
+            float finalMulti = armStamMulti * healthMulti * armHealthLMulti * armHealthRMulti * strengthMulti * poseLevelMulti * PrimeMover.ArmShakeMulti.Value * _HandShakeMultiGeneral * pistolFactor;
 
             float handsShakeX = shakeCurve.Evaluate(_handShakeLoopTimeX) * finalMulti;
             float handsShakeY = shakeCurve.Evaluate(_handShakeLoopTimeY) * finalMulti;

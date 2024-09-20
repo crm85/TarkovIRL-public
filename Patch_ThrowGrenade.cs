@@ -17,12 +17,12 @@ namespace TarkovIRL
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(Player __instance)
+        private static void PatchPostfix(Player __instance, bool lowThrow)
         {
             if ((UnityEngine.Object)(object)__instance != (UnityEngine.Object)null && __instance.IsYourPlayer)
             {
-                UtilsTIRL.Log(false, $"grenade thrown");
-                ThrowController.NewThrow(true);
+                UtilsTIRL.Log(false, $"grenade thrown, is overhand {!lowThrow}");
+                ThrowController.NewThrow(lowThrow);
             }
         }
     }
