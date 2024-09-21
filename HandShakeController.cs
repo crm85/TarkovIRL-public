@@ -25,22 +25,6 @@ namespace TarkovIRL
                 return Vector3.zero;
             }
 
-            AnimationCurve shakeCurve = PrimeMover.Instance.HandsShakeCurve;
-            float armStamNorm = player.Physical.HandsStamina.Current / 80f;
-            float healthCommon = player.HealthController.GetBodyPartHealth(EBodyPart.Common).Normalized;
-            float armHealthR = player.HealthController.GetBodyPartHealth(EBodyPart.RightArm).Normalized;
-            float armHealthL = player.HealthController.GetBodyPartHealth(EBodyPart.LeftArm).Normalized;
-            float strength = player.Skills.Strength.Current;
-            float poseLevel = player.PoseLevel;
-
-            float armStamMulti = 1f - armStamNorm;
-            float healthMulti = 1f + ((1f - healthCommon) * .2f);
-            float armHealthRMulti = 1f + ((1f - armHealthR) * .2f);
-            float armHealthLMulti = 1f + ((1f - armHealthL) * .2f);
-            //float strengthMulti = 1f - (strength / 15000);
-            float strengthMulti = 1f;
-            float poseLevelMulti = 1f + poseLevel;
-
             float effectSpeedMulti = _HandShakeCurveSpeedMulti * PrimeMover.ArmShakeRateMulti.Value;
             _handShakeLoopTimeX += player.DeltaTime * effectSpeedMulti * 0.37f;
             if (_handShakeLoopTimeX >= 1f)
@@ -55,8 +39,9 @@ namespace TarkovIRL
             }
 
             float pistolFactor = WeaponController.IsPistol ? 2f : 1f;
-            float finalMulti = armStamMulti * healthMulti * armHealthLMulti * armHealthRMulti * strengthMulti * poseLevelMulti * PrimeMover.ArmShakeMulti.Value * _HandShakeMultiGeneral * pistolFactor;
+            float finalMulti = EfficiencyController.EfficiencyModifier * PrimeMover.ArmShakeMulti.Value * _HandShakeMultiGeneral * pistolFactor;
 
+            AnimationCurve shakeCurve = PrimeMover.Instance.HandsShakeCurve;
             float handsShakeX = shakeCurve.Evaluate(_handShakeLoopTimeX) * finalMulti;
             float handsShakeY = shakeCurve.Evaluate(_handShakeLoopTimeY) * finalMulti;
 

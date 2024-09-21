@@ -50,10 +50,11 @@ namespace TarkovIRL
             return true;
         }
 
-        public static float GetWeaponMulti()
+        public static float GetWeaponMulti(bool getInverse)
         {
             float ergoAdjusted = PrimeMover.Instance.ErgoAttenuationCurve.Evaluate(CurrentWeaponErgoNorm);
             float weaponMulti = WeaponController.CurrentWeaponWeight * (1f - ergoAdjusted);
+            if (getInverse) return 1f / weaponMulti;
             return weaponMulti;
         }
     }

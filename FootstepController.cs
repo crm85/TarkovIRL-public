@@ -21,7 +21,7 @@ namespace TarkovIRL
 
         public static void UpdateStep(float dt)
         {
-            float efficiencyInvert = 1f / EfficiencyController.EfficiencyModifier;
+            float efficiencyInvert = EfficiencyController.EfficiencyModifierInverse;
             float speedAdjusted = 1f + _currentSpeed;
             _stepLerp = Mathf.Lerp(_stepLerp, 1f, dt * _UpdateMulti * efficiencyInvert * speedAdjusted * PrimeMover.FootstepLerpMulti.Value);
         }

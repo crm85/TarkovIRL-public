@@ -10,6 +10,7 @@ namespace TarkovIRL
 {
     internal static class EfficiencyController
     {
+        // readonlys
         static readonly float _LerpSpeed = 1f;
 
         static float _efficiencyLerpTarget = 0;
@@ -24,42 +25,62 @@ namespace TarkovIRL
         public static void UpdateEfficiency(Player player)
         {
             //
-            // TODO : incorporate player.ErgonomicsPenalty into efficiency
+            // get raw values
             //
-
+            float hydrationNorm = player.HealthController.Hydration.Normalized;
+            float nutritionNorm = player.HealthController.Energy.Normalized;
+            float overWeightVal = Mathf.Clamp01(player.Physical.Overweight);
+            UtilsTIRL.Log(true, $"overWeightVal {overWeightVal}");
+            float ergoPenalty = player.ErgonomicsPenalty;
+            UtilsTIRL.Log(true, $"ergoPenalty {ergoPenalty}");
             //
-            // TODO : incorporate strength correctly
+            float brokenArmR = player.HealthController.IsBodyPartBroken(EBodyPart.RightArm) ? 1f : 0;
+            float brokenArmL = player.HealthController.IsBodyPartBroken(EBodyPart.LeftArm) ? 1f : 0;
+            float brokenLegR = player.HealthController.IsBodyPartBroken(EBodyPart.RightLeg) ? 1f : 0;
+            float brokenLegL = player.HealthController.IsBodyPartBroken(EBodyPart.LeftLeg) ? 1f : 0;
             //
-
-            //
-            // Higher result = LESS efficient
-            // divide by 1 to reverse result
-            //
-            float playerSpeed = 1f + player.Speed;
-            float poseLevel = Mathf.Clamp(player.PoseLevel, 0.5f, 1f);
-
             float healthCommon = player.HealthController.GetBodyPartHealth(EBodyPart.Common).Normalized;
-            float armHealthR = player.HealthController.GetBodyPartHealth(EBodyPart.RightArm).Normalized;
-            float armHealthL = player.HealthController.GetBodyPartHealth(EBodyPart.LeftArm).Normalized;
-            float stamNormalized = player.Physical.Stamina.Current / 104f;
-            float handStamNormalized = player.Physical.HandsStamina.Current / 80f;
-            //float strength = player.Skills.Strength.Current;
-            float strength = PrimeMover.FootstepLerpMulti.Value;
-            // i want this to cap out at 350, that removes 25% effect
+            float stamNormalized = player.Physical.Stamina.NormalValue;
+            float handStamNormalized = player.Physical.HandsStamina.NormalValue;
 
-            float currentWeight = player.Physical.PreviousWeight;
+            //
+            // compute outcomes
+            //
+            float hydroMulti = GetNormalizedEffectImpact(hydrationNorm, 5f);
+            float nutritionMulti = GetNormalizedEffectImpact(nutritionNorm, 5f);
+            float overWeightMulti = GetNormalizedEffectImpact(overWeightVal, 10f);
+            float ergoMulti = GetNormalizedEffectImpact(ergoPenalty, 5f);
+            //
+            float armMultiL = GetNormalizedEffectImpact(brokenArmL, 15f);
+            float armMultiR = GetNormalizedEffectImpact(brokenArmR, 15f);
+            float legMultiL = GetNormalizedEffectImpact(brokenLegL, 15f);
+            float legMultiR = GetNormalizedEffectImpact(brokenLegR, 15f);
+            //
+            float healthMulti = GetNormalizedEffectImpact(healthCommon, 50f);
+            float stamMulti = GetNormalizedEffectImpact(stamNormalized, 10f);
+            float handStamMulti = GetNormalizedEffectImpact(handStamNormalized, 10f);
 
-            float healthMulti = 1f + ((1f - healthCommon) * .2f);
-            float armHealthRMulti = 1f + ((1f - armHealthR) * .2f);
-            float armHealthLMulti = 1f + ((1f - armHealthL) * .2f);
-            float stamMulti = 1f + ((1f - stamNormalized) * .1f);
-            float handStamMulti = 1f + ((1f - handStamNormalized) * .1f);
-            //float underweightReduction = Mathf.Clamp01(currentWeight / (strength * .034f));
-            float underweightReduction = 1f;
-            //float strengthMulti = 1f - (strength / 15000);
-            float strengthMulti = 1f;
+            //
+            // negative effects
+            //
+            float negativeEffects = hydroMulti * nutritionMulti * overWeightMulti * 1f * armMultiL * armMultiR * legMultiL * legMultiR * healthMulti * stamMulti * handStamMulti;
 
-            _efficiencyLerpTarget = strengthMulti * underweightReduction * healthMulti * armHealthRMulti * armHealthLMulti * stamMulti * handStamMulti * playerSpeed * poseLevel;
+            // reduce negetive effects per speed and pose
+            float sprintingmulti = player.IsSprintEnabled ? 1.5f : 1f;
+            float speedMulti = 0.5f + (player.Speed * 0.5f);
+            float poseMulti = 0.5f + (player.PoseLevel * 0.5f);
+            float proneMulti = player.IsInPronePose ? 0.5f : 1f;
+
+            // final mobility
+            float mobilityMulti = speedMulti * poseMulti * proneMulti * sprintingmulti;
+
+            // final output
+            _efficiencyLerpTarget = negativeEffects * mobilityMulti;
+
+            // debug
+            UtilsTIRL.Log(true, $"hydroMulti {hydroMulti}, nutritionMulti {nutritionMulti}, overWeightMulti {overWeightMulti}, ergoMulti {ergoMulti}" +
+                $", armMultiL {armMultiL}, armMultiR {armMultiR}, legMultiL {legMultiL}, legMultiR {legMultiR}, healthMulti {healthMulti}, stamMulti {stamMulti}, handStamMulti {handStamMulti}");
+            UtilsTIRL.Log(true, $"final efficiency before mobility correction: {negativeEffects}; mobility corrections: {mobilityMulti}; after mobility correction: {_efficiencyLerpTarget}; actual lerp value {_efficiencyLerp}");
         }
 
         public static float EfficiencyModifier
@@ -70,6 +91,12 @@ namespace TarkovIRL
         public static float EfficiencyModifierInverse
         {
             get { return 1f / _efficiencyLerp; }
+        }
+
+        static float GetNormalizedEffectImpact(float value, float impactWeightPercent)
+        {
+            float impactWeightAdjusted = impactWeightPercent * 0.01f;
+            return 1f + ((1f - value) * impactWeightAdjusted);
         }
     }
 }
