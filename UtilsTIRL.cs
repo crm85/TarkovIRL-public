@@ -15,24 +15,37 @@ namespace TarkovIRL
 
         static float _updateResolution = 0.1f;
 
-        public static void Log(bool everyFrame, string toPrint)
+        public static void Log(string toPrint)
         {
-            if (!PrimeMover.IsLogging.Value)
-            {
-                return;
-            }
-
-            if (everyFrame && !PrimeMover.DebugSpam.Value)
-            {
-                return;
-            }
-
             Logger.LogError((object)toPrint);
         }
 
         public static void Update(float dt)
         {
             _dt += dt;
+        }
+
+        public static bool IsPriority(int priority)
+        {
+            if (priority == 1)
+            {
+                return true;
+            }
+            else if (priority == 2)
+            {
+                if (PrimeMover.IsLogging.Value && PrimeMover.DebugSpam.Value)
+                {
+                    return true;
+                }
+            }
+            else if (priority == 3)
+            {
+                if (PrimeMover.IsLogging.Value)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 

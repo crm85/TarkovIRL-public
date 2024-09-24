@@ -18,7 +18,7 @@ namespace TarkovIRL
         {
             if (fc != null)
             {
-                CurrentWeaponWeight = fc.Weapon.GetSingleItemTotalWeight();
+                CurrentWeaponWeight = PrimeMover.Instance.WeightAttenuationCurve.Evaluate(fc.Weapon.GetSingleItemTotalWeight());
                 CurrentWeaponErgoNorm = fc.TotalErgonomics / 100f;
                 IsStocked = CheckForStock(fc.Weapon);
             }

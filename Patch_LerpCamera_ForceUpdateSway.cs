@@ -32,7 +32,7 @@ namespace TarkovIRL
                 return;
             }
             Player player = (Player)playerField.GetValue(firearmController);
-            UtilsTIRL.Log(true, $"anim state name {player.MovementContext.CurrentState.Name}, anim state hash {player.MovementContext.CurrentState.AnimatorStateHash}");
+            if (UtilsTIRL.IsPriority(2)) UtilsTIRL.Log($"anim state name {player.MovementContext.CurrentState.Name}, anim state hash {player.MovementContext.CurrentState.AnimatorStateHash}");
 
             if ((Object)(object)player != (Object)null && player.IsYourPlayer)
             {

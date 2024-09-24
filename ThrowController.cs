@@ -27,7 +27,7 @@ namespace TarkovIRL
                 _isThrowing = false;
                 _throwLerp = 1f;
             }
-            UtilsTIRL.Log(true, $"throwlerp is {_throwLerp}");
+            if (UtilsTIRL.IsPriority(2)) UtilsTIRL.Log($"throwlerp is {_throwLerp}");
         }
 
         public static void NewThrow(bool isUnderhand)
@@ -46,10 +46,7 @@ namespace TarkovIRL
                 AnimationCurve yCurve = _isUnderhand ? PrimeMover.Instance.ThrowVisualUnderhandCurveY : PrimeMover.Instance.ThrowVisualCurveY;
                 float xOffsetThisFrame = xCurve.Evaluate(_throwLerp) * EfficiencyController.EfficiencyModifierInverse * PrimeMover.ThrowStrengthMulti.Value;
                 float yOffsetThisFrame = yCurve.Evaluate(_throwLerp) * EfficiencyController.EfficiencyModifierInverse * _OverhandYExtraMulti * PrimeMover.ThrowStrengthMulti.Value * reverseY;
-                UtilsTIRL.Log(true, $"throw | xOffsetThisFrame {xOffsetThisFrame} | yOffsetThisFrame {yOffsetThisFrame}");
-
-
-
+                if (UtilsTIRL.IsPriority(2)) UtilsTIRL.Log($"throw | xOffsetThisFrame {xOffsetThisFrame} | yOffsetThisFrame {yOffsetThisFrame}");
                 return new Vector3(-xOffsetThisFrame, -yOffsetThisFrame, 0);
             }
         }
