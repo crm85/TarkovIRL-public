@@ -12,7 +12,7 @@ namespace TarkovIRL
     {
         const string modGUID = "TarkovIRL";
         const string modName = "TarkovIRL - WHM";
-        const string modVersion = "0.4.7";
+        const string modVersion = "0.5";
 
         public static PrimeMover Instance;
 
@@ -254,6 +254,7 @@ namespace TarkovIRL
         void LateUpdate()
         {
             SwayController.IsSwayUpdatedThisFrame = false;
+            DeadzoneController.DeadzoneUpdatedThisFrame = false;
         }
 
         void TryLoadPatch(ModulePatch patch)

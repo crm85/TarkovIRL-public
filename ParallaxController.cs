@@ -82,7 +82,7 @@ namespace TarkovIRL
             float parallaxMulti = PrimeMover.ParallaxMulti.Value * WeaponController.GetWeaponMulti(false) * extraPistolParallax;
 
             // down
-            float pistolZeroFactor = (WeaponController.IsPistol && PlayerMotionController.RotationDelta >= _RotationTrigger) ? 0.5f : PrimeMover.PistolSpecificParallax.Value;
+            float pistolZeroFactor = (WeaponController.IsPistol && PlayerMotionController.RotationDelta <= _RotationTrigger) ? PrimeMover.PistolSpecificParallax.Value * 2f : 0.5f;
             float zeroDt = dt * PrimeMover.ParallaxReturnToCenterMulti.Value * inverseEfficiencyMulti * pistolZeroFactor;
 
             //

@@ -41,11 +41,11 @@ namespace TarkovIRL
         {
             get
             {
-                float reverseY = _isUnderhand ? -1f : 1f;
                 AnimationCurve xCurve = _isUnderhand ? PrimeMover.Instance.ThrowVisualUnderhandCurveX : PrimeMover.Instance.ThrowVisualCurveX;
                 AnimationCurve yCurve = _isUnderhand ? PrimeMover.Instance.ThrowVisualUnderhandCurveY : PrimeMover.Instance.ThrowVisualCurveY;
-                float xOffsetThisFrame = xCurve.Evaluate(_throwLerp) * EfficiencyController.EfficiencyModifierInverse * PrimeMover.ThrowStrengthMulti.Value;
-                float yOffsetThisFrame = yCurve.Evaluate(_throwLerp) * EfficiencyController.EfficiencyModifierInverse * _OverhandYExtraMulti * PrimeMover.ThrowStrengthMulti.Value * reverseY;
+                float xOffsetThisFrame = xCurve.Evaluate(_throwLerp) * PrimeMover.ThrowStrengthMulti.Value;
+                float reverseY = _isUnderhand ? -1f : 1f;
+                float yOffsetThisFrame = yCurve.Evaluate(_throwLerp) * _OverhandYExtraMulti * PrimeMover.ThrowStrengthMulti.Value * reverseY;
                 if (UtilsTIRL.IsPriority(2)) UtilsTIRL.Log($"throw | xOffsetThisFrame {xOffsetThisFrame} | yOffsetThisFrame {yOffsetThisFrame}");
                 return new Vector3(-xOffsetThisFrame, -yOffsetThisFrame, 0);
             }

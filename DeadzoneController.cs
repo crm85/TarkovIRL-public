@@ -14,6 +14,8 @@ namespace TarkovIRL
         static float _deadZoneLerp = 0;
         static bool _updateDZ = true;
 
+        public static bool DeadzoneUpdatedThisFrame = false;
+
         static float ProcessHeadDelta(float rawHeadDelta)
         {
             float adjustedHeadDelta = rawHeadDelta / WeaponController.CurrentWeaponErgoNorm / 10f;

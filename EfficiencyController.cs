@@ -21,7 +21,9 @@ namespace TarkovIRL
         static readonly int _ToxicationHash = 0;
 
         static readonly int[] _NominalEffectStates = new int[] { 619622721, 1782422141, 619622720 };
+        static readonly int[] _KnownEffectStates = new int[] { 1022907245, 1022907248, 2109260636, 619622726, 1782422140, 2109260633, 1782422139, };
 
+        // lerps
         static float _efficiencyLerpTarget = 0;
         static float _efficiencyLerp = 0;
         static float _efficiencyLastFrame = 0;
@@ -62,7 +64,7 @@ namespace TarkovIRL
             //
             foreach (var effect in player.HealthController.GetAllEffects())
             {
-                if (!IsNomicalEffect(effect))
+                if (!IsEffectKnown(effect, _NominalEffectStates) && !IsEffectKnown(effect, _KnownEffectStates))
                 {
                     if (UtilsTIRL.IsPriority(2)) UtilsTIRL.Log($"effect type {effect.Type.FullName.GetHashCode()} on bodypart {effect.BodyPart}");
                 }
@@ -157,9 +159,9 @@ namespace TarkovIRL
             return finalEffectImpact;
         }
 
-        static bool IsNomicalEffect(IEffect effect)
+        static bool IsEffectKnown(IEffect effect, int[] effectsArray)
         {
-            foreach (var stateHash in _NominalEffectStates)
+            foreach (var stateHash in effectsArray)
             {
                 if (effect.Type.FullName.GetHashCode() == stateHash)
                 {
