@@ -35,18 +35,18 @@ namespace TarkovIRL
             Player.FirearmController firearmController = (Player.FirearmController)_fcField.GetValue(__instance);
             if ((UnityEngine.Object)(object)firearmController == (UnityEngine.Object)null)
             {
-                //return true;
+                return true;
             }
 
             Player player = (Player)_playerField.GetValue(firearmController);
             if ((UnityEngine.Object)(object)player != (UnityEngine.Object)null && player.IsYourPlayer && player.MovementContext.CurrentState.Name != EPlayerState.Stationary)
             {
-                if (!DeadzoneController.DeadzoneUpdatedThisFrame)
+                if (!DeadzoneController.DeadzoneUpdatedThisFrame && !ThrowController.IsThrowing)
                 {
-                    DeadzoneController.DeadzoneUpdatedThisFrame = true;
                     Vector3 headRotModified = DeadzoneController.GetHeadRotationWithDeadzone(player, PrimeMover.WeaponDeadzoneMulti.Value, headRot);
-                    headRotModified += ThrowController.GetThrowOffset;
+                    player.HeadRotation = headRotModified;
                     AccessTools.Field(typeof(ProceduralWeaponAnimation), "_headRotationVec").SetValue(__instance, headRotModified);
+                    DeadzoneController.DeadzoneUpdatedThisFrame = true;
                 }
 
                 return false;

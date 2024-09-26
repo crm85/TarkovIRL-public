@@ -50,5 +50,15 @@ namespace TarkovIRL
                 return new Vector3(-xOffsetThisFrame, -yOffsetThisFrame, 0);
             }
         }
+
+        public static bool IsThrowing
+        {
+            get { return _isThrowing; }
+        }
+
+        public static float ThrowProgress
+        {
+            get { return _throwLerp; }
+        }
     }
 }

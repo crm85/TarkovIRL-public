@@ -7,8 +7,6 @@ namespace TarkovIRL
     internal static class DeadzoneController
     {
         static readonly float _LerpRate = 10f;
-        static readonly int _TurnState1 = -31136456;
-        static readonly int _TurnState2 = 287005718;
         static readonly float _RotDeltaThresh = 0.0002f;
 
         static float _deadZoneLerp = 0;
@@ -31,10 +29,7 @@ namespace TarkovIRL
 
             Vector3 headRotThisFrame = headRotInitial;
             headRotThisFrame.y *= 1.5f;
-
-            bool flag1 = player.MovementContext.CurrentState.AnimatorStateHash == _TurnState1;
-            bool flag2 = player.MovementContext.CurrentState.AnimatorStateHash == _TurnState2;
-            bool isChangeingStance = flag1 || flag2;
+            bool isChangeingStance = AnimStateController.IsTurning;
 
             float headDeltaRaw = player.MovementContext.DeltaRotation;
             float headDeltaTaperMulti = Mathf.Abs(headDeltaRaw / 45f);

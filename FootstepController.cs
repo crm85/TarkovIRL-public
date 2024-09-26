@@ -27,6 +27,10 @@ namespace TarkovIRL
 
         public static void NewStep(Player player)
         {
+            if (_stepLerp < 0.95f)
+            {
+                return;
+            }
             _stepLerp = 0;
             _currentSpeed = player.Speed;
         }
