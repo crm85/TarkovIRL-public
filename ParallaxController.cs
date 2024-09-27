@@ -38,6 +38,13 @@ namespace TarkovIRL
 
         public static void GetModifiedHandPosRotParallax(Player player, ref Vector3 position, ref Quaternion rotation)
         {
+            if (AnimStateController.IsBlindfire)
+            {
+                position = Vector3.zero;
+                rotation = Quaternion.identity;
+                return;
+            }
+
             float inverseWeaponMulti = WeaponController.GetWeaponMulti(true);
             float inverseEfficiencyMulti = EfficiencyController.EfficiencyModifierInverse;
             float parallaxEfficiencyMulti = inverseWeaponMulti * inverseEfficiencyMulti;

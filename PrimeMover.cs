@@ -89,7 +89,7 @@ namespace TarkovIRL
         readonly float BreathingEffectMultiDefault = 1f;
         readonly float CameraUpdateMultiDefault = 1f;
         readonly float EfficiencyLerpMultiDefault = 0.8f;
-        readonly float FootstepLerpMultiDefault = 0.3f;
+        readonly float FootstepLerpMultiDefault = 0.45f;
         readonly float FootstepIntesnityMultiDefault = 2f;
         readonly float ParallaxInAdsDefault = 0.2f;
         readonly float PistolSpecificParallaxDefault = 2f;
