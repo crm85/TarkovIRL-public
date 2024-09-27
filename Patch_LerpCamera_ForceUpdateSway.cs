@@ -32,13 +32,16 @@ namespace TarkovIRL
                 return;
             }
             Player player = (Player)playerField.GetValue(firearmController);
-            if ((Object)(object)player != (Object)null && player.IsYourPlayer)
+
+            //
+            if (UtilsTIRL.IsPriority(2)) UtilsTIRL.Log($"anim state name {player.MovementContext.CurrentState.Name}, anim state hash {player.MovementContext.CurrentState.AnimatorStateHash}");
+            AnimStateController.SetCurrentState(player.MovementContext.CurrentState.AnimatorStateHash);
+
+            //
+            PlayerMotionController.UpdateMovement(player);
+            if (!player.IsInventoryOpened)
             {
-                PlayerMotionController.UpdateMovement(player);
-                if (!player.IsInventoryOpened)
-                {
-                    __instance.UpdateSwayFactors();
-                }
+                __instance.UpdateSwayFactors();
             }
         }
     }

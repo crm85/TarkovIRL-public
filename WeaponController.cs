@@ -18,7 +18,7 @@ namespace TarkovIRL
         {
             if (fc != null)
             {
-                CurrentWeaponWeight = fc.Weapon.GetSingleItemTotalWeight();
+                CurrentWeaponWeight = PrimeMover.Instance.WeightAttenuationCurve.Evaluate(fc.Weapon.GetSingleItemTotalWeight());
                 CurrentWeaponErgoNorm = fc.TotalErgonomics / 100f;
                 IsStocked = CheckForStock(fc.Weapon);
             }
@@ -50,10 +50,11 @@ namespace TarkovIRL
             return true;
         }
 
-        public static float GetWeaponMulti()
+        public static float GetWeaponMulti(bool getInverse)
         {
             float ergoAdjusted = PrimeMover.Instance.ErgoAttenuationCurve.Evaluate(CurrentWeaponErgoNorm);
             float weaponMulti = WeaponController.CurrentWeaponWeight * (1f - ergoAdjusted);
+            if (getInverse) return 1f / weaponMulti;
             return weaponMulti;
         }
     }

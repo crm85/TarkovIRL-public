@@ -32,7 +32,16 @@ namespace TarkovIRL
         {
             float dt = player.DeltaTime;
             _pullInGateTimer += dt;
-            if(!player.ProceduralWeaponAnimation.IsAiming)
+
+            if (player.ProceduralWeaponAnimation.IsAiming)
+            {
+                _rotPullInTarget = 0;
+            }
+            else if (player.MovementContext.CurrentState.AnimatorStateHash == AnimStateController._Blindfire1 || player.MovementContext.CurrentState.AnimatorStateHash == AnimStateController._Blindfire2)
+            {
+                _rotPullInTarget = 0;
+            }
+            else
             {
                 if (_pullInGateTimer > _PullInGateTime)
                 {
@@ -52,10 +61,7 @@ namespace TarkovIRL
                     _rotPullInTarget = 0;
                 }
             }
-            else
-            {
-                _rotPullInTarget = 0;
-            }
+
             _rotPullInLerp = Mathf.Lerp(_rotPullInLerp, _rotPullInTarget, dt * _LerpRate * 0.6f);
             float finalValue = PrimeMover.Instance.SmoothEdgesCurve.Evaluate(_rotPullInLerp / _RotPullInValue) * _RotPullInValue;
             return new Vector3(0, 0, -finalValue);

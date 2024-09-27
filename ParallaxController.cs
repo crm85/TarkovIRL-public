@@ -38,10 +38,15 @@ namespace TarkovIRL
 
         public static void GetModifiedHandPosRotParallax(Player player, ref Vector3 position, ref Quaternion rotation)
         {
-            float weaponMulti = WeaponController.GetWeaponMulti();
-            float efficiencyMulti = EfficiencyController.GetEfficiencyModifier;
-            float inverseEfficiencyMulti = 1f / efficiencyMulti;
-            float inverseWeaponMulti = 1f / weaponMulti;
+            if (AnimStateController.IsBlindfire)
+            {
+                position = Vector3.zero;
+                rotation = Quaternion.identity;
+                return;
+            }
+
+            float inverseWeaponMulti = WeaponController.GetWeaponMulti(true);
+            float inverseEfficiencyMulti = EfficiencyController.EfficiencyModifierInverse;
             float parallaxEfficiencyMulti = inverseWeaponMulti * inverseEfficiencyMulti;
             bool isAiming = player.ProceduralWeaponAnimation.IsAiming;
 
@@ -78,10 +83,14 @@ namespace TarkovIRL
 
             _parallaxWeightADS = ParallaxAdsController.ParallaxWeight;
 
+            // up
             float dt = player.DeltaTime;
             float extraPistolParallax = WeaponController.IsPistol ? PrimeMover.PistolSpecificParallax.Value : 1f;
-            float parallaxMulti = PrimeMover.ParallaxMulti.Value * weaponMulti * extraPistolParallax;
-            float zeroDt = dt * PrimeMover.ParallaxReturnToCenterMulti.Value * inverseEfficiencyMulti;
+            float parallaxMulti = PrimeMover.ParallaxMulti.Value * WeaponController.GetWeaponMulti(false) * extraPistolParallax;
+
+            // down
+            float pistolZeroFactor = (WeaponController.IsPistol && PlayerMotionController.RotationDelta <= _RotationTrigger) ? PrimeMover.PistolSpecificParallax.Value * 2f : 0.5f;
+            float zeroDt = dt * PrimeMover.ParallaxReturnToCenterMulti.Value * inverseEfficiencyMulti * pistolZeroFactor;
 
             //
             // calc the position lerps

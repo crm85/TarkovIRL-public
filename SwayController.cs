@@ -26,6 +26,11 @@ namespace TarkovIRL
 
         public static Vector3 GetNewSway(Vector3 newSwayFactors, bool isAiming)
         {
+            if (AnimStateController.IsBlindfire)
+            {
+                return Vector3.zero;
+            }
+
             float weaponWeight = WeaponController.CurrentWeaponWeight;
             bool isFolded = !WeaponController.IsStocked;
             bool isPistol = WeaponController.IsPistol;
@@ -41,7 +46,7 @@ namespace TarkovIRL
             newSwayFactors.y *= -.2f * weaponWeight;
 
             // horizontal axis ***
-            _addedSwayTarget = _BaseSwayValue * PrimeMover.WeaponSwayMulti.Value * WeaponController.GetWeaponMulti() * EfficiencyController.GetEfficiencyModifier;
+            _addedSwayTarget = _BaseSwayValue * PrimeMover.WeaponSwayMulti.Value * WeaponController.GetWeaponMulti(false) * EfficiencyController.EfficiencyModifier;
 
             if (isAiming)
             {

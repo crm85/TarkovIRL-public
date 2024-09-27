@@ -74,6 +74,7 @@ namespace TarkovIRL
                 {
                     __instance.HandsContainer.WeaponRoot.localPosition += parallaxPosition;
                     __instance.HandsContainer.WeaponRoot.localRotation *= parallaxRotation;
+
                 }
             }
         }
