@@ -115,6 +115,10 @@ namespace TarkovIRL
             // reduce negetive effects per speed and pose
             float sprintingmulti = player.IsSprintEnabled ? 1.5f : 1f;
             float speedMulti = 0.5f + (player.Speed * 0.5f);
+            if (!PlayerMotionController.IsPlayerMovement)
+            {
+                speedMulti = 0.5f;
+            }
             float poseMulti = 0.5f + (player.PoseLevel * 0.5f);
             float proneMulti = player.IsInPronePose ? 0.5f : 1f;
 

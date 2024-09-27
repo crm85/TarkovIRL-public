@@ -26,6 +26,11 @@ namespace TarkovIRL
 
         public static Vector3 GetNewSway(Vector3 newSwayFactors, bool isAiming)
         {
+            if (AnimStateController.IsBlindfire)
+            {
+                return Vector3.zero;
+            }
+
             float weaponWeight = WeaponController.CurrentWeaponWeight;
             bool isFolded = !WeaponController.IsStocked;
             bool isPistol = WeaponController.IsPistol;
