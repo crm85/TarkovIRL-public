@@ -92,7 +92,7 @@ namespace TarkovIRL
             float nutritionMulti = GetNormalizedEffectImpact(nutritionNorm, 5f);
             float overWeightMulti = GetNormalizedEffectImpact(overWeightVal, 50f);
             //
-            float healthMulti = GetNormalizedEffectImpact(healthCommon, 100f);
+            float healthMulti = GetNormalizedEffectImpact(healthCommon, 50f);
             float stamMulti = GetNormalizedEffectImpact(stamNormalized, 20f);
             float handStamMulti = GetNormalizedEffectImpact(handStamNormalized, 20f);
             //

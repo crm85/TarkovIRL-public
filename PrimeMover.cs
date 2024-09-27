@@ -12,7 +12,7 @@ namespace TarkovIRL
     {
         const string modGUID = "TarkovIRL";
         const string modName = "TarkovIRL - WHM";
-        const string modVersion = "0.5";
+        const string modVersion = "0.5.1";
 
         public static PrimeMover Instance;
 
@@ -93,13 +93,13 @@ namespace TarkovIRL
         readonly float FootstepIntesnityMultiDefault = 2f;
         readonly float ParallaxInAdsDefault = 0.2f;
         readonly float PistolSpecificParallaxDefault = 2f;
-        readonly float ParallaxMultiDefault = 9f;
+        readonly float ParallaxMultiDefault = 8f;
         readonly float ParallaxReturnToCenterMultiDefault = 10f;
         readonly float ParallaxSetSizeMultiDefault = 2f;
         readonly float ShotParallaxWeaponWeightMultiDefault = 5f;
         readonly float ShotParallaxResetTimeMultiDefault = 10f;
-        readonly float WeaponDeadzoneMultiDefault = 2f;
-        readonly float WeaponSwayMultiDefault = 0.5f;
+        readonly float WeaponDeadzoneMultiDefault = 1.5f;
+        readonly float WeaponSwayMultiDefault = 2f;
         readonly float ThrowStrengthMultiDefault = 10f;
         readonly float ThrowSpeedMultiDefault = 1.5f;
 
@@ -229,7 +229,7 @@ namespace TarkovIRL
             // dev
             IsLogging = ConstructBoolConfig(false, DEV_SECTION, "Enable debug logging", "");
             DebugSpam = ConstructBoolConfig(false, DEV_SECTION, "Enable debug spam", "");
-            DevTestFloat3 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 3", "This is only for dev use, should not be connected to anything in production releases.", 1f, 30f);
+            //DevTestFloat3 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 3", "This is only for dev use, should not be connected to anything in production releases.", 1f, 30f);
             //DevTestFloat4 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 4", "This is only for dev use, should not be connected to anything in production releases.", 1f, 10f);
             //DevTestFloat5 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 5", "This is only for dev use, should not be connected to anything in production releases.", 0, 10f);
         }

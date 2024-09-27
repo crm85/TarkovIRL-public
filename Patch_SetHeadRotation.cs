@@ -25,10 +25,10 @@ namespace TarkovIRL
         [PatchPrefix]
         private static bool Prefix(ProceduralWeaponAnimation __instance, Vector3 headRot)
         {
-            float rate = PrimeMover.DevTestFloat3.Value;
-            _dzLerp.x = Mathf.Lerp(_dzLerp.x, _dzLerpTarget.x, PrimeMover.Instance.DeltaTime * rate);
-            _dzLerp.y = Mathf.Lerp(_dzLerp.y, _dzLerpTarget.y, PrimeMover.Instance.DeltaTime * rate);
-            _dzLerp.z = Mathf.Lerp(_dzLerp.z, _dzLerpTarget.z, PrimeMover.Instance.DeltaTime * rate);
+            //float rate = PrimeMover.DevTestFloat3.Value;
+            //_dzLerp.x = Mathf.Lerp(_dzLerp.x, _dzLerpTarget.x, PrimeMover.Instance.DeltaTime * rate);
+            //_dzLerp.y = Mathf.Lerp(_dzLerp.y, _dzLerpTarget.y, PrimeMover.Instance.DeltaTime * rate);
+            //_dzLerp.z = Mathf.Lerp(_dzLerp.z, _dzLerpTarget.z, PrimeMover.Instance.DeltaTime * rate);
 
             if (!PrimeMover.IsWeaponDeadzone.Value)
             {
