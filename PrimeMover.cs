@@ -12,7 +12,7 @@ namespace TarkovIRL
     {
         const string modGUID = "TarkovIRL";
         const string modName = "TarkovIRL - WHM";
-        const string modVersion = "0.5.1";
+        const string modVersion = "0.5.2";
 
         public static PrimeMover Instance;
 
@@ -100,8 +100,8 @@ namespace TarkovIRL
         readonly float ShotParallaxResetTimeMultiDefault = 10f;
         readonly float WeaponDeadzoneMultiDefault = 1.5f;
         readonly float WeaponSwayMultiDefault = 2f;
-        readonly float ThrowStrengthMultiDefault = 10f;
-        readonly float ThrowSpeedMultiDefault = 1.5f;
+        readonly float ThrowStrengthMultiDefault = 16;
+        readonly float ThrowSpeedMultiDefault = 2.25f;
 
         void Awake()
         {
