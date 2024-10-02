@@ -111,6 +111,7 @@ namespace TarkovIRL
             // negative effects
             //
             float negativeEffects = hydroMulti * nutritionMulti * overWeightMulti * healthMulti * stamMulti * handStamMulti * injuryMulti;
+            negativeEffects *= PrimeMover.EfficiencyNegativeEffectsMulti.Value;
 
             // reduce negetive effects per speed and pose
             float sprintingmulti = player.IsSprintEnabled ? 1.5f : 1f;

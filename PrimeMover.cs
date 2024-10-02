@@ -76,6 +76,7 @@ namespace TarkovIRL
         public static ConfigEntry<float> ParallaxReturnToCenterMulti;
         public static ConfigEntry<float> ThrowStrengthMulti;
         public static ConfigEntry<float> ThrowSpeedMulti;
+        public static ConfigEntry<float> EfficiencyNegativeEffectsMulti;
 
         const string DEV_SECTION = "3 - Only for dev/testing";
         public static ConfigEntry<float> DevTestFloat3;
@@ -93,15 +94,16 @@ namespace TarkovIRL
         readonly float FootstepIntesnityMultiDefault = 2f;
         readonly float ParallaxInAdsDefault = 0.2f;
         readonly float PistolSpecificParallaxDefault = 2f;
-        readonly float ParallaxMultiDefault = 8f;
+        readonly float ParallaxMultiDefault = 6.5f;
         readonly float ParallaxReturnToCenterMultiDefault = 10f;
         readonly float ParallaxSetSizeMultiDefault = 2f;
         readonly float ShotParallaxWeaponWeightMultiDefault = 5f;
         readonly float ShotParallaxResetTimeMultiDefault = 10f;
         readonly float WeaponDeadzoneMultiDefault = 1.5f;
-        readonly float WeaponSwayMultiDefault = 2f;
-        readonly float ThrowStrengthMultiDefault = 16;
+        readonly float WeaponSwayMultiDefault = 1.2f;
+        readonly float ThrowStrengthMultiDefault = 14;
         readonly float ThrowSpeedMultiDefault = 2.25f;
+        readonly float EfficiencyNegativeEffectsMultiDefault = 1f;
 
         void Awake()
         {
@@ -219,11 +221,10 @@ namespace TarkovIRL
             FootstepLerpMulti = ConstructFloatConfig(FootstepLerpMultiDefault, ADJUST_VAR_SECTION, "Footstep lerp speed multiplier", "How quickly the footstep animation plays", 0, 10f);
             FootstepIntesnityMulti = ConstructFloatConfig(FootstepIntesnityMultiDefault, ADJUST_VAR_SECTION, "Footstep intensity multiplier", "", 0, 10f);
             ParallaxInAds = ConstructFloatConfig(ParallaxInAdsDefault, ADJUST_VAR_SECTION, "Parallax effect in ADS", "The % of parallax effect that you see in ADS (with a stocked weapon)", 0, 1f);
-            PistolSpecificParallax = ConstructFloatConfig(PistolSpecificParallaxDefault, ADJUST_VAR_SECTION, "Parallax effect value specifically for pistols", "", 0, 10f);
-            ParallaxReturnToCenterMulti = ConstructFloatConfig(ParallaxReturnToCenterMultiDefault, ADJUST_VAR_SECTION, "Parallax return-to-center multiplier", "Higher = a faster return to center of the parallax", 0, 20f);
-            ParallaxReturnToCenterMulti = ConstructFloatConfig(ParallaxReturnToCenterMultiDefault, ADJUST_VAR_SECTION, "Parallax return-to-center multiplier", "Higher = a faster return to center of the parallax", 0, 20f);
+            PistolSpecificParallax = ConstructFloatConfig(PistolSpecificParallaxDefault, ADJUST_VAR_SECTION, "Parallax effect value specifically for pistols", "", 0, 10f); ParallaxReturnToCenterMulti = ConstructFloatConfig(ParallaxReturnToCenterMultiDefault, ADJUST_VAR_SECTION, "Parallax return-to-center multiplier", "Higher = a faster return to center of the parallax", 0, 20f);
             ThrowStrengthMulti = ConstructFloatConfig(ThrowStrengthMultiDefault, ADJUST_VAR_SECTION, "Throw visual effect multi", "", 0, 100f);
             ThrowSpeedMulti = ConstructFloatConfig(ThrowSpeedMultiDefault, ADJUST_VAR_SECTION, "Throw effect speed", "", 0, 10f);
+            EfficiencyNegativeEffectsMulti = ConstructFloatConfig(EfficiencyNegativeEffectsMultiDefault, ADJUST_VAR_SECTION, "Efficiency negative effect multi", "Controls how much negative effects (such as fatigue and damage) negatively affect your efficiency stat.", 0f, 2f);
 
 
             // dev
