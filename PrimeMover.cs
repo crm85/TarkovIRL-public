@@ -82,6 +82,7 @@ namespace TarkovIRL
         public static ConfigEntry<float> DevTestFloat3;
         public static ConfigEntry<float> DevTestFloat4;
         public static ConfigEntry<float> DevTestFloat5;
+        public static ConfigEntry<float> DevTestFloat6;
 
         // config defaults
         readonly float AdsParallaxTimeMultiDefault = 30f;
@@ -230,9 +231,10 @@ namespace TarkovIRL
             // dev
             IsLogging = ConstructBoolConfig(false, DEV_SECTION, "Enable debug logging", "");
             DebugSpam = ConstructBoolConfig(false, DEV_SECTION, "Enable debug spam", "");
-            //DevTestFloat3 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 3", "This is only for dev use, should not be connected to anything in production releases.", 1f, 30f);
-            //DevTestFloat4 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 4", "This is only for dev use, should not be connected to anything in production releases.", 1f, 10f);
-            //DevTestFloat5 = ConstructFloatConfig(1f, DEV_SECTION, "Test value 5", "This is only for dev use, should not be connected to anything in production releases.", 0, 10f);
+            DevTestFloat3 = ConstructFloatConfig(80f, DEV_SECTION, "1 _playerRotationAvg fdt multi", "This is only for dev use, should not be connected to anything in production releases.", 0.1f, 100f);
+            DevTestFloat4 = ConstructFloatConfig(40f, DEV_SECTION, "2 extra parallax from rot", "This is only for dev use, should not be connected to anything in production releases.", 0.1f, 100f);
+            //DevTestFloat5 = ConstructFloatConfig(1f, DEV_SECTION, "3 parallax return to center extra force", "This is only for dev use, should not be connected to anything in production releases.", 0.1f, 100f);
+            DevTestFloat6 = ConstructFloatConfig(0.1f, DEV_SECTION, "4 _playerRotationAvg clamp size", "This is only for dev use, should not be connected to anything in production releases.", 0f, 0.1f);
         }
 
         //

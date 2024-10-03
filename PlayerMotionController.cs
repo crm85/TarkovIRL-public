@@ -47,15 +47,17 @@ namespace TarkovIRL
             _verticalAvg = newRot.y > _playerRotLastFrame.y ? 1f : -1f;
 
             // horizontal
-            float distance = Vector2.Distance(newRot.normalized, _playerRotLastFrame.normalized);
+            float distance = Vector2.Distance(newRot, _playerRotLastFrame) * PrimeMover.Instance.FixedDeltaTime;
+            _playerRotLastFrame = newRot;
 
             _playerRotationHistory += distance;
             _playerRotationHistory -= _playerRotationAvg;
-            _playerRotationHistory = Mathf.Clamp(_playerRotationHistory, 0, _RotationHistoryClamp);
-            _playerRotationAvg = _playerRotationHistory * PrimeMover.Instance.DeltaTime;
+            _playerRotationHistory = Mathf.Clamp(_playerRotationHistory, 0, PrimeMover.DevTestFloat6.Value);
+            _playerRotationAvg = _playerRotationHistory * PrimeMover.Instance.FixedDeltaTime * PrimeMover.DevTestFloat3.Value;
+
+            //UtilsTIRL.Log($"_playerRotationAvg : {_playerRotationAvg}");
 
             // set for next frame
-            _playerRotLastFrame = newRot;
         }
 
         public static float GetNormalSpeed(Player player)
