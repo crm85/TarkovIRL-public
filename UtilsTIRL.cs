@@ -10,6 +10,8 @@ namespace TarkovIRL
 {
     public static class UtilsTIRL
     {
+        public enum E_DEBUG_PRIORITY { ERROR, SPAM, TESTING };
+
         public static ManualLogSource Logger;
         static float _dt = 0;
 

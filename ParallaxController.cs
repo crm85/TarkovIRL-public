@@ -68,6 +68,9 @@ namespace TarkovIRL
                 }
             }
 
+            //float dt = player.DeltaTime;
+            float dt = PrimeMover.Instance.FixedDeltaTime;
+
             Vector2 rotationalMotionThisFrame = _playerRotationLastFrame - player.Rotation;
             _playerRotationLastFrame = player.Rotation;
             float sizeMultiFinal = _ParallaxSetSizeFixed * PrimeMover.ParallaxSetSizeMulti.Value;
@@ -78,40 +81,42 @@ namespace TarkovIRL
             _rotAvgYSet -= _rotAvgY;
             _rotAvgXSet = Mathf.Clamp(_rotAvgXSet, -sizeMultiFinal, sizeMultiFinal);
             _rotAvgYSet = Mathf.Clamp(_rotAvgYSet, -sizeMultiFinal, sizeMultiFinal);
-            _rotAvgX = _rotAvgXSet * player.DeltaTime;
-            _rotAvgY = _rotAvgYSet * player.DeltaTime;
+            _rotAvgX = _rotAvgXSet * dt;
+            _rotAvgY = _rotAvgYSet * dt;
 
             _parallaxWeightADS = ParallaxAdsController.ParallaxWeight;
 
             // up
-            float dt = player.DeltaTime;
             float extraPistolParallax = WeaponController.IsPistol ? PrimeMover.PistolSpecificParallax.Value : 1f;
-
-            float extraMultiFromRot = PlayerMotionController.RotationDelta * PrimeMover.DevTestFloat4.Value;
+            float rotationDeltaMulti = PlayerMotionController.RotationDelta * PrimeMover.DevTestFloat4.Value;
             //UtilsTIRL.Log($"extraMultiFromRot : {extraMultiFromRot}");
 
-            float parallaxMulti = PrimeMover.ParallaxMulti.Value * WeaponController.GetWeaponMulti(false) * extraPistolParallax * extraMultiFromRot;
+            float parallaxMulti = PrimeMover.ParallaxMulti.Value * WeaponController.GetWeaponMulti(false) * extraPistolParallax;
 
             // down
             //float pistolZeroFactor = (WeaponController.IsPistol && PlayerMotionController.RotationDelta <= _RotationTrigger) ? PrimeMover.PistolSpecificParallax.Value * 2f : 0.5f;
-            float zeroDt = dt * PrimeMover.ParallaxReturnToCenterMulti.Value * inverseEfficiencyMulti * (1f / extraMultiFromRot);
+            float inverseRotationDeltaMulti = Mathf.Pow(1f / rotationDeltaMulti, PrimeMover.ParallaxRecenterFactor.Value);
+            inverseRotationDeltaMulti = Mathf.Clamp(inverseRotationDeltaMulti, 0, PrimeMover.DevTestFloat7.Value);
+            float zeroLerpTime = dt * inverseEfficiencyMulti * inverseRotationDeltaMulti;
+            if (UtilsTIRL.IsPriority(2)) UtilsTIRL.Log($"zeroLerpTime {zeroLerpTime}, inverseEfficiencyMulti {inverseEfficiencyMulti}, inverseRotationDeltaMulti {inverseRotationDeltaMulti}, rotationDeltaMulti {rotationDeltaMulti}");
+
 
             //
             // calc the position lerps
             //
             _posLerpXTarget = Mathf.Lerp(_posLerpXTarget, _rotAvgX * parallaxMulti, dt);
-            _posLerpXTarget = Mathf.Lerp(_posLerpXTarget, 0, zeroDt);
+            _posLerpXTarget = Mathf.Lerp(_posLerpXTarget, 0, zeroLerpTime);
             //
             _posLerpYTarget = Mathf.Lerp(_posLerpYTarget, _rotAvgY * parallaxMulti, dt);
-            _posLerpYTarget = Mathf.Lerp(_posLerpYTarget, 0, zeroDt);
+            _posLerpYTarget = Mathf.Lerp(_posLerpYTarget, 0, zeroLerpTime);
 
             //
             // calc the rotation lerps
             //
             _rotLerpXTarget = Mathf.Lerp(_rotLerpXTarget, _rotAvgX * parallaxMulti, dt);
-            _rotLerpXTarget = Mathf.Lerp(_rotLerpXTarget, 0, zeroDt);
+            _rotLerpXTarget = Mathf.Lerp(_rotLerpXTarget, 0, zeroLerpTime);
             _rotLerpYTarget = Mathf.Lerp(_rotLerpYTarget, _rotAvgY * parallaxMulti, dt);
-            _rotLerpYTarget = Mathf.Lerp(_rotLerpYTarget, 0, zeroDt);
+            _rotLerpYTarget = Mathf.Lerp(_rotLerpYTarget, 0, zeroLerpTime);
 
             //
             // final lerp

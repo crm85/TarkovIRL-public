@@ -69,7 +69,7 @@ namespace TarkovIRL
             {
 
                 
-                    Vector3 headRotModified = DeadzoneController.GetHeadRotationWithDeadzone(player, PrimeMover.WeaponDeadzoneMulti.Value, headRot);
+                    Vector3 headRotModified = DeadzoneController.GetHeadRotationWithDeadzone(player, PrimeMover._1_WeaponDeadzoneMulti.Value, headRot);
                     //_dzLerpTarget = headRotModified;
                     player.HeadRotation = headRotModified;
                     AccessTools.Field(typeof(ProceduralWeaponAnimation), "_headRotationVec").SetValue(__instance, headRotModified);
