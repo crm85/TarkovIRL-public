@@ -20,13 +20,19 @@ namespace TarkovIRL
         static float _playerRotationHistory = 0;
         static float _playerRotationAvg = 0;
 
+        static float _horizontalRotationHistory = 0;
+        static float _horizontalRotationValue = 0;
+
         static bool _playerMoving = false;
         static float _verticalAvg = 0;
+
+        static public bool IsAiming = false;
         
         public static void UpdateMovement(Player player)
         {
             UpdateMoving(player.Position);
             UpdateRotation(player.Rotation);
+            IsAiming = player.ProceduralWeaponAnimation.IsAiming;
         }
         static void UpdateMoving(Vector3 position)
         {
@@ -46,18 +52,26 @@ namespace TarkovIRL
             // vertical 
             _verticalAvg = newRot.y > _playerRotLastFrame.y ? 1f : -1f;
 
-            // horizontal
             float distance = Vector2.Distance(newRot, _playerRotLastFrame) * PrimeMover.Instance.FixedDeltaTime;
-            _playerRotLastFrame = newRot;
+            float horizontalMovement = newRot.x - _playerRotLastFrame.x;
+            horizontalMovement *= 0.01f;
 
+            // general rot detection
             _playerRotationHistory += distance;
             _playerRotationHistory -= _playerRotationAvg;
             _playerRotationHistory = Mathf.Clamp(_playerRotationHistory, 0, PrimeMover.DevTestFloat6.Value);
             _playerRotationAvg = _playerRotationHistory * PrimeMover.Instance.FixedDeltaTime * PrimeMover.DevTestFloat3.Value;
 
-            //UtilsTIRL.Log($"_playerRotationAvg : {_playerRotationAvg}");
+            // horizontal tracking
+            _horizontalRotationHistory += horizontalMovement;
+            _horizontalRotationHistory -= _horizontalRotationValue;
+            //_horizontalRotationHistory = Mathf.Clamp(_horizontalRotationHistory, -PrimeMover.DevTestFloat6.Value, PrimeMover.DevTestFloat6.Value);
+            _horizontalRotationValue = _horizontalRotationHistory * PrimeMover.Instance.FixedDeltaTime * PrimeMover.DevTestFloat3.Value;
+
+            //UtilsTIRL.Log($"_playerRotationAvg : {_playerRotationAvg} , _horizontalRotationValue : {_horizontalRotationValue}");
 
             // set for next frame
+            _playerRotLastFrame = newRot;
         }
 
         public static float GetNormalSpeed(Player player)
@@ -78,6 +92,11 @@ namespace TarkovIRL
         public static float RotationDelta
         {
             get { return _playerRotationAvg; }
+        }
+
+        public static float HorizontalRotationDelta
+        {
+            get { return _horizontalRotationValue; }
         }
     }
 }

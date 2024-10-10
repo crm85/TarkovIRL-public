@@ -2,8 +2,10 @@
 using SPT.Reflection.Patching;
 using BepInEx;
 using BepInEx.Configuration;
-using HarmonyLib;
 using UnityEngine;
+using EFT;
+using static System.Net.Mime.MediaTypeNames;
+using JetBrains.Annotations;
 
 namespace TarkovIRL
 {
@@ -31,6 +33,7 @@ namespace TarkovIRL
         public AnimationCurve ThrowVisualUnderhandCurveY;
         public AnimationCurve WeightAttenuationCurve;
         public AnimationCurve ThrowAlphaCurve;
+        public AnimationCurve NewSwayCurve;
 
         //
         // Dts
@@ -77,6 +80,12 @@ namespace TarkovIRL
         public static ConfigEntry<float> ThrowSpeedMulti;
         public static ConfigEntry<float> EfficiencyNegativeEffectsMulti;
         public static ConfigEntry<float> ParallaxRecenterFactor;
+        public static ConfigEntry<float> NewSwayPositionMulti;
+        public static ConfigEntry<float> NewSwayRotationMulti;
+        public static ConfigEntry<float> NewSwayPositionDTMulti;
+        public static ConfigEntry<float> NewSwayRotationDTMulti;
+
+
 
         const string DEV_SECTION = "3 - Only for dev/testing";
         public static ConfigEntry<float> DevTestFloat3;
@@ -105,6 +114,7 @@ namespace TarkovIRL
         readonly float ThrowStrengthMultiDefault = 14;
         readonly float ThrowSpeedMultiDefault = 2.25f;
         readonly float EfficiencyNegativeEffectsMultiDefault = 1f;
+
 
         void Awake()
         {
@@ -180,6 +190,10 @@ namespace TarkovIRL
                 new Keyframe(0f, 1f), new Keyframe(0.15f, 0), new Keyframe(0.6f, 0), new Keyframe(0.95f, 1f)
             );
 
+            NewSwayCurve = new AnimationCurve
+            (
+                new Keyframe(0f, 0f), new Keyframe(0.01f, 0.0005299348f), new Keyframe(0.02f, 0.0008844695f), new Keyframe(0.03f, 0.001104074f), new Keyframe(0.04f, 0.001229217f), new Keyframe(0.05f, 0.001300369f), new Keyframe(0.05999999f, 0.001357998f), new Keyframe(0.06999999f, 0.001442575f), new Keyframe(0.07999999f, 0.001594569f), new Keyframe(0.08999999f, 0.001854448f), new Keyframe(0.09999999f, 0.002262684f), new Keyframe(0.11f, 0.002859745f), new Keyframe(0.12f, 0.003686101f), new Keyframe(0.13f, 0.004782219f), new Keyframe(0.14f, 0.006188573f), new Keyframe(0.15f, 0.007945633f), new Keyframe(0.16f, 0.01009386f), new Keyframe(0.17f, 0.01267374f), new Keyframe(0.18f, 0.01572572f), new Keyframe(0.19f, 0.01929029f), new Keyframe(0.2f, 0.02340791f), new Keyframe(0.21f, 0.02811905f), new Keyframe(0.22f, 0.03346418f), new Keyframe(0.23f, 0.03948377f), new Keyframe(0.24f, 0.04621829f), new Keyframe(0.25f, 0.0537082f), new Keyframe(0.26f, 0.06199397f), new Keyframe(0.27f, 0.07111607f), new Keyframe(0.28f, 0.08111499f), new Keyframe(0.29f, 0.09204137f), new Keyframe(0.3f, 0.104522f), new Keyframe(0.31f, 0.1187859f), new Keyframe(0.32f, 0.1346613f), new Keyframe(0.33f, 0.1519762f), new Keyframe(0.3399999f, 0.1705587f), new Keyframe(0.3499999f, 0.1902369f), new Keyframe(0.3599999f, 0.210839f), new Keyframe(0.3699999f, 0.2321929f), new Keyframe(0.3799999f, 0.2541268f), new Keyframe(0.3899999f, 0.2764688f), new Keyframe(0.3999999f, 0.2990471f), new Keyframe(0.4099999f, 0.3216895f), new Keyframe(0.4199999f, 0.3442244f), new Keyframe(0.4299999f, 0.3664797f), new Keyframe(0.4399998f, 0.3882836f), new Keyframe(0.4499998f, 0.4094641f), new Keyframe(0.4599998f, 0.4298493f), new Keyframe(0.4699998f, 0.4492674f), new Keyframe(0.4799998f, 0.4675464f), new Keyframe(0.4899998f, 0.4845145f), new Keyframe(0.4999998f, 0.4999996f), new Keyframe(0.5099998f, 0.5145006f), new Keyframe(0.5199998f, 0.5286377f), new Keyframe(0.5299998f, 0.5424225f), new Keyframe(0.5399998f, 0.555866f), new Keyframe(0.5499998f, 0.5689797f), new Keyframe(0.5599998f, 0.5817747f), new Keyframe(0.5699998f, 0.5942622f), new Keyframe(0.5799997f, 0.6064535f), new Keyframe(0.5899997f, 0.6183599f), new Keyframe(0.5999997f, 0.6299927f), new Keyframe(0.6099997f, 0.641363f), new Keyframe(0.6199997f, 0.6524821f), new Keyframe(0.6299997f, 0.6633613f), new Keyframe(0.6399997f, 0.6740117f), new Keyframe(0.6499997f, 0.6844448f), new Keyframe(0.6599997f, 0.6946716f), new Keyframe(0.6699997f, 0.7047035f), new Keyframe(0.6799996f, 0.7145516f), new Keyframe(0.6899996f, 0.7242273f), new Keyframe(0.6999996f, 0.7337418f), new Keyframe(0.7099996f, 0.7431063f), new Keyframe(0.7199996f, 0.7523321f), new Keyframe(0.7299996f, 0.7614304f), new Keyframe(0.7399996f, 0.7704126f), new Keyframe(0.7499996f, 0.7792897f), new Keyframe(0.7599996f, 0.7880731f), new Keyframe(0.7699996f, 0.796774f), new Keyframe(0.7799996f, 0.8054037f), new Keyframe(0.7899995f, 0.8139734f), new Keyframe(0.7999995f, 0.8224944f), new Keyframe(0.8099995f, 0.8309778f), new Keyframe(0.8199995f, 0.8394351f), new Keyframe(0.8299995f, 0.8478773f), new Keyframe(0.8399995f, 0.8563158f), new Keyframe(0.8499995f, 0.8647617f), new Keyframe(0.8599995f, 0.8732265f), new Keyframe(0.8699995f, 0.8817211f), new Keyframe(0.8799995f, 0.8902571f), new Keyframe(0.8899994f, 0.8988456f), new Keyframe(0.8999994f, 0.9074978f), new Keyframe(0.9099994f, 0.916225f), new Keyframe(0.9199994f, 0.9250383f), new Keyframe(0.9299994f, 0.9339492f), new Keyframe(0.9399994f, 0.9429687f), new Keyframe(0.9499994f, 0.9521084f), new Keyframe(0.9599994f, 0.9613791f), new Keyframe(0.9699994f, 0.9707924f), new Keyframe(0.9799994f, 0.9803593f), new Keyframe(0.9899994f, 0.9900912f), new Keyframe(0.9999993f, 0.9999993f)
+            );
 
             TryLoadPatch(new Patch_LerpCamera_ForceUpdateSway());
             TryLoadPatch(new Patch_UpdateSwayFactors());
@@ -192,7 +206,6 @@ namespace TarkovIRL
             TryLoadPatch(new Patch_SetHeadRotation());
             TryLoadPatch(new Patch_Look());
         }
-
         void LoadConfigValues()
         {
             // toggles
@@ -226,7 +239,11 @@ namespace TarkovIRL
             ThrowStrengthMulti = ConstructFloatConfig(ThrowStrengthMultiDefault, ADJUST_VAR_SECTION, "Throw visual effect multi", "", 0, 100f);
             ThrowSpeedMulti = ConstructFloatConfig(ThrowSpeedMultiDefault, ADJUST_VAR_SECTION, "Throw effect speed", "", 0, 10f);
             EfficiencyNegativeEffectsMulti = ConstructFloatConfig(EfficiencyNegativeEffectsMultiDefault, ADJUST_VAR_SECTION, "Efficiency negative effect multi", "Controls how much negative effects (such as fatigue and damage) negatively affect your efficiency stat.", 0f, 2f);
-            ParallaxRecenterFactor = ConstructFloatConfig(2f, ADJUST_VAR_SECTION, "Parallax recenter factor", "", 1f, 20f);
+            ParallaxRecenterFactor = ConstructFloatConfig(2f, ADJUST_VAR_SECTION, "Parallax recenter factor", "", 1f, 200f);
+            NewSwayPositionMulti = ConstructFloatConfig(1f, ADJUST_VAR_SECTION, "NewSwayPositionMulti", "", 0, 10f);
+            NewSwayRotationMulti = ConstructFloatConfig(1f, ADJUST_VAR_SECTION, "NewSwayRotationMulti", "", 0, 10f);
+            NewSwayPositionDTMulti = ConstructFloatConfig(1f, ADJUST_VAR_SECTION, "NewSwayPositionDTMulti", "", 0, 10f);
+            NewSwayRotationDTMulti = ConstructFloatConfig(1f, ADJUST_VAR_SECTION, "NewSwayRotationDTMulti", "", 0, 10f);
 
             // dev
             IsLogging = ConstructBoolConfig(false, DEV_SECTION, "Enable debug logging", "");
@@ -234,7 +251,7 @@ namespace TarkovIRL
             DevTestFloat3 = ConstructFloatConfig(80f, DEV_SECTION, "1 _playerRotationAvg fdt multi", "This is only for dev use, should not be connected to anything in production releases.", 0.1f, 100f);
             DevTestFloat4 = ConstructFloatConfig(80f, DEV_SECTION, "2 extra parallax from rot", "This is only for dev use, should not be connected to anything in production releases.", 0.1f, 100f);
             DevTestFloat6 = ConstructFloatConfig(0.1f, DEV_SECTION, "4 _playerRotationAvg clamp size", "This is only for dev use, should not be connected to anything in production releases.", 0f, 1f);
-            DevTestFloat7 = ConstructFloatConfig(1000f, DEV_SECTION, "inverseRotationDeltaMulti set size", "This is only for dev use, should not be connected to anything in production releases.", 1f, 10000f);
+            DevTestFloat7 = ConstructFloatConfig(1f, DEV_SECTION, "inverseRotationDeltaMulti set size", "This is only for dev use, should not be connected to anything in production releases.", 0.01f, 10f);
         }
 
         //
@@ -247,6 +264,7 @@ namespace TarkovIRL
             FootstepController.UpdateStep(DeltaTime);
             SwayController.UpdateLerp(DeltaTime);
             ThrowController.UpdateLerp(DeltaTime);
+            NewSwayController.UpdateLerp(DeltaTime);
         }
 
         void Update()

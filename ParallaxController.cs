@@ -12,7 +12,6 @@ namespace TarkovIRL
     public static class ParallaxController
     {
         private static readonly float _ParallaxSetSizeFixed = 0.2f;
-        private static readonly float _RotationTrigger = 0.0002f;
 
         private static float _rotAvgXSet = 0;
         private static float _rotAvgYSet = 0;
@@ -95,8 +94,7 @@ namespace TarkovIRL
 
             // down
             //float pistolZeroFactor = (WeaponController.IsPistol && PlayerMotionController.RotationDelta <= _RotationTrigger) ? PrimeMover.PistolSpecificParallax.Value * 2f : 0.5f;
-            float inverseRotationDeltaMulti = Mathf.Pow(1f / rotationDeltaMulti, PrimeMover.ParallaxRecenterFactor.Value);
-            inverseRotationDeltaMulti = Mathf.Clamp(inverseRotationDeltaMulti, 0, PrimeMover.DevTestFloat7.Value);
+            float inverseRotationDeltaMulti = 1f / rotationDeltaMulti;
             float zeroLerpTime = dt * inverseEfficiencyMulti * inverseRotationDeltaMulti;
             if (UtilsTIRL.IsPriority(2)) UtilsTIRL.Log($"zeroLerpTime {zeroLerpTime}, inverseEfficiencyMulti {inverseEfficiencyMulti}, inverseRotationDeltaMulti {inverseRotationDeltaMulti}, rotationDeltaMulti {rotationDeltaMulti}");
 

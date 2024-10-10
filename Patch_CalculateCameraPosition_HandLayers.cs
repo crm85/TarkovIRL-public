@@ -76,6 +76,28 @@ namespace TarkovIRL
                     __instance.HandsContainer.WeaponRoot.localRotation *= parallaxRotation;
 
                 }
+
+                //
+                // new sway
+                // --------
+                // The new sway will add both rot and pos;
+                // the general intentions will be the same:
+                // in the ads you get a lagging sway because of the cheek weld;
+                // otherwise there is a leading sway.
+                // The main difference is that the motion will be based on my newly
+                // figured-out rotational calculation which has become far more
+                // reliable (at least, on my system??).
+                //
+
+                //
+                // new sway injection;
+                //
+
+                Vector3 addedSwayPosition = NewSwayController.GetNewSwayPosition(player);
+                Quaternion addedSwayRotation = NewSwayController.GetNewSwayRotation(player);
+
+                __instance.HandsContainer.WeaponRoot.localPosition += addedSwayPosition;
+                __instance.HandsContainer.WeaponRoot.localRotation *= addedSwayRotation;
             }
         }
     }

@@ -60,7 +60,8 @@ namespace TarkovIRL
                     _addedSwayTarget *= -3f;
                 }
             }
-            newSwayFactors.z *= _addedSwayLerp;
+            newSwayFactors.z *= 0;
+            //newSwayFactors.z *= _addedSwayLerp;
             //UtilsTIRL.Log($"added sway {_addedSwayLerp}");
 
             // output

@@ -80,6 +80,7 @@
   <ItemGroup>
     <Compile Include="EfficiencyController.cs" />
     <Compile Include="FootstepController.cs" />
+    <Compile Include="NewSwayController.cs" />
     <Compile Include="ParallaxAdsController.cs" />
     <Compile Include="DeadzoneController.cs" />
     <Compile Include="HandPoseController.cs" />
