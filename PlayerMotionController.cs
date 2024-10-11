@@ -55,18 +55,22 @@ namespace TarkovIRL
             float distance = Vector2.Distance(newRot, _playerRotLastFrame) * PrimeMover.Instance.FixedDeltaTime;
             float horizontalMovement = newRot.x - _playerRotLastFrame.x;
             horizontalMovement *= 0.01f;
+            if (horizontalMovement < -1f)
+            {
+                horizontalMovement = 0;
+            }
 
             // general rot detection
             _playerRotationHistory += distance;
             _playerRotationHistory -= _playerRotationAvg;
-            _playerRotationHistory = Mathf.Clamp(_playerRotationHistory, 0, PrimeMover.DevTestFloat6.Value);
-            _playerRotationAvg = _playerRotationHistory * PrimeMover.Instance.FixedDeltaTime * PrimeMover.DevTestFloat3.Value;
+            _playerRotationHistory = Mathf.Clamp(_playerRotationHistory, 0, PrimeMover.RotationHistoryClamp.Value);
+            _playerRotationAvg = _playerRotationHistory * PrimeMover.Instance.FixedDeltaTime * PrimeMover.RotationAverageDTMulti.Value;
 
             // horizontal tracking
             _horizontalRotationHistory += horizontalMovement;
             _horizontalRotationHistory -= _horizontalRotationValue;
             //_horizontalRotationHistory = Mathf.Clamp(_horizontalRotationHistory, -PrimeMover.DevTestFloat6.Value, PrimeMover.DevTestFloat6.Value);
-            _horizontalRotationValue = _horizontalRotationHistory * PrimeMover.Instance.FixedDeltaTime * PrimeMover.DevTestFloat3.Value;
+            _horizontalRotationValue = _horizontalRotationHistory * PrimeMover.Instance.FixedDeltaTime * PrimeMover.RotationAverageDTMulti.Value;
 
             //UtilsTIRL.Log($"_playerRotationAvg : {_playerRotationAvg} , _horizontalRotationValue : {_horizontalRotationValue}");
 

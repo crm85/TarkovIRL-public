@@ -15,22 +15,22 @@ namespace TarkovIRL
         {
             float delta = PlayerMotionController.HorizontalRotationDelta;
             float isStockedMulti = WeaponController.IsStocked ? -1 : 1f;
-            float isStockedAds = WeaponController.IsStocked && PlayerMotionController.IsAiming ? -1 : 1f;
-            float isAds = PlayerMotionController.IsAiming && WeaponController.IsStocked ? 0 : 1f;
+            float isAdsPos = WeaponController.IsStocked && PlayerMotionController.IsAiming ? 0 : 1f;
+            float isAdsRot = WeaponController.IsStocked && PlayerMotionController.IsAiming ? -0.5f : 1f;
             float wpnMulti = WeaponController.GetWeaponMulti(true);
             float efficiencyMulti = EfficiencyController.EfficiencyModifierInverse;
             float lerpDTMulti = wpnMulti * efficiencyMulti;
 
             // pos
-            float lerpPosTarget = delta * isStockedMulti * isAds;
+            float lerpPosTarget = delta * isStockedMulti * isAdsPos;
             _lerpPos = Mathf.Lerp(_lerpPos, lerpPosTarget, deltaTime * lerpDTMulti * PrimeMover.NewSwayPositionDTMulti.Value);
 
             // rot
-            float lerpRotTarget = delta * isStockedAds;
+            float lerpRotTarget = delta * isAdsRot;
             _lerpRot = Mathf.Lerp(_lerpRot, lerpRotTarget, deltaTime * lerpDTMulti * PrimeMover.NewSwayRotationDTMulti.Value);
 
             // debug
-            UtilsTIRL.Log($" lerpDTMulti {lerpDTMulti}, efficiencyMulti {efficiencyMulti}, wpnMulti {wpnMulti}");
+            //UtilsTIRL.Log($" lerpDTMulti {lerpDTMulti}, efficiencyMulti {efficiencyMulti}, wpnMulti {wpnMulti}");
         }
         public static Vector3 GetNewSwayPosition(Player player)
         {

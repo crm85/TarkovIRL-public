@@ -15,8 +15,8 @@ namespace TarkovIRL
         // readonlys
         static readonly float _RotPullInDeltaThresh = 0.0002f;
         static readonly float _RotPullInValue = 0.05f;
-        static readonly float _LerpRate = 2.2f;
-        static readonly float _PullInGateTime = 0.1f;
+        static readonly float _LerpRate = 4f;
+        static readonly float _PullInGateTime = 0.8f;
         static readonly float _StockMovementAddedPosValue = 0.01f;
 
         // vars
@@ -37,7 +37,7 @@ namespace TarkovIRL
             {
                 _rotPullInTarget = 0;
             }
-            else if (player.MovementContext.CurrentState.AnimatorStateHash == AnimStateController._Blindfire1 || player.MovementContext.CurrentState.AnimatorStateHash == AnimStateController._Blindfire2)
+            else if (AnimStateController.IsBlindfire)
             {
                 _rotPullInTarget = 0;
             }

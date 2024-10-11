@@ -40,7 +40,7 @@ namespace TarkovIRL
             get 
             {
                 float speedAdjusted = 0.2f + _currentSpeed;
-                float stepValue = PrimeMover.Instance.FootStepCurve.Evaluate(_stepLerp) * _StepIntensityMulti * PrimeMover.FootstepIntesnityMulti.Value * EfficiencyController.EfficiencyModifier * speedAdjusted;
+                float stepValue = PrimeMover.Instance.FootStepCurve.Evaluate(_stepLerp) * _StepIntensityMulti * PrimeMover.FootstepIntesnityMulti.Value * (EfficiencyController.EfficiencyModifier * 0.5f) * speedAdjusted;
                 return new Vector3(0, stepValue, 0); 
             }
         }

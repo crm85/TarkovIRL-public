@@ -42,10 +42,28 @@ namespace TarkovIRL
         public float Time = 0;
         public float FixedDeltaTime = 0;
 
+        // new sway sliders
+
+        // parallax sliders
+
+        // deadzone sliders
+
+        // misc fine tuning sliders
+
+
+        const string BASE_FEATURES_SECTION = "1 - Toggle base features";
+        const string ADJUST_VAR_SECTION = "2 - Adjust main feature values";
+        const string NEW_SWAY_SLIDERS = "3 - Fine tuning of new sway";
+        const string PARALLAX_SLIDERS = "4 - Fine tuning of parallax mechanic";
+        const string EFFICIENCY_SLIDERS = "5 - Fine tuning of efficiency mechanic";
+        const string ROTATION_ENGINE_SLIDERS = "6 - Rotation engine sliders";
+        const string MISC_SLIDERS = "7 - Misc sliders";
+        const string DEV_SECTION = "99 - Only for dev/testing";
+
+
         //
         // config items
         //
-        const string BASE_FEATURES_SECTION = "1 - Toggle base features";
         public static ConfigEntry<bool> IsWeaponDeadzone;
         public static ConfigEntry<bool> IsWeaponSway;
         public static ConfigEntry<bool> IsBreathingEffect;
@@ -59,15 +77,14 @@ namespace TarkovIRL
         public static ConfigEntry<bool> IsLogging;
         public static ConfigEntry<bool> DebugSpam;
 
-        const string ADJUST_VAR_SECTION = "2 - Adjust feature values";
-        public static ConfigEntry<float> _1_WeaponDeadzoneMulti;
-        public static ConfigEntry<float> _2_WeaponSwayMulti;
-        public static ConfigEntry<float> _3_BreathingEffectMulti;
-        public static ConfigEntry<float> _4_ArmShakeMulti;
-        public static ConfigEntry<float> _5_ArmShakeRateMulti;
+        public static ConfigEntry<float> WeaponDeadzoneMulti;
+        public static ConfigEntry<float> WeaponSwayMulti;
+        public static ConfigEntry<float> BreathingEffectMulti;
+        public static ConfigEntry<float> ArmShakeMulti;
+        public static ConfigEntry<float> ArmShakeRateMulti;
         public static ConfigEntry<float> ParallaxMulti;
-        public static ConfigEntry<float> _7_AdsParallaxTimeMulti;
-        public static ConfigEntry<float> _6_ShotParallaxResetTimeMulti;
+        public static ConfigEntry<float> AdsParallaxTimeMulti;
+        public static ConfigEntry<float> ShotParallaxResetTimeMulti;
         public static ConfigEntry<float> EfficiencyLerpMulti;
         public static ConfigEntry<float> ShotParallaxWeaponWeightMulti;
         public static ConfigEntry<float> ParallaxSetSizeMulti;
@@ -87,11 +104,10 @@ namespace TarkovIRL
 
 
 
-        const string DEV_SECTION = "3 - Only for dev/testing";
-        public static ConfigEntry<float> DevTestFloat3;
-        public static ConfigEntry<float> DevTestFloat4;
+        public static ConfigEntry<float> RotationAverageDTMulti;
+        public static ConfigEntry<float> ParallaxRotationRecenterMulti;
         public static ConfigEntry<float> DevTestFloat7;
-        public static ConfigEntry<float> DevTestFloat6;
+        public static ConfigEntry<float> RotationHistoryClamp;
 
         // config defaults
         readonly float AdsParallaxTimeMultiDefault = 30f;
@@ -210,48 +226,55 @@ namespace TarkovIRL
         {
             // toggles
             IsWeaponDeadzone = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable weapon deadzone", "The weapon 'deadzone' effect is a separation of the player's camera from where the weapon is pointing. In vanilla these are perfectly aligned at all times; in this mod, these values become disaligned based on the size and ergo value of the weapon.");
-            IsWeaponSway = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable weapon sway", "This mod changes how weapon sway works: your weapon generally sways ahead of your aimpoint (rather than behind like in vanilla), and the severity of the sway is influenced by the weapon's weight and ergo, and by your character's condition (health, stam, strength stat, gear weight).");
+            IsWeaponSway = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable weapon sway", "Weapon sway has been rewritten from scratch. When not ADS'd, your weapon mostly LEADS your aimpoint, and the sway characteristics are informed by your current efficiency and what kind of weapon you have. In the ADS, stocked weapons will LAG behind your aimpoint unless the stock is retracted.");
             IsBreathingEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable breathing effect", "Adds a visual oscillation to your character's weapon, the intensity of which depends on your current stamina.");
             IsPoseEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable stance-dependent weapon position", "When you crouch, your weapon position is pulled in closer to your character.");
             IsPoseChangeEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable stance transition effect", "When you change your crouch position, you see a dip in your sight picture, the speed and intensity of which is driven by how much you change your stance (e.g. incrimental change versus full change.");
             IsArmShakeEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable extra arms shaking", "Adds additional arm shake as arm stam decreases.");
             IsSmallMovementsEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable small visual effects", "Toggles small details: pulling the weapon in on rotation, lowering with unstocked weapon.");
             IsFootstepEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable footstep effect", "Player's weapon will bounce a bit more when taking steps, effect intesnity depends on several factors.");
-            IsParallaxEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable parallax feature", "Extensive feature when causes the weapon to rotate in the player's hand and thus un-align the sights, when the player is rotating. The intensity of the effect depends on many factors: is in ADS?; player health and stam, weight and ergo of the weapon. This effect is wired into the sway effect.");
+            IsParallaxEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable parallax feature", "Extensive feature when causes the weapon to rotate in the player's hand and thus un-align the sights, when the player is rotating. The intensity of the effect depends on your efficiency and the weight and ergo of the weapon.");
 
-            // sliders
-            _1_WeaponDeadzoneMulti = ConstructFloatConfig(WeaponDeadzoneMultiDefault, ADJUST_VAR_SECTION, "Weapon deadzone multiplier", "", 0, 5f);
-            _2_WeaponSwayMulti = ConstructFloatConfig(WeaponSwayMultiDefault, ADJUST_VAR_SECTION, "Weapon sway multiplier", "", 0, 5f);
-            _3_BreathingEffectMulti = ConstructFloatConfig(BreathingEffectMultiDefault, ADJUST_VAR_SECTION, "Breathing effect multiplier", "", 0, 5f);
-            _4_ArmShakeMulti = ConstructFloatConfig(ArmShakeMultiDefault, ADJUST_VAR_SECTION, "Arm shake multiplier", "", 0, 5f);
-            _5_ArmShakeRateMulti = ConstructFloatConfig(ArmShakeRateMultiDefault, ADJUST_VAR_SECTION, "Arm shake effect speed multiplier", "", 0, 5f);
-            _6_ShotParallaxResetTimeMulti = ConstructFloatConfig(ShotParallaxResetTimeMultiDefault, ADJUST_VAR_SECTION, "Shot-parallax cooldown multiplier", "Higher = d", 0, 20f);
-            _7_AdsParallaxTimeMulti = ConstructFloatConfig(AdsParallaxTimeMultiDefault, ADJUST_VAR_SECTION, "Ads-parallax cooldown multiplier", "", 0, 160f);
-            ParallaxMulti = ConstructFloatConfig(ParallaxMultiDefault, ADJUST_VAR_SECTION,"Parallax multiplier", "", 1f, 100f);
-            ShotParallaxWeaponWeightMulti = ConstructFloatConfig(ShotParallaxWeaponWeightMultiDefault, ADJUST_VAR_SECTION, "Shot parallax weapon weight factor multiplier", "", 0, 10f);
-            ParallaxSetSizeMulti = ConstructFloatConfig(ParallaxSetSizeMultiDefault, ADJUST_VAR_SECTION, "Parallax set size", "", 0, 20f);
-            EfficiencyLerpMulti = ConstructFloatConfig(EfficiencyLerpMultiDefault, ADJUST_VAR_SECTION, "Efficiency lerp multiplier", "", 0, 10f);
-            //CameraUpdateMulti = ConstructFloatConfig(CameraUpdateMultiDefault, ADJUST_VAR_SECTION, "Camera update rate multiplier", "Really a nothing-burger", 0, 10f);
-            FootstepLerpMulti = ConstructFloatConfig(FootstepLerpMultiDefault, ADJUST_VAR_SECTION, "Footstep lerp speed multiplier", "How quickly the footstep animation plays", 0, 10f);
-            FootstepIntesnityMulti = ConstructFloatConfig(FootstepIntesnityMultiDefault, ADJUST_VAR_SECTION, "Footstep intensity multiplier", "", 0, 10f);
-            ParallaxInAds = ConstructFloatConfig(ParallaxInAdsDefault, ADJUST_VAR_SECTION, "Parallax effect in ADS", "The % of parallax effect that you see in ADS (with a stocked weapon)", 0, 1f);
-            PistolSpecificParallax = ConstructFloatConfig(PistolSpecificParallaxDefault, ADJUST_VAR_SECTION, "Parallax effect value specifically for pistols", "", 0, 10f); 
-            ThrowStrengthMulti = ConstructFloatConfig(ThrowStrengthMultiDefault, ADJUST_VAR_SECTION, "Throw visual effect multi", "", 0, 100f);
-            ThrowSpeedMulti = ConstructFloatConfig(ThrowSpeedMultiDefault, ADJUST_VAR_SECTION, "Throw effect speed", "", 0, 10f);
-            EfficiencyNegativeEffectsMulti = ConstructFloatConfig(EfficiencyNegativeEffectsMultiDefault, ADJUST_VAR_SECTION, "Efficiency negative effect multi", "Controls how much negative effects (such as fatigue and damage) negatively affect your efficiency stat.", 0f, 2f);
-            ParallaxRecenterFactor = ConstructFloatConfig(2f, ADJUST_VAR_SECTION, "Parallax recenter factor", "", 1f, 200f);
-            NewSwayPositionMulti = ConstructFloatConfig(1f, ADJUST_VAR_SECTION, "NewSwayPositionMulti", "", 0, 10f);
-            NewSwayRotationMulti = ConstructFloatConfig(1f, ADJUST_VAR_SECTION, "NewSwayRotationMulti", "", 0, 10f);
-            NewSwayPositionDTMulti = ConstructFloatConfig(1f, ADJUST_VAR_SECTION, "NewSwayPositionDTMulti", "", 0, 10f);
-            NewSwayRotationDTMulti = ConstructFloatConfig(1f, ADJUST_VAR_SECTION, "NewSwayRotationDTMulti", "", 0, 10f);
+            // general sliders
+            WeaponDeadzoneMulti = ConstructFloatConfig(WeaponDeadzoneMultiDefault, ADJUST_VAR_SECTION, "Weapon deadzone multiplier", "", 0, 5f);
+            WeaponSwayMulti = ConstructFloatConfig(WeaponSwayMultiDefault, ADJUST_VAR_SECTION, "Weapon sway multiplier", "", 0, 5f);
+
+            // new sway sliders
+            NewSwayPositionMulti = ConstructFloatConfig(0.3f, NEW_SWAY_SLIDERS, "NewSwayPositionMulti", "", 0, 10f);
+            NewSwayRotationMulti = ConstructFloatConfig(1.5f, NEW_SWAY_SLIDERS, "NewSwayRotationMulti", "", 0, 10f);
+            NewSwayPositionDTMulti = ConstructFloatConfig(7f, NEW_SWAY_SLIDERS, "NewSwayPositionDTMulti", "", 0, 10f);
+            NewSwayRotationDTMulti = ConstructFloatConfig(2.8f, NEW_SWAY_SLIDERS, "NewSwayRotationDTMulti", "", 0, 10f);
+
+            // parallax sliders
+            ParallaxMulti = ConstructFloatConfig(ParallaxMultiDefault, PARALLAX_SLIDERS,"Parallax multiplier", "", 1f, 100f);
+            ParallaxSetSizeMulti = ConstructFloatConfig(ParallaxSetSizeMultiDefault, PARALLAX_SLIDERS, "Parallax set size", "", 0, 20f);
+            ParallaxInAds = ConstructFloatConfig(ParallaxInAdsDefault, PARALLAX_SLIDERS, "Parallax effect in ADS", "The % of parallax effect that you see in ADS (with a stocked weapon)", 0, 1f);
+            PistolSpecificParallax = ConstructFloatConfig(PistolSpecificParallaxDefault, PARALLAX_SLIDERS, "Parallax effect value specifically for pistols", "", 0, 10f); 
+            ShotParallaxResetTimeMulti = ConstructFloatConfig(ShotParallaxResetTimeMultiDefault, PARALLAX_SLIDERS, "Shot-parallax cooldown multiplier", "Higher = d", 0, 20f);
+            AdsParallaxTimeMulti = ConstructFloatConfig(AdsParallaxTimeMultiDefault, PARALLAX_SLIDERS, "Ads-parallax cooldown multiplier", "", 0, 160f);
+            ShotParallaxWeaponWeightMulti = ConstructFloatConfig(ShotParallaxWeaponWeightMultiDefault, PARALLAX_SLIDERS, "Shot parallax weapon weight factor multiplier", "", 0, 10f);
+            ParallaxRotationRecenterMulti = ConstructFloatConfig(80f, PARALLAX_SLIDERS, "ParallaxRotationRecenterMulti", "", 0.1f, 100f);
+
+            // efficiency sliders
+            EfficiencyLerpMulti = ConstructFloatConfig(EfficiencyLerpMultiDefault, EFFICIENCY_SLIDERS, "Efficiency lerp multiplier", "", 0, 10f);
+            EfficiencyNegativeEffectsMulti = ConstructFloatConfig(EfficiencyNegativeEffectsMultiDefault, EFFICIENCY_SLIDERS, "Efficiency negative effect multi", "Controls how much negative effects (such as fatigue and damage) negatively affect your efficiency stat.", 0f, 2f);
+
+            // misc fine tuning sliders
+            BreathingEffectMulti = ConstructFloatConfig(BreathingEffectMultiDefault, MISC_SLIDERS, "Breathing effect multiplier", "", 0, 5f);
+            ArmShakeMulti = ConstructFloatConfig(ArmShakeMultiDefault, MISC_SLIDERS, "Arm shake multiplier", "", 0, 5f);
+            ArmShakeRateMulti = ConstructFloatConfig(ArmShakeRateMultiDefault, MISC_SLIDERS, "Arm shake effect speed multiplier", "", 0, 5f);
+            FootstepLerpMulti = ConstructFloatConfig(FootstepLerpMultiDefault, MISC_SLIDERS, "Footstep lerp speed multiplier", "How quickly the footstep animation plays", 0, 10f);
+            FootstepIntesnityMulti = ConstructFloatConfig(FootstepIntesnityMultiDefault, MISC_SLIDERS, "Footstep intensity multiplier", "", 0, 10f);
+            ThrowStrengthMulti = ConstructFloatConfig(ThrowStrengthMultiDefault, MISC_SLIDERS, "Throw visual effect multi", "", 0, 100f);
+            ThrowSpeedMulti = ConstructFloatConfig(ThrowSpeedMultiDefault, MISC_SLIDERS, "Throw effect speed", "", 0, 10f);
+
+            // rotation engine
+            RotationAverageDTMulti = ConstructFloatConfig(80f, ROTATION_ENGINE_SLIDERS, "RotationAverageDTMulti", "", 0.1f, 100f);
+            RotationHistoryClamp = ConstructFloatConfig(0.1f, ROTATION_ENGINE_SLIDERS, "RotationHistoryClamp", "", 0f, 1f);
 
             // dev
             IsLogging = ConstructBoolConfig(false, DEV_SECTION, "Enable debug logging", "");
             DebugSpam = ConstructBoolConfig(false, DEV_SECTION, "Enable debug spam", "");
-            DevTestFloat3 = ConstructFloatConfig(80f, DEV_SECTION, "1 _playerRotationAvg fdt multi", "This is only for dev use, should not be connected to anything in production releases.", 0.1f, 100f);
-            DevTestFloat4 = ConstructFloatConfig(80f, DEV_SECTION, "2 extra parallax from rot", "This is only for dev use, should not be connected to anything in production releases.", 0.1f, 100f);
-            DevTestFloat6 = ConstructFloatConfig(0.1f, DEV_SECTION, "4 _playerRotationAvg clamp size", "This is only for dev use, should not be connected to anything in production releases.", 0f, 1f);
-            DevTestFloat7 = ConstructFloatConfig(1f, DEV_SECTION, "inverseRotationDeltaMulti set size", "This is only for dev use, should not be connected to anything in production releases.", 0.01f, 10f);
         }
 
         //

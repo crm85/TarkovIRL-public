@@ -25,11 +25,6 @@ namespace TarkovIRL
         [PatchPrefix]
         private static bool Prefix(ProceduralWeaponAnimation __instance, Vector3 headRot)
         {
-            //float rate = PrimeMover.DevTestFloat3.Value;
-            //_dzLerp.x = Mathf.Lerp(_dzLerp.x, _dzLerpTarget.x, PrimeMover.Instance.DeltaTime * rate);
-            //_dzLerp.y = Mathf.Lerp(_dzLerp.y, _dzLerpTarget.y, PrimeMover.Instance.DeltaTime * rate);
-            //_dzLerp.z = Mathf.Lerp(_dzLerp.z, _dzLerpTarget.z, PrimeMover.Instance.DeltaTime * rate);
-
             if (!PrimeMover.IsWeaponDeadzone.Value)
             {
                 return true;
@@ -57,22 +52,17 @@ namespace TarkovIRL
                 // re-presentation of the weapon after (and before!), but at least the full throw animation
                 // is allowed to play before the snap back -- and if the player is moving, the rupture is
                 // anyway attenuated and hard to notice.
-
-                // I have this lerp in here but it doesn't really solve the problem, and makes
-                // freelook very squishy so it's not a solution. This could use a more robust system
-                // in the future but I don't know if everything can be solved and still remain consanate
-                // with the FOV fix.
             }
 
             Player player = (Player)_playerField.GetValue(firearmController);
             if ((UnityEngine.Object)(object)player != (UnityEngine.Object)null && player.IsYourPlayer && player.MovementContext.CurrentState.Name != EPlayerState.Stationary)
             {
-
-                
-                    Vector3 headRotModified = DeadzoneController.GetHeadRotationWithDeadzone(player, PrimeMover._1_WeaponDeadzoneMulti.Value, headRot);
-                    //_dzLerpTarget = headRotModified;
-                    player.HeadRotation = headRotModified;
-                    AccessTools.Field(typeof(ProceduralWeaponAnimation), "_headRotationVec").SetValue(__instance, headRotModified);
+                Vector3 headRotModified = DeadzoneController.GetHeadRotationWithDeadzone(player, PrimeMover.WeaponDeadzoneMulti.Value, headRot);
+                // ^^
+                // for some reason I have to inject the config value here, if I try to do it in the deadzone controller 
+                // it gets a wild error. Shrug.
+                player.HeadRotation = headRotModified;
+                AccessTools.Field(typeof(ProceduralWeaponAnimation), "_headRotationVec").SetValue(__instance, headRotModified);
                 
                 return false;
             }

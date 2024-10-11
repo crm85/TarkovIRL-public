@@ -25,7 +25,7 @@ namespace TarkovIRL
                 return Vector3.zero;
             }
 
-            float effectSpeedMulti = _HandShakeCurveSpeedMulti * PrimeMover._5_ArmShakeRateMulti.Value;
+            float effectSpeedMulti = _HandShakeCurveSpeedMulti * PrimeMover.ArmShakeRateMulti.Value;
             _handShakeLoopTimeX += player.DeltaTime * effectSpeedMulti * 0.37f;
             if (_handShakeLoopTimeX >= 1f)
             {
@@ -39,7 +39,8 @@ namespace TarkovIRL
             }
 
             float pistolFactor = WeaponController.IsPistol ? 2f : 1f;
-            float finalMulti = EfficiencyController.EfficiencyModifier * PrimeMover._4_ArmShakeMulti.Value * _HandShakeMultiGeneral * pistolFactor;
+            float unstockedFactor = !WeaponController.IsPistol && !WeaponController.IsStocked ? 1.8f : 1f;
+            float finalMulti = EfficiencyController.EfficiencyModifier * PrimeMover.ArmShakeMulti.Value * _HandShakeMultiGeneral * pistolFactor * unstockedFactor * WeaponController.CurrentWeaponWeight;
 
             AnimationCurve shakeCurve = PrimeMover.Instance.HandsShakeCurve;
             float handsShakeX = shakeCurve.Evaluate(_handShakeLoopTimeX) * finalMulti;

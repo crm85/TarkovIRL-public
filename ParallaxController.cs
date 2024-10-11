@@ -87,13 +87,11 @@ namespace TarkovIRL
 
             // up
             float extraPistolParallax = WeaponController.IsPistol ? PrimeMover.PistolSpecificParallax.Value : 1f;
-            float rotationDeltaMulti = PlayerMotionController.RotationDelta * PrimeMover.DevTestFloat4.Value;
-            //UtilsTIRL.Log($"extraMultiFromRot : {extraMultiFromRot}");
+            float rotationDeltaMulti = PlayerMotionController.RotationDelta * PrimeMover.ParallaxRotationRecenterMulti.Value;
 
             float parallaxMulti = PrimeMover.ParallaxMulti.Value * WeaponController.GetWeaponMulti(false) * extraPistolParallax;
 
             // down
-            //float pistolZeroFactor = (WeaponController.IsPistol && PlayerMotionController.RotationDelta <= _RotationTrigger) ? PrimeMover.PistolSpecificParallax.Value * 2f : 0.5f;
             float inverseRotationDeltaMulti = 1f / rotationDeltaMulti;
             float zeroLerpTime = dt * inverseEfficiencyMulti * inverseRotationDeltaMulti;
             if (UtilsTIRL.IsPriority(2)) UtilsTIRL.Log($"zeroLerpTime {zeroLerpTime}, inverseEfficiencyMulti {inverseEfficiencyMulti}, inverseRotationDeltaMulti {inverseRotationDeltaMulti}, rotationDeltaMulti {rotationDeltaMulti}");
