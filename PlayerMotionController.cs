@@ -59,6 +59,10 @@ namespace TarkovIRL
             {
                 horizontalMovement = 0;
             }
+            if (horizontalMovement > 1f) 
+            {
+                horizontalMovement = 0;
+            }
 
             // general rot detection
             _playerRotationHistory += distance;

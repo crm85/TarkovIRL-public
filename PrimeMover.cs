@@ -101,6 +101,8 @@ namespace TarkovIRL
         public static ConfigEntry<float> NewSwayRotationMulti;
         public static ConfigEntry<float> NewSwayPositionDTMulti;
         public static ConfigEntry<float> NewSwayRotationDTMulti;
+        public static ConfigEntry<float> NewSwayVerticalPosMulti;
+        public static ConfigEntry<float> NewSwayVerticalPosDTMulti;
 
 
 
@@ -121,7 +123,6 @@ namespace TarkovIRL
         readonly float ParallaxInAdsDefault = 0.3f;
         readonly float PistolSpecificParallaxDefault = 2f;
         readonly float ParallaxMultiDefault = 10f;
-        readonly float ParallaxReturnToCenterMultiDefault = 10f;
         readonly float ParallaxSetSizeMultiDefault = 2f;
         readonly float ShotParallaxWeaponWeightMultiDefault = 5f;
         readonly float ShotParallaxResetTimeMultiDefault = 10f;
@@ -240,10 +241,12 @@ namespace TarkovIRL
             WeaponSwayMulti = ConstructFloatConfig(WeaponSwayMultiDefault, ADJUST_VAR_SECTION, "Weapon sway multiplier", "", 0, 5f);
 
             // new sway sliders
-            NewSwayPositionMulti = ConstructFloatConfig(0.3f, NEW_SWAY_SLIDERS, "NewSwayPositionMulti", "", 0, 10f);
-            NewSwayRotationMulti = ConstructFloatConfig(1.5f, NEW_SWAY_SLIDERS, "NewSwayRotationMulti", "", 0, 10f);
-            NewSwayPositionDTMulti = ConstructFloatConfig(7f, NEW_SWAY_SLIDERS, "NewSwayPositionDTMulti", "", 0, 10f);
-            NewSwayRotationDTMulti = ConstructFloatConfig(2.8f, NEW_SWAY_SLIDERS, "NewSwayRotationDTMulti", "", 0, 10f);
+            NewSwayPositionMulti = ConstructFloatConfig(0.5f, NEW_SWAY_SLIDERS, "NewSwayPositionMulti", "", 0, 10f);
+            NewSwayRotationMulti = ConstructFloatConfig(3f, NEW_SWAY_SLIDERS, "NewSwayRotationMulti", "", 0, 10f);
+            NewSwayPositionDTMulti = ConstructFloatConfig(14f, NEW_SWAY_SLIDERS, "NewSwayPositionDTMulti", "", 0, 20f);
+            NewSwayRotationDTMulti = ConstructFloatConfig(2f, NEW_SWAY_SLIDERS, "NewSwayRotationDTMulti", "", 0, 10f);
+            NewSwayVerticalPosMulti = ConstructFloatConfig(0.35f, NEW_SWAY_SLIDERS, "NewSwayVerticalPosMulti", "", 0, 10f);
+            NewSwayVerticalPosDTMulti = ConstructFloatConfig(7f, NEW_SWAY_SLIDERS, "NewSwayVerticalPosDTMulti", "", 0, 10f);
 
             // parallax sliders
             ParallaxMulti = ConstructFloatConfig(ParallaxMultiDefault, PARALLAX_SLIDERS,"Parallax multiplier", "", 1f, 100f);
