@@ -93,8 +93,8 @@ namespace TarkovIRL
                 // new sway injection;
                 //
 
-                Vector3 addedSwayPosition = NewSwayController.GetNewSwayPosition(player);
-                Quaternion addedSwayRotation = NewSwayController.GetNewSwayRotation(player);
+                Vector3 addedSwayPosition = NewSwayController.GetNewSwayPosition();
+                Quaternion addedSwayRotation = NewSwayController.GetNewSwayRotation();
 
                 __instance.HandsContainer.WeaponRoot.localPosition += addedSwayPosition;
                 __instance.HandsContainer.WeaponRoot.localRotation *= addedSwayRotation;

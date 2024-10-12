@@ -5,15 +5,19 @@ namespace TarkovIRL
 {
     internal class NewSwayController
     {
-        static readonly float _RotationDTMagicNumber = 5.7f;
-        static readonly float _MuteThresh = 0.0132f;
-
         static float _lerpPosHorizontal = 0;
         static float _lerpPosVertical = 0;
         static float _lerpRot = 0;
+        static float _weaponTiltLerp = 0;
+        static float _sideToSideLerp = 0;
 
         public static void UpdateLerp (float deltaTime)
         {
+            if (!PrimeMover.IsWeaponSway.Value)
+            {
+                return;
+            }
+
             float delta = PlayerMotionController.HorizontalRotationDelta;
             float isStockedMulti = WeaponController.IsStocked ? -1 : 0.5f;
             float isAdsPos = WeaponController.IsStocked && PlayerMotionController.IsAiming ? 0 : 1f;
@@ -30,6 +34,7 @@ namespace TarkovIRL
             float posVerticalAimingMulti = PlayerMotionController.IsAiming ? 0.5f : 1f;
             float posVerticalPistolMulti = WeaponController.IsPistol ? 2f : 1f;
 
+
             // pos
             float lerpPosHorizontalTarget = delta * isStockedMulti * isAdsPos * isAdsPos2;
             float lerpPosVerticalTarget = Mathf.Abs(delta) * posVerticalStockedMulti * posVerticalAimingMulti * posVerticalPistolMulti;
@@ -41,21 +46,54 @@ namespace TarkovIRL
             float lerpRotTarget = delta * isAdsRot;
             _lerpRot = Mathf.Lerp(_lerpRot, lerpRotTarget, deltaTime * lerpDTMulti * isdAdsRotDT * isStockedRotDT * PrimeMover.NewSwayRotationDTMulti.Value);
 
+            // tilt
+            float tilteValue = PlayerMotionController.IsAiming ? 0 : PrimeMover.WeaponTiltValue.Value * 0.1f;
+            _weaponTiltLerp = Mathf.Lerp(_weaponTiltLerp, tilteValue, deltaTime * 20f);
+
+            // side to side
+            _sideToSideLerp += deltaTime * PrimeMover.SideToSideDTMulti.Value * PlayerMotionController.GetNormalSpeed();
+            if (_sideToSideLerp >= 1f)
+            {
+                _sideToSideLerp = 0;
+            }
+
             // debug
             //UtilsTIRL.Log($" lerpDTMulti {lerpDTMulti}, efficiencyMulti {efficiencyMulti}, wpnMulti {wpnMulti}");
         }
-        public static Vector3 GetNewSwayPosition(Player player)
+        public static Vector3 GetNewSwayPosition()
         {
+            if (!PrimeMover.IsWeaponSway.Value)
+            {
+                return Vector3.zero;
+            }
+            if (AnimStateController.IsBlindfire)
+            {
+                return Vector3.zero;
+            }
+
             Vector3 addedSway = Vector3.zero;
             addedSway.x = _lerpPosHorizontal * PrimeMover.NewSwayPositionMulti.Value * WeaponController.GetWeaponMulti(false);
             addedSway.y = _lerpPosVertical * PrimeMover.NewSwayVerticalPosMulti.Value * WeaponController.GetWeaponMulti(false);
             return addedSway;
         }
 
-        public static Quaternion GetNewSwayRotation(Player player)
+        public static Quaternion GetNewSwayRotation()
         {
+            if (!PrimeMover.IsWeaponSway.Value)
+            {
+                return Quaternion.identity;
+            }
+            if (AnimStateController.IsBlindfire)
+            {
+                return Quaternion.identity;
+            }
+
             Quaternion addedRotation = Quaternion.identity;
             addedRotation.z = _lerpRot * PrimeMover.NewSwayRotationMulti.Value * WeaponController.GetWeaponMulti(false);
+            float added = PrimeMover.Instance.SharkFinCurve.Evaluate(_sideToSideLerp) * PrimeMover.SideToSideSwayMulti.Value;
+            UtilsTIRL.Log($"added {added}, _sideToSideLerp {_sideToSideLerp}");
+            addedRotation.z += added;
+            addedRotation.y = _weaponTiltLerp;
             return addedRotation;
         }
     }

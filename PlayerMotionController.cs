@@ -25,6 +25,9 @@ namespace TarkovIRL
 
         static bool _playerMoving = false;
         static float _verticalAvg = 0;
+        static float _playerSpeed = 0;
+        static float _playerTrackedSpeed = 0;
+        static float _distTraveled = 0;
 
         static public bool IsAiming = false;
         
@@ -33,10 +36,11 @@ namespace TarkovIRL
             UpdateMoving(player.Position);
             UpdateRotation(player.Rotation);
             IsAiming = player.ProceduralWeaponAnimation.IsAiming;
+            _playerSpeed = player.Speed;
         }
         static void UpdateMoving(Vector3 position)
         {
-            float dist = Vector3.Distance(position.normalized, _playerPosLastFrame.normalized);
+            float dist = Vector3.Distance(position, _playerPosLastFrame);
             if (dist > 0)
             {
                 _playerMoving = true;
@@ -45,6 +49,10 @@ namespace TarkovIRL
             {
                 _playerMoving = false;
             }
+            _distTraveled += dist;
+            _distTraveled -= _playerTrackedSpeed;
+            _playerTrackedSpeed *= PrimeMover.Instance.DeltaTime;
+            UtilsTIRL.Log($"_distTraveled {_distTraveled}, _playerTrackedSpeed {_playerTrackedSpeed}");
             _playerPosLastFrame = position;
         }
         static void UpdateRotation(Vector2 newRot)
@@ -82,9 +90,9 @@ namespace TarkovIRL
             _playerRotLastFrame = newRot;
         }
 
-        public static float GetNormalSpeed(Player player)
+        public static float GetNormalSpeed()
         {
-            return player.Speed / .6f; ;
+            return _playerSpeed / .6f; ;
         }
 
         public static float VerticalTrend
