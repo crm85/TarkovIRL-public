@@ -19,18 +19,46 @@ namespace TarkovIRL
         static float _stepLerp = 0;
         static float _currentSpeed = 0;
 
+        static float _sideToSideRotationLerp = 0;
+        static float _sideToSidePositionLerp = 0;
+        static float _sideToSideRotationSmoothingLerp = 0;
+        static float _sideToSidePositionSmoothingLerp = 0;
+
+        static bool _currentStepLeft = false;
+        static bool _movementLastFrame = false;
+
         public static void UpdateStep(float dt)
         {
             float speedAdjusted = 1f + _currentSpeed;
             _stepLerp = Mathf.Lerp(_stepLerp, 1f, dt * _UpdateMulti * speedAdjusted * PrimeMover.FootstepLerpMulti.Value);
+            _sideToSideRotationLerp += dt * PrimeMover.SideToSideRotationDTMulti.Value * speedAdjusted;
+            _sideToSidePositionLerp += dt * PrimeMover.SideToSidePositionDTMulti.Value * speedAdjusted;
+
+            float sideToSideAddedRotationValue = PrimeMover.Instance.SideToSideCurve.Evaluate(_sideToSideRotationLerp) * PrimeMover.SideToSideSwayMulti.Value;
+            sideToSideAddedRotationValue *= _currentStepLeft ? 1f : -1f;
+            float sideToSideAddedPositionValue = PrimeMover.Instance.FootStepCurve.Evaluate(_sideToSidePositionLerp) * PrimeMover.SideToSideSwayMulti.Value;
+            sideToSideAddedPositionValue *= _currentStepLeft ? -1f : 1f;
+
+            _sideToSideRotationSmoothingLerp = Mathf.Lerp(_sideToSideRotationSmoothingLerp, sideToSideAddedRotationValue, dt * 7f);
+            _sideToSidePositionSmoothingLerp = Mathf.Lerp(_sideToSidePositionSmoothingLerp, sideToSideAddedPositionValue, dt * 7f);
         }
 
-        public static void NewStep(Player player, bool isLeftStep)
+        public static void NewStep(Player player)
         {
             _stepLerp = 0;
             _currentSpeed = player.Speed;
-            //PlayerMotionController.AddFootstep();
-            NewSwayController.SetFootstep(isLeftStep);
+            _sideToSideRotationLerp = 0;
+            _sideToSidePositionLerp = 0;
+
+            if (!PlayerMotionController.IsPlayerMovement && !_movementLastFrame)
+            {
+                _currentStepLeft = true;
+            }
+            else
+            {
+                _currentStepLeft = !_currentStepLeft;
+            }
+            _movementLastFrame = PlayerMotionController.IsPlayerMovement;
         }
 
         public static Vector3 GetModifiedHandPosFootstep
@@ -41,6 +69,21 @@ namespace TarkovIRL
                 float stepValue = PrimeMover.Instance.FootStepCurve.Evaluate(_stepLerp) * _StepIntensityMulti * PrimeMover.FootstepIntesnityMulti.Value * (EfficiencyController.EfficiencyModifier * 0.5f) * speedAdjusted;
                 return new Vector3(0, stepValue, 0); 
             }
+        }
+
+        public static Quaternion GetSideToSideRotation()
+        {
+            Quaternion addedRotation = Quaternion.identity;
+            addedRotation.z = _sideToSideRotationSmoothingLerp;
+            addedRotation.y = PrimeMover.WeaponTiltValue.Value * _sideToSideRotationSmoothingLerp;
+            return addedRotation;
+        }
+
+        public static Vector3 GetSideToSidePosition()
+        {
+            Vector3 addedPosition = Vector3.zero;
+            addedPosition.x = _sideToSidePositionSmoothingLerp;
+            return addedPosition;
         }
     }
 }

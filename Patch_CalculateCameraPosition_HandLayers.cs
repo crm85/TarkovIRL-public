@@ -96,8 +96,15 @@ namespace TarkovIRL
                 Vector3 addedSwayPosition = NewSwayController.GetNewSwayPosition();
                 Quaternion addedSwayRotation = NewSwayController.GetNewSwayRotation();
 
+                Vector3 sideToSidePosition = FootstepController.GetSideToSidePosition();
+                Quaternion sideToSideRotation = FootstepController.GetSideToSideRotation();
+
                 __instance.HandsContainer.WeaponRoot.localPosition += addedSwayPosition;
                 __instance.HandsContainer.WeaponRoot.localRotation *= addedSwayRotation;
+
+
+                __instance.HandsContainer.WeaponRoot.localPosition += sideToSidePosition;
+                __instance.HandsContainer.WeaponRoot.localRotation *= sideToSideRotation;
             }
         }
     }

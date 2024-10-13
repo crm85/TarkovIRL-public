@@ -51,22 +51,10 @@ namespace TarkovIRL
             _weaponTiltLerp = Mathf.Lerp(_weaponTiltLerp, tilteValue, deltaTime * 20f);
 
             // side to side
-            _sideToSideLerp += deltaTime * PrimeMover.SideToSideDTMulti.Value;
+            _sideToSideLerp += deltaTime * PrimeMover.SideToSideRotationDTMulti.Value;
 
             // debug
             //UtilsTIRL.Log($" lerpDTMulti {lerpDTMulti}, efficiencyMulti {efficiencyMulti}, wpnMulti {wpnMulti}");
-        }
-
-        public static void SetFootstep(bool isLeft)
-        {
-            if (isLeft)
-            {
-                _sideToSideLerp = 0;
-            }
-            else
-            {
-                _sideToSideLerp = 0.5f;
-            }
         }
 
         public static Vector3 GetNewSwayPosition()
@@ -99,9 +87,6 @@ namespace TarkovIRL
 
             Quaternion addedRotation = Quaternion.identity;
             addedRotation.z = _lerpRot * PrimeMover.NewSwayRotationMulti.Value * WeaponController.GetWeaponMulti(false);
-            float added = PrimeMover.Instance.SharkFinCurve.Evaluate(_sideToSideLerp) * PrimeMover.SideToSideSwayMulti.Value;
-            UtilsTIRL.Log($"added {added}, _sideToSideLerp {_sideToSideLerp}");
-            addedRotation.z += added;
             addedRotation.y = _weaponTiltLerp;
             return addedRotation;
         }

@@ -42,7 +42,8 @@ namespace TarkovIRL
         }
         static void UpdateMoving(Vector3 position)
         {
-            float dist = Vector3.Distance(position.normalized, _playerPosLastFrame.normalized);
+            float dist = Vector3.Distance(position, _playerPosLastFrame);
+            UtilsTIRL.Log($"dist tracked {dist}");
             if (dist > 0)
             {
                 _playerMoving = true;
