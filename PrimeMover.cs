@@ -283,7 +283,7 @@ namespace TarkovIRL
             ThrowStrengthMulti = ConstructFloatConfig(ThrowStrengthMultiDefault, MISC_SLIDERS, "Throw visual effect multi", "", 0, 100f);
             ThrowSpeedMulti = ConstructFloatConfig(ThrowSpeedMultiDefault, MISC_SLIDERS, "Throw effect speed", "", 0, 10f);
             SideToSideSwayMulti = ConstructFloatConfig(1f, MISC_SLIDERS, "SideToSideSwayMulti", "", 0, 0.1f);
-            SideToSideDTMulti = ConstructFloatConfig(1f, MISC_SLIDERS, "SideToSideDTMulti", "", 0, 10f);
+            SideToSideDTMulti = ConstructFloatConfig(1f, MISC_SLIDERS, "SideToSideDTMulti", "", 0, 1f);
             FootstepCutoffRatio = ConstructFloatConfig(0.65f, MISC_SLIDERS, "FootstepCutoffRatio", "", 0, 1f);
 
             // rotation engine

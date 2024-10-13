@@ -51,15 +51,24 @@ namespace TarkovIRL
             _weaponTiltLerp = Mathf.Lerp(_weaponTiltLerp, tilteValue, deltaTime * 20f);
 
             // side to side
-            _sideToSideLerp += deltaTime * PrimeMover.SideToSideDTMulti.Value * PlayerMotionController.GetNormalSpeed();
-            if (_sideToSideLerp >= 1f)
-            {
-                _sideToSideLerp = 0;
-            }
+            _sideToSideLerp += deltaTime * PrimeMover.SideToSideDTMulti.Value;
 
             // debug
             //UtilsTIRL.Log($" lerpDTMulti {lerpDTMulti}, efficiencyMulti {efficiencyMulti}, wpnMulti {wpnMulti}");
         }
+
+        public static void SetFootstep(bool isLeft)
+        {
+            if (isLeft)
+            {
+                _sideToSideLerp = 0;
+            }
+            else
+            {
+                _sideToSideLerp = 0.5f;
+            }
+        }
+
         public static Vector3 GetNewSwayPosition()
         {
             if (!PrimeMover.IsWeaponSway.Value)

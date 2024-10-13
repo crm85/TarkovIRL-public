@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using EFT;
+using System.Security.Policy;
 
 namespace TarkovIRL
 {
@@ -26,8 +27,9 @@ namespace TarkovIRL
         static bool _playerMoving = false;
         static float _verticalAvg = 0;
         static float _playerSpeed = 0;
-        static float _playerTrackedSpeed = 0;
-        static float _distTraveled = 0;
+        static float _footstepsPerSecond = 0;
+        static float _footstepHistory = 0;
+        static float _avgPlayerSpeed = 0;
 
         static public bool IsAiming = false;
         
@@ -40,7 +42,7 @@ namespace TarkovIRL
         }
         static void UpdateMoving(Vector3 position)
         {
-            float dist = Vector3.Distance(position, _playerPosLastFrame);
+            float dist = Vector3.Distance(position.normalized, _playerPosLastFrame.normalized);
             if (dist > 0)
             {
                 _playerMoving = true;
@@ -49,12 +51,19 @@ namespace TarkovIRL
             {
                 _playerMoving = false;
             }
-            _distTraveled += dist;
-            _distTraveled -= _playerTrackedSpeed;
-            _playerTrackedSpeed *= PrimeMover.Instance.DeltaTime;
-            UtilsTIRL.Log($"_distTraveled {_distTraveled}, _playerTrackedSpeed {_playerTrackedSpeed}");
+
+            _footstepHistory -= _footstepsPerSecond;
+            _footstepsPerSecond = _footstepHistory * PrimeMover.Instance.DeltaTime;
+            _avgPlayerSpeed = Mathf.Lerp(_avgPlayerSpeed, _footstepsPerSecond, PrimeMover.Instance.DeltaTime * 20f);
+            UtilsTIRL.Log($"_footstepHistory {_footstepHistory}, _footstepsPerSecond {_footstepsPerSecond}, Avgspeed {_avgPlayerSpeed}");
             _playerPosLastFrame = position;
         }
+
+        public static void AddFootstep()
+        {
+            _footstepHistory++;
+        }
+
         static void UpdateRotation(Vector2 newRot)
         {
             // vertical 
@@ -113,6 +122,18 @@ namespace TarkovIRL
         public static float HorizontalRotationDelta
         {
             get { return _horizontalRotationValue; }
+        }
+
+        public static float FootstepsPerSecond
+        {
+            get
+            {
+                if (_footstepHistory < 0.1f)
+                {
+                    return 0;
+                }
+                return _footstepsPerSecond;
+            }
         }
     }
 }

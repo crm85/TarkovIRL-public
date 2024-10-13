@@ -25,10 +25,12 @@ namespace TarkovIRL
             _stepLerp = Mathf.Lerp(_stepLerp, 1f, dt * _UpdateMulti * speedAdjusted * PrimeMover.FootstepLerpMulti.Value);
         }
 
-        public static void NewStep(Player player)
+        public static void NewStep(Player player, bool isLeftStep)
         {
             _stepLerp = 0;
             _currentSpeed = player.Speed;
+            //PlayerMotionController.AddFootstep();
+            NewSwayController.SetFootstep(isLeftStep);
         }
 
         public static Vector3 GetModifiedHandPosFootstep
