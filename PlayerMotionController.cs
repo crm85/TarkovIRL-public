@@ -27,9 +27,6 @@ namespace TarkovIRL
         static bool _playerMoving = false;
         static float _verticalAvg = 0;
         static float _playerSpeed = 0;
-        static float _footstepsPerSecond = 0;
-        static float _footstepHistory = 0;
-        static float _avgPlayerSpeed = 0;
 
         static public bool IsAiming = false;
         
@@ -44,7 +41,7 @@ namespace TarkovIRL
         {
             float dist = Vector3.Distance(position, _playerPosLastFrame);
             UtilsTIRL.Log($"dist tracked {dist}");
-            if (dist > 0)
+            if (dist > PrimeMover.MotionTrackingThreshold.Value)
             {
                 _playerMoving = true;
             }
@@ -52,17 +49,7 @@ namespace TarkovIRL
             {
                 _playerMoving = false;
             }
-
-            _footstepHistory -= _footstepsPerSecond;
-            _footstepsPerSecond = _footstepHistory * PrimeMover.Instance.DeltaTime;
-            _avgPlayerSpeed = Mathf.Lerp(_avgPlayerSpeed, _footstepsPerSecond, PrimeMover.Instance.DeltaTime * 20f);
-            UtilsTIRL.Log($"_footstepHistory {_footstepHistory}, _footstepsPerSecond {_footstepsPerSecond}, Avgspeed {_avgPlayerSpeed}");
             _playerPosLastFrame = position;
-        }
-
-        public static void AddFootstep()
-        {
-            _footstepHistory++;
         }
 
         static void UpdateRotation(Vector2 newRot)
@@ -91,10 +78,7 @@ namespace TarkovIRL
             // horizontal tracking
             _horizontalRotationHistory += horizontalMovement;
             _horizontalRotationHistory -= _horizontalRotationValue;
-            //_horizontalRotationHistory = Mathf.Clamp(_horizontalRotationHistory, -PrimeMover.DevTestFloat6.Value, PrimeMover.DevTestFloat6.Value);
             _horizontalRotationValue = _horizontalRotationHistory * PrimeMover.Instance.FixedDeltaTime * PrimeMover.RotationAverageDTMulti.Value;
-
-            //UtilsTIRL.Log($"_playerRotationAvg : {_playerRotationAvg} , _horizontalRotationValue : {_horizontalRotationValue}");
 
             // set for next frame
             _playerRotLastFrame = newRot;
@@ -123,18 +107,6 @@ namespace TarkovIRL
         public static float HorizontalRotationDelta
         {
             get { return _horizontalRotationValue; }
-        }
-
-        public static float FootstepsPerSecond
-        {
-            get
-            {
-                if (_footstepHistory < 0.1f)
-                {
-                    return 0;
-                }
-                return _footstepsPerSecond;
-            }
         }
     }
 }

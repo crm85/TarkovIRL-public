@@ -109,6 +109,7 @@ namespace TarkovIRL
         public static ConfigEntry<float> SideToSideRotationDTMulti;
         public static ConfigEntry<float> SideToSidePositionDTMulti;
         public static ConfigEntry<float> FootstepCutoffRatio;
+        public static ConfigEntry<float> MotionTrackingThreshold;
 
 
 
@@ -122,7 +123,6 @@ namespace TarkovIRL
         readonly float ArmShakeMultiDefault = 1f;
         readonly float ArmShakeRateMultiDefault = 1f;
         readonly float BreathingEffectMultiDefault = 1f;
-        readonly float CameraUpdateMultiDefault = 1f;
         readonly float EfficiencyLerpMultiDefault = 0.8f;
         readonly float FootstepLerpMultiDefault = 0.1f;
         readonly float FootstepIntesnityMultiDefault = 2f;
@@ -259,7 +259,7 @@ namespace TarkovIRL
             NewSwayRotationDTMulti = ConstructFloatConfig(2f, NEW_SWAY_SLIDERS, "NewSwayRotationDTMulti", "", 0, 10f);
             NewSwayVerticalPosMulti = ConstructFloatConfig(0.35f, NEW_SWAY_SLIDERS, "NewSwayVerticalPosMulti", "", 0, 10f);
             NewSwayVerticalPosDTMulti = ConstructFloatConfig(7f, NEW_SWAY_SLIDERS, "NewSwayVerticalPosDTMulti", "", 0, 10f);
-            WeaponTiltValue = ConstructFloatConfig(1f, NEW_SWAY_SLIDERS, "WeaponTiltValue", "", -10f, 10f);
+            WeaponTiltValue = ConstructFloatConfig(1f, NEW_SWAY_SLIDERS, "WeaponTiltValue", "", -1f, 1f);
 
             // parallax sliders
             ParallaxMulti = ConstructFloatConfig(ParallaxMultiDefault, PARALLAX_SLIDERS,"Parallax multiplier", "", 1f, 100f);
@@ -287,7 +287,8 @@ namespace TarkovIRL
             SideToSideRotationDTMulti = ConstructFloatConfig(0.9f, MISC_SLIDERS, "SideToSideRotationDTMulti", "", 0, 10f);
             SideToSidePositionDTMulti = ConstructFloatConfig(0.35f, MISC_SLIDERS, "SideToSidePositionDTMulti", "", 0, 10f);
             FootstepCutoffRatio = ConstructFloatConfig(0.65f, MISC_SLIDERS, "FootstepCutoffRatio", "", 0, 1f);
-
+            MotionTrackingThreshold = ConstructFloatConfig(0.005f, MISC_SLIDERS, "MotionTrackingThreshold", "", 0, 0.01f);
+            
             // rotation engine
             RotationAverageDTMulti = ConstructFloatConfig(80f, ROTATION_ENGINE_SLIDERS, "RotationAverageDTMulti", "", 0.1f, 100f);
             RotationHistoryClamp = ConstructFloatConfig(0.1f, ROTATION_ENGINE_SLIDERS, "RotationHistoryClamp", "", 0f, 1f);

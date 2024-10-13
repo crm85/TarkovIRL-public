@@ -74,15 +74,19 @@ namespace TarkovIRL
         public static Quaternion GetSideToSideRotation()
         {
             Quaternion addedRotation = Quaternion.identity;
-            addedRotation.z = _sideToSideRotationSmoothingLerp;
-            addedRotation.y = PrimeMover.WeaponTiltValue.Value * _sideToSideRotationSmoothingLerp;
+            addedRotation.z = _sideToSideRotationSmoothingLerp * PlayerMotionController.GetNormalSpeed();
+            addedRotation.z *= PlayerMotionController.IsAiming ? 0.4f : 1f;
+            //addedRotation.y = PrimeMover.WeaponTiltValue.Value * _sideToSideRotationSmoothingLerp;
+            // ^^ needs some elaboration
+
             return addedRotation;
         }
 
         public static Vector3 GetSideToSidePosition()
         {
             Vector3 addedPosition = Vector3.zero;
-            addedPosition.x = _sideToSidePositionSmoothingLerp;
+            addedPosition.x = _sideToSidePositionSmoothingLerp * PlayerMotionController.GetNormalSpeed();
+            addedPosition.x *= PlayerMotionController.IsAiming ? 0.4f : 1f;
             return addedPosition;
         }
     }
