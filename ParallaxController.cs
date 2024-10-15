@@ -68,9 +68,10 @@ namespace TarkovIRL
             }
 
             //float dt = player.DeltaTime;
-            float dt = PrimeMover.Instance.FixedDeltaTime;
+            float dt = PrimeMover.Instance.DeltaTime;
 
             Vector2 rotationalMotionThisFrame = _playerRotationLastFrame - player.Rotation;
+            rotationalMotionThisFrame *= dt;
             _playerRotationLastFrame = player.Rotation;
             float sizeMultiFinal = _ParallaxSetSizeFixed * PrimeMover.ParallaxSetSizeMulti.Value;
 
@@ -100,27 +101,30 @@ namespace TarkovIRL
             //
             // calc the position lerps
             //
+
             _posLerpXTarget = Mathf.Lerp(_posLerpXTarget, _rotAvgX * parallaxMulti, dt);
             _posLerpXTarget = Mathf.Lerp(_posLerpXTarget, 0, zeroLerpTime);
             //
-            _posLerpYTarget = Mathf.Lerp(_posLerpYTarget, _rotAvgY * parallaxMulti, dt);
+            _posLerpYTarget = Mathf.Lerp(_posLerpYTarget, _rotAvgY * parallaxMulti * PrimeMover.ParallaxVerticalMulti.Value, dt);
             _posLerpYTarget = Mathf.Lerp(_posLerpYTarget, 0, zeroLerpTime);
 
             //
             // calc the rotation lerps
             //
+
             _rotLerpXTarget = Mathf.Lerp(_rotLerpXTarget, _rotAvgX * parallaxMulti, dt);
             _rotLerpXTarget = Mathf.Lerp(_rotLerpXTarget, 0, zeroLerpTime);
-            _rotLerpYTarget = Mathf.Lerp(_rotLerpYTarget, _rotAvgY * parallaxMulti, dt);
+            //
+            _rotLerpYTarget = Mathf.Lerp(_rotLerpYTarget, _rotAvgY * parallaxMulti * PrimeMover.ParallaxVerticalMulti.Value, dt);
             _rotLerpYTarget = Mathf.Lerp(_rotLerpYTarget, 0, zeroLerpTime);
 
             //
             // final lerp
             //
             _rotLerpX = Mathf.Lerp(_rotLerpX, _rotLerpXTarget, dt);
-            _rotLerpY = Mathf.Lerp(_rotLerpY, _rotLerpYTarget, dt);
-            //
             _posLerpX = Mathf.Lerp(_posLerpX, _posLerpXTarget, dt);
+            //
+            _rotLerpY = Mathf.Lerp(_rotLerpY, _rotLerpYTarget, dt);
             _posLerpY = Mathf.Lerp(_posLerpY, _posLerpYTarget, dt);
 
             //

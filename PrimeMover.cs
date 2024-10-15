@@ -110,13 +110,16 @@ namespace TarkovIRL
         public static ConfigEntry<float> SideToSidePositionDTMulti;
         public static ConfigEntry<float> FootstepCutoffRatio;
         public static ConfigEntry<float> MotionTrackingThreshold;
-
-
-
+        public static ConfigEntry<float> LeanVerticalMulti;
+        public static ConfigEntry<float> VerticalDropMulti;
         public static ConfigEntry<float> RotationAverageDTMulti;
         public static ConfigEntry<float> ParallaxRotationRecenterMulti;
         public static ConfigEntry<float> DevTestFloat7;
         public static ConfigEntry<float> RotationHistoryClamp;
+        public static ConfigEntry<float> HyperVerticalClamp;
+        public static ConfigEntry<float> HyperVerticalMulti;
+        public static ConfigEntry<float> HyperVerticalDT;
+        public static ConfigEntry<float> ParallaxVerticalMulti;
 
         // config defaults
         readonly float AdsParallaxTimeMultiDefault = 30f;
@@ -250,7 +253,7 @@ namespace TarkovIRL
 
             // general sliders
             WeaponDeadzoneMulti = ConstructFloatConfig(WeaponDeadzoneMultiDefault, ADJUST_VAR_SECTION, "Weapon deadzone multiplier", "", 0, 5f);
-            WeaponSwayMulti = ConstructFloatConfig(WeaponSwayMultiDefault, ADJUST_VAR_SECTION, "Weapon sway multiplier", "", 0, 5f);
+            WeaponSwayMulti = ConstructFloatConfig(0.3f, ADJUST_VAR_SECTION, "Weapon sway multiplier", "", 0, 5f);
 
             // new sway sliders
             NewSwayPositionMulti = ConstructFloatConfig(0.5f, NEW_SWAY_SLIDERS, "NewSwayPositionMulti", "", 0, 10f);
@@ -258,8 +261,13 @@ namespace TarkovIRL
             NewSwayPositionDTMulti = ConstructFloatConfig(14f, NEW_SWAY_SLIDERS, "NewSwayPositionDTMulti", "", 0, 20f);
             NewSwayRotationDTMulti = ConstructFloatConfig(2f, NEW_SWAY_SLIDERS, "NewSwayRotationDTMulti", "", 0, 10f);
             NewSwayVerticalPosMulti = ConstructFloatConfig(0.35f, NEW_SWAY_SLIDERS, "NewSwayVerticalPosMulti", "", 0, 10f);
-            NewSwayVerticalPosDTMulti = ConstructFloatConfig(7f, NEW_SWAY_SLIDERS, "NewSwayVerticalPosDTMulti", "", 0, 10f);
-            WeaponTiltValue = ConstructFloatConfig(1f, NEW_SWAY_SLIDERS, "WeaponTiltValue", "", -1f, 1f);
+            NewSwayVerticalPosDTMulti = ConstructFloatConfig(3f, NEW_SWAY_SLIDERS, "NewSwayVerticalPosDTMulti", "", 0, 10f);
+            WeaponTiltValue = ConstructFloatConfig(-0.5f, NEW_SWAY_SLIDERS, "WeaponTiltValue", "", -1f, 1f);
+            LeanVerticalMulti = ConstructFloatConfig(0.01f, NEW_SWAY_SLIDERS, "LeanVerticalMulti", "", 0, 0.05f);
+            VerticalDropMulti = ConstructFloatConfig(0.3f, NEW_SWAY_SLIDERS, "VerticalDropMulti", "", -10f, 10f);
+            HyperVerticalClamp = ConstructFloatConfig(0.2f, NEW_SWAY_SLIDERS, "HyperVerticalClamp", "", -1f, 1f);
+            HyperVerticalMulti = ConstructFloatConfig(10f, NEW_SWAY_SLIDERS, "HyperVerticalMulti", "", 0, 30f);
+            HyperVerticalDT = ConstructFloatConfig(0.8f, NEW_SWAY_SLIDERS, "HyperVerticalDT", "", -10f, 10f);
 
             // parallax sliders
             ParallaxMulti = ConstructFloatConfig(ParallaxMultiDefault, PARALLAX_SLIDERS,"Parallax multiplier", "", 1f, 100f);
@@ -270,6 +278,7 @@ namespace TarkovIRL
             AdsParallaxTimeMulti = ConstructFloatConfig(AdsParallaxTimeMultiDefault, PARALLAX_SLIDERS, "Ads-parallax cooldown multiplier", "", 0, 160f);
             ShotParallaxWeaponWeightMulti = ConstructFloatConfig(ShotParallaxWeaponWeightMultiDefault, PARALLAX_SLIDERS, "Shot parallax weapon weight factor multiplier", "", 0, 10f);
             ParallaxRotationRecenterMulti = ConstructFloatConfig(80f, PARALLAX_SLIDERS, "ParallaxRotationRecenterMulti", "", 0.1f, 100f);
+            ParallaxVerticalMulti = ConstructFloatConfig(8f, PARALLAX_SLIDERS, "ParallaxVerticalMulti", "", 0.1f, 100f);
 
             // efficiency sliders
             EfficiencyLerpMulti = ConstructFloatConfig(EfficiencyLerpMultiDefault, EFFICIENCY_SLIDERS, "Efficiency lerp multiplier", "", 0, 10f);
@@ -280,7 +289,7 @@ namespace TarkovIRL
             ArmShakeMulti = ConstructFloatConfig(ArmShakeMultiDefault, MISC_SLIDERS, "Arm shake multiplier", "", 0, 5f);
             ArmShakeRateMulti = ConstructFloatConfig(ArmShakeRateMultiDefault, MISC_SLIDERS, "Arm shake effect speed multiplier", "", 0, 5f);
             FootstepLerpMulti = ConstructFloatConfig(FootstepLerpMultiDefault, MISC_SLIDERS, "Footstep lerp speed multiplier", "How quickly the footstep animation plays", 0, 1f);
-            FootstepIntesnityMulti = ConstructFloatConfig(FootstepIntesnityMultiDefault, MISC_SLIDERS, "Footstep intensity multiplier", "", 0, 10f);
+            FootstepIntesnityMulti = ConstructFloatConfig(9f, MISC_SLIDERS, "Footstep intensity multiplier", "", 0, 10f);
             ThrowStrengthMulti = ConstructFloatConfig(ThrowStrengthMultiDefault, MISC_SLIDERS, "Throw visual effect multi", "", 0, 100f);
             ThrowSpeedMulti = ConstructFloatConfig(ThrowSpeedMultiDefault, MISC_SLIDERS, "Throw effect speed", "", 0, 10f);
             SideToSideSwayMulti = ConstructFloatConfig(0.01f, MISC_SLIDERS, "SideToSideSwayMulti", "", 0, 0.03f);

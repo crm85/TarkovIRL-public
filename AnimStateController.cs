@@ -13,6 +13,9 @@ namespace TarkovIRL
         public static readonly int _Blindfire2 = 1276948056;
         public static readonly int _TurnState1 = -31136456;
         public static readonly int _TurnState2 = 287005718;
+        public static readonly int _LeftShoulderStance = 0;
+        public static readonly int _SideStepLeft = 731208140;
+        public static readonly int _SideStepRight = -1527041989;
 
         static int _currentStateHash = 0;
 
@@ -29,6 +32,15 @@ namespace TarkovIRL
         public static bool IsBlindfire
         {
             get { return _currentStateHash == _Blindfire1 || _currentStateHash == _Blindfire2; }
+        }
+
+        public static bool IsLeftShoulder
+        {
+            get { return _currentStateHash == _LeftShoulderStance; }
+        }
+        public static bool IsSideStep
+        {
+            get { return _currentStateHash == _SideStepLeft || _currentStateHash == _SideStepRight; }
         }
     }
 }

@@ -34,7 +34,6 @@ namespace TarkovIRL
             Player player = (Player)playerField.GetValue(firearmController);
 
             //
-            if (UtilsTIRL.IsPriority(2)) UtilsTIRL.Log($"anim state name {player.MovementContext.CurrentState.Name}, anim state hash {player.MovementContext.CurrentState.AnimatorStateHash}");
             AnimStateController.SetCurrentState(player.MovementContext.CurrentState.AnimatorStateHash);
 
             //

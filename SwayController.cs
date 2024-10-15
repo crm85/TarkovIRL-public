@@ -37,17 +37,9 @@ namespace TarkovIRL
             }
 
             float weaponWeight = WeaponController.GetWeaponMulti(false);
-            bool isPistol = WeaponController.IsPistol;
-
-            // vertical axis
-            newSwayFactors.x *= -0.3f * weaponWeight;
-            if (PlayerMotionController.VerticalTrend < 0 && !isPistol)
-            {
-                newSwayFactors.x *= -1f;
-            }
-
-            // z axis
+            newSwayFactors.x = 0;
             newSwayFactors.y *= -.2f * weaponWeight;
+            newSwayFactors.z = 0;
 
             // output
             return newSwayFactors;

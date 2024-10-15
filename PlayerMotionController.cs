@@ -24,9 +24,13 @@ namespace TarkovIRL
         static float _horizontalRotationHistory = 0;
         static float _horizontalRotationValue = 0;
 
+        static float _verticalRotationHistory = 0;
+        static float _verticalRotationValue = 0;
+
         static bool _playerMoving = false;
         static float _verticalAvg = 0;
         static float _playerSpeed = 0;
+        static float _leanNormalized = 0;
 
         static public bool IsAiming = false;
         
@@ -36,11 +40,11 @@ namespace TarkovIRL
             UpdateRotation(player.Rotation);
             IsAiming = player.ProceduralWeaponAnimation.IsAiming;
             _playerSpeed = player.Speed;
+            _leanNormalized = player.MovementContext.Tilt / 5f;
         }
         static void UpdateMoving(Vector3 position)
         {
             float dist = Vector3.Distance(position, _playerPosLastFrame);
-            UtilsTIRL.Log($"dist tracked {dist}");
             if (dist > PrimeMover.MotionTrackingThreshold.Value)
             {
                 _playerMoving = true;
@@ -54,12 +58,18 @@ namespace TarkovIRL
 
         static void UpdateRotation(Vector2 newRot)
         {
+            float dt = PrimeMover.Instance.DeltaTime;
+
             // vertical 
             _verticalAvg = newRot.y > _playerRotLastFrame.y ? 1f : -1f;
 
-            float distance = Vector2.Distance(newRot, _playerRotLastFrame) * PrimeMover.Instance.FixedDeltaTime;
+            float distance = Vector2.Distance(newRot, _playerRotLastFrame) * dt;
             float horizontalMovement = newRot.x - _playerRotLastFrame.x;
+            float verticalMovement = newRot.y - _playerRotLastFrame.y;
+
             horizontalMovement *= 0.01f;
+            verticalMovement *= 0.01f;
+
             if (horizontalMovement < -1f)
             {
                 horizontalMovement = 0;
@@ -73,12 +83,17 @@ namespace TarkovIRL
             _playerRotationHistory += distance;
             _playerRotationHistory -= _playerRotationAvg;
             _playerRotationHistory = Mathf.Clamp(_playerRotationHistory, 0, PrimeMover.RotationHistoryClamp.Value);
-            _playerRotationAvg = _playerRotationHistory * PrimeMover.Instance.FixedDeltaTime * PrimeMover.RotationAverageDTMulti.Value;
+            _playerRotationAvg = _playerRotationHistory * dt * PrimeMover.RotationAverageDTMulti.Value;
 
             // horizontal tracking
             _horizontalRotationHistory += horizontalMovement;
             _horizontalRotationHistory -= _horizontalRotationValue;
-            _horizontalRotationValue = _horizontalRotationHistory * PrimeMover.Instance.FixedDeltaTime * PrimeMover.RotationAverageDTMulti.Value;
+            _horizontalRotationValue = _horizontalRotationHistory * dt * PrimeMover.RotationAverageDTMulti.Value;
+
+            // vertical tracking
+            _verticalRotationHistory += verticalMovement;
+            _verticalRotationHistory -= _verticalRotationValue;
+            _verticalRotationValue = _verticalRotationHistory * dt * PrimeMover.RotationAverageDTMulti.Value;
 
             // set for next frame
             _playerRotLastFrame = newRot;
@@ -107,6 +122,19 @@ namespace TarkovIRL
         public static float HorizontalRotationDelta
         {
             get { return _horizontalRotationValue; }
+        }
+
+        public static float VerticalRotationDelta
+        {
+            get { return _verticalRotationValue; }
+        }
+
+        public static float LeanNormal
+        {
+            get
+            {
+                return _leanNormalized;
+            }
         }
     }
 }
