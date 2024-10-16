@@ -28,7 +28,24 @@ namespace TarkovIRL
                 Vector3 throwOffset = ThrowController.GetThrowOffset;
                 headRotWithThrow += throwOffset;
 
+
+
+
                 __instance.HeadRotation = headRotWithThrow;
+                __instance.ProceduralWeaponAnimation.SetHeadRotation(__instance.HeadRotation);
+
+
+
+
+            }
+            else
+
+            {
+                Vector3 headRotWith = __instance.HeadRotation;
+                Vector3 rotateHeadForLean = new Vector3(0,0, PlayerMotionController.LeanNormal * PrimeMover.LeanCounterRotateMod.Value);
+                headRotWith += rotateHeadForLean;
+
+                __instance.HeadRotation = headRotWith;
                 __instance.ProceduralWeaponAnimation.SetHeadRotation(__instance.HeadRotation);
 
             }

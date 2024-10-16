@@ -14,73 +14,56 @@ namespace TarkovIRL
         static float _vertDropFromRotLerp = 0;
         static float _hyperVerticalLerp = 0;
 
-        public static void UpdateLerp (float deltaTime)
+        public static void UpdateLerp(float deltaTime)
         {
-            if (!PrimeMover.IsWeaponSway.Value)
+            if (PrimeMover.IsWeaponSway.Value)
             {
-                return;
+                float value = PlayerMotionController.HorizontalRotationDelta * PrimeMover.WeaponSwayMulti.Value;
+                float value2 = PrimeMover.NewSwayRotDeltaClamp.Value;
+                value = Mathf.Clamp(value, 0f - value2, value2);
+                float num = (WeaponController.IsStocked ? (-1f) : 0.5f);
+                float num2 = ((WeaponController.IsStocked && PlayerMotionController.IsAiming) ? 0f : 1f);
+                float num3 = ((!WeaponController.IsStocked && !WeaponController.IsPistol && PlayerMotionController.IsAiming) ? 0.7f : 1f);
+                float num4 = ((WeaponController.IsStocked && !PlayerMotionController.IsAiming) ? 0.7f : 1f);
+                float num5 = ((!WeaponController.IsStocked && PlayerMotionController.IsAiming) ? 1.25f : 1f);
+                float num6 = ((WeaponController.IsStocked && PlayerMotionController.IsAiming) ? (-0.25f) : 1f);
+                float num7 = ((WeaponController.IsStocked && PlayerMotionController.IsAiming) ? 2f : 1f);
+                float num8 = ((!WeaponController.IsStocked) ? 0.5f : 1f);
+                float weaponMulti = WeaponController.GetWeaponMulti(getInverse: true);
+                float efficiencyModifierInverse = EfficiencyController.EfficiencyModifierInverse;
+                float num9 = weaponMulti * efficiencyModifierInverse;
+                float num10 = ((!WeaponController.IsStocked) ? (-1f) : 0f);
+                float num11 = (PlayerMotionController.IsAiming ? 0.5f : 1f);
+                float num12 = (WeaponController.IsPistol ? 2f : 1f);
+                float b = value * num * num2 * num3 * WeaponController.GetWeaponMulti(getInverse: false) * EfficiencyController.EfficiencyModifier;
+                float b2 = Mathf.Abs(value) * num10 * num11 * num12;
+                _lerpPosHorizontal = Mathf.Lerp(_lerpPosHorizontal, b, deltaTime * num9 * num4 * num5 * PrimeMover.NewSwayPositionDTMulti.Value);
+                _lerpPosVertical = Mathf.Lerp(_lerpPosVertical, b2, deltaTime * num9 * PrimeMover.NewSwayVerticalPosDTMulti.Value);
+                float value3 = value * num6 * WeaponController.GetWeaponMulti(getInverse: false) * EfficiencyController.EfficiencyModifier;
+                float num13 = (PlayerMotionController.IsAiming ? (PrimeMover.NewSwayADSRotClamp.Value * value2) : 1f);
+                value3 = Mathf.Clamp(value3, 0f - num13, num13);
+                _lerpRot = Mathf.Lerp(_lerpRot, value3, deltaTime * num9 * num7 * num8 * PrimeMover.NewSwayRotationDTMulti.Value);
+                float value4 = PrimeMover.NewSwayRotFinalClamp.Value;
+                _lerpRot = Mathf.Clamp(_lerpRot, 0f - value4, value4);
+                float b3 = (PlayerMotionController.IsAiming ? 0f : (PrimeMover.WeaponTiltValue.Value * 0.1f));
+                _weaponTiltLerp = Mathf.Lerp(_weaponTiltLerp, b3, deltaTime * 20f);
+                float num14 = (PlayerMotionController.IsAiming ? 0f : (PlayerMotionController.LeanNormal * PrimeMover.LeanVerticalMulti.Value * WeaponController.GetWeaponMulti(getInverse: false)));
+                num14 *= -1f;
+                if (AnimStateController.IsLeftShoulder)
+                {
+                    num14 *= -1f;
+                }
+                _leanVerticalLerp = Mathf.Lerp(_leanVerticalLerp, num14, deltaTime * 10f);
+                float num15 = ((WeaponController.IsStocked && PlayerMotionController.IsAiming) ? 0.2f : 1f);
+                float b4 = PlayerMotionController.RotationDelta * PrimeMover.VerticalDropMulti.Value * WeaponController.GetWeaponMulti(getInverse: false) * EfficiencyController.EfficiencyModifier * num15;
+                _vertDropFromRotLerp = Mathf.Lerp(_vertDropFromRotLerp, b4, deltaTime * PrimeMover.NewSwayVerticalPosDTMulti.Value);
+                float verticalRotationDelta = PlayerMotionController.VerticalRotationDelta;
+                float num16 = ((verticalRotationDelta < 0f) ? (-1f) : 1f);
+                float value5 = (PlayerMotionController.IsAiming ? 0f : (verticalRotationDelta * num16 * PrimeMover.HyperVerticalMulti.Value * WeaponController.GetWeaponMulti(getInverse: false) * EfficiencyController.EfficiencyModifier));
+                float value6 = PrimeMover.HyperVerticalClamp.Value;
+                value5 = Mathf.Clamp(value5, 0f - value6, value6);
+                _hyperVerticalLerp = Mathf.Lerp(_hyperVerticalLerp, value5, deltaTime * PrimeMover.HyperVerticalDT.Value);
             }
-
-            float horizontalDelta = PlayerMotionController.HorizontalRotationDelta * PrimeMover.WeaponSwayMulti.Value;
-            float horizontalDeltaClamp = PrimeMover.NewSwayRotDeltaClamp.Value;
-            horizontalDelta = Mathf.Clamp(horizontalDelta, -horizontalDeltaClamp, horizontalDeltaClamp);
-            float isStockedMulti = WeaponController.IsStocked ? -1 : 0.5f;
-            float isAdsPos = WeaponController.IsStocked && PlayerMotionController.IsAiming ? 0 : 1f;
-            float isAdsPos2 = !WeaponController.IsStocked && !WeaponController.IsPistol && PlayerMotionController.IsAiming ? 0.7f : 1f;
-            float isAdsPosDT = WeaponController.IsStocked && !PlayerMotionController.IsAiming ? 0.7f : 1f;
-            float isAdsPosDT2 = !WeaponController.IsStocked && PlayerMotionController.IsAiming ? 1.25f : 1f;
-            float isAdsRot = WeaponController.IsStocked && PlayerMotionController.IsAiming ? -0.25f : 1f;
-            float isdAdsRotDT = WeaponController.IsStocked && PlayerMotionController.IsAiming ? 2f : 1f;
-            float isStockedRotDT = !WeaponController.IsStocked ? 0.5f : 1f;
-            float wpnMulti = WeaponController.GetWeaponMulti(true);
-            float efficiencyMulti = EfficiencyController.EfficiencyModifierInverse;
-            float lerpDTMulti = wpnMulti * efficiencyMulti;
-            float posVerticalStockedMulti = !WeaponController.IsStocked ? -1f : 0;
-            float posVerticalAimingMulti = PlayerMotionController.IsAiming ? 0.5f : 1f;
-            float posVerticalPistolMulti = WeaponController.IsPistol ? 2f : 1f;
-
-
-            // pos
-            float lerpPosHorizontalTarget = horizontalDelta * isStockedMulti * isAdsPos * isAdsPos2 * WeaponController.GetWeaponMulti(false) * EfficiencyController.EfficiencyModifier;
-            float lerpPosVerticalTarget = Mathf.Abs(horizontalDelta) * posVerticalStockedMulti * posVerticalAimingMulti * posVerticalPistolMulti;
-            
-            _lerpPosHorizontal = Mathf.Lerp(_lerpPosHorizontal, lerpPosHorizontalTarget, deltaTime * lerpDTMulti * isAdsPosDT * isAdsPosDT2 * PrimeMover.NewSwayPositionDTMulti.Value);
-            _lerpPosVertical = Mathf.Lerp(_lerpPosVertical, lerpPosVerticalTarget, deltaTime * lerpDTMulti * PrimeMover.NewSwayVerticalPosDTMulti.Value);
-
-            // rot
-            float lerpRotTarget = horizontalDelta * isAdsRot * WeaponController.GetWeaponMulti(false) * EfficiencyController.EfficiencyModifier;
-            float rotADSClamp = PlayerMotionController.IsAiming ? PrimeMover.NewSwayADSRotClamp.Value * horizontalDeltaClamp : 1f;
-            lerpRotTarget = Mathf.Clamp(lerpRotTarget, -rotADSClamp, rotADSClamp);
-            _lerpRot = Mathf.Lerp(_lerpRot, lerpRotTarget, deltaTime * lerpDTMulti * isdAdsRotDT * isStockedRotDT * PrimeMover.NewSwayRotationDTMulti.Value);
-            float finalClamp = PrimeMover.NewSwayRotFinalClamp.Value;
-            _lerpRot = Mathf.Clamp(_lerpRot, -finalClamp, finalClamp);
-
-            // tilt
-            float tilteValue = PlayerMotionController.IsAiming ? 0 : PrimeMover.WeaponTiltValue.Value * 0.1f;
-            _weaponTiltLerp = Mathf.Lerp(_weaponTiltLerp, tilteValue, deltaTime * 20f);
-
-            // lean vertical
-            float leanVerticalTarget = PlayerMotionController.IsAiming ? 0 : PlayerMotionController.LeanNormal * PrimeMover.LeanVerticalMulti.Value * WeaponController.GetWeaponMulti(false);
-            leanVerticalTarget *= -1f;
-            if (AnimStateController.IsLeftShoulder) leanVerticalTarget *= -1f;
-            //if (AnimStateController.IsSideStep) leanVerticalTarget = 1f;
-            _leanVerticalLerp = Mathf.Lerp(_leanVerticalLerp, leanVerticalTarget, deltaTime * 10f);
-
-            // vertical drop from rotation
-            float isAds = WeaponController.IsStocked && PlayerMotionController.IsAiming ? 0.2f : 1f;
-            float verticalDropTarget = PlayerMotionController.RotationDelta * PrimeMover.VerticalDropMulti.Value * WeaponController.GetWeaponMulti(false) * isAds;
-            _vertDropFromRotLerp = Mathf.Lerp(_vertDropFromRotLerp, verticalDropTarget, deltaTime * PrimeMover.NewSwayVerticalPosDTMulti.Value) * EfficiencyController.EfficiencyModifierInverse;
-
-            // hyper-vertical
-            float vertDelta = PlayerMotionController.VerticalRotationDelta;
-            float gravity = vertDelta < 0 ? -1f : 1f;
-            float hyperVertTarget = PlayerMotionController.IsAiming ? 0 : vertDelta * gravity * PrimeMover.HyperVerticalMulti.Value * WeaponController.GetWeaponMulti(false);
-            float clamp = PrimeMover.HyperVerticalClamp.Value;
-            hyperVertTarget = Mathf.Clamp(hyperVertTarget, -clamp, clamp);
-            _hyperVerticalLerp = Mathf.Lerp(_hyperVerticalLerp, hyperVertTarget, deltaTime * PrimeMover.HyperVerticalDT.Value) * EfficiencyController.EfficiencyModifier;
-
-            // debug
-            //UtilsTIRL.Log($" lerpDTMulti {lerpDTMulti}, efficiencyMulti {efficiencyMulti}, wpnMulti {wpnMulti}");
         }
 
         public static Vector3 GetNewSwayPosition()
@@ -93,11 +76,10 @@ namespace TarkovIRL
             {
                 return Vector3.zero;
             }
-
-            Vector3 addedSway = Vector3.zero;
-            addedSway.x = _lerpPosHorizontal * PrimeMover.NewSwayPositionMulti.Value * WeaponController.GetWeaponMulti(false);
-            addedSway.y = _lerpPosVertical * PrimeMover.NewSwayVerticalPosMulti.Value * WeaponController.GetWeaponMulti(false);
-            return addedSway;
+            Vector3 zero = Vector3.zero;
+            zero.x = _lerpPosHorizontal * PrimeMover.NewSwayPositionMulti.Value * WeaponController.GetWeaponMulti(getInverse: false);
+            zero.y = _lerpPosVertical * PrimeMover.NewSwayVerticalPosMulti.Value * WeaponController.GetWeaponMulti(getInverse: false);
+            return zero;
         }
 
         public static Quaternion GetNewSwayRotation()
@@ -110,12 +92,11 @@ namespace TarkovIRL
             {
                 return Quaternion.identity;
             }
-
-            Quaternion addedRotation = Quaternion.identity;
-            addedRotation.x = _leanVerticalLerp + _vertDropFromRotLerp + _hyperVerticalLerp;
-            addedRotation.z = _lerpRot * PrimeMover.NewSwayRotationMulti.Value * WeaponController.GetWeaponMulti(false);
-            addedRotation.y = _weaponTiltLerp;
-            return addedRotation;
+            Quaternion identity = Quaternion.identity;
+            identity.x = _leanVerticalLerp + _vertDropFromRotLerp + _hyperVerticalLerp;
+            identity.z = _lerpRot * PrimeMover.NewSwayRotationMulti.Value * WeaponController.GetWeaponMulti(getInverse: false);
+            identity.y = _weaponTiltLerp;
+            return identity;
         }
     }
 }

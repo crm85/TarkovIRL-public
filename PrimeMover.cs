@@ -123,6 +123,7 @@ namespace TarkovIRL
         public static ConfigEntry<float> NewSwayADSRotClamp;
         public static ConfigEntry<float> NewSwayRotDeltaClamp;
         public static ConfigEntry<float> NewSwayRotFinalClamp;
+        public static ConfigEntry<float> LeanCounterRotateMod;
 
         // config defaults
         readonly float AdsParallaxTimeMultiDefault = 30f;
@@ -260,6 +261,7 @@ namespace TarkovIRL
             // general sliders
             WeaponDeadzoneMulti = ConstructFloatConfig(WeaponDeadzoneMultiDefault, ADJUST_VAR_SECTION, "Weapon deadzone multiplier", "", 0, 5f);
             WeaponSwayMulti = ConstructFloatConfig(0.25f, ADJUST_VAR_SECTION, "Weapon sway multiplier", "", 0, 5f);
+            LeanCounterRotateMod = ConstructFloatConfig(0, ADJUST_VAR_SECTION, "LeanCounterRotateMod", "", -5f, 5f);
 
             // new sway sliders
             NewSwayPositionMulti = ConstructFloatConfig(0.5f, NEW_SWAY_SLIDERS, "NewSwayPositionMulti", "", 0, 10f);
