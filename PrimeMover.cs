@@ -120,6 +120,9 @@ namespace TarkovIRL
         public static ConfigEntry<float> HyperVerticalMulti;
         public static ConfigEntry<float> HyperVerticalDT;
         public static ConfigEntry<float> ParallaxVerticalMulti;
+        public static ConfigEntry<float> NewSwayADSRotClamp;
+        public static ConfigEntry<float> NewSwayRotDeltaClamp;
+        public static ConfigEntry<float> NewSwayRotFinalClamp;
 
         // config defaults
         readonly float AdsParallaxTimeMultiDefault = 30f;
@@ -235,13 +238,16 @@ namespace TarkovIRL
             TryLoadPatch(new Patch_PlayStepSound());
             TryLoadPatch(new Patch_ThrowGrenade());
 
+            //TryLoadPatch(new Patch_ProcessRotation());
+            //TryLoadPatch(new Patch_ProcessUpperbodyRotation());
+
             TryLoadPatch(new Patch_SetHeadRotation());
             TryLoadPatch(new Patch_Look());
         }
         void LoadConfigValues()
         {
             // toggles
-            IsWeaponDeadzone = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable weapon deadzone", "The weapon 'deadzone' effect is a separation of the player's camera from where the weapon is pointing. In vanilla these are perfectly aligned at all times; in this mod, these values become disaligned based on the size and ergo value of the weapon.");
+            IsWeaponDeadzone = ConstructBoolConfig(false, BASE_FEATURES_SECTION, "Enable weapon deadzone", "The weapon 'deadzone' effect is a separation of the player's camera from where the weapon is pointing. In vanilla these are perfectly aligned at all times; in this mod, these values become disaligned based on the size and ergo value of the weapon.");
             IsWeaponSway = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable custom weapon sway", "Weapon sway has been rewritten from scratch. When not ADS'd, your weapon mostly LEADS your aimpoint, and the sway characteristics are informed by your current efficiency and what kind of weapon you have. In the ADS, stocked weapons will LAG behind your aimpoint unless the stock is retracted.");
             IsBreathingEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable breathing effect", "Adds a visual oscillation to your character's weapon, the intensity of which depends on your current stamina.");
             IsPoseEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable stance-dependent weapon position", "When you crouch, your weapon position is pulled in closer to your character.");
@@ -253,7 +259,7 @@ namespace TarkovIRL
 
             // general sliders
             WeaponDeadzoneMulti = ConstructFloatConfig(WeaponDeadzoneMultiDefault, ADJUST_VAR_SECTION, "Weapon deadzone multiplier", "", 0, 5f);
-            WeaponSwayMulti = ConstructFloatConfig(0.3f, ADJUST_VAR_SECTION, "Weapon sway multiplier", "", 0, 5f);
+            WeaponSwayMulti = ConstructFloatConfig(0.25f, ADJUST_VAR_SECTION, "Weapon sway multiplier", "", 0, 5f);
 
             // new sway sliders
             NewSwayPositionMulti = ConstructFloatConfig(0.5f, NEW_SWAY_SLIDERS, "NewSwayPositionMulti", "", 0, 10f);
@@ -264,10 +270,13 @@ namespace TarkovIRL
             NewSwayVerticalPosDTMulti = ConstructFloatConfig(3f, NEW_SWAY_SLIDERS, "NewSwayVerticalPosDTMulti", "", 0, 10f);
             WeaponTiltValue = ConstructFloatConfig(-0.5f, NEW_SWAY_SLIDERS, "WeaponTiltValue", "", -1f, 1f);
             LeanVerticalMulti = ConstructFloatConfig(0.01f, NEW_SWAY_SLIDERS, "LeanVerticalMulti", "", 0, 0.05f);
-            VerticalDropMulti = ConstructFloatConfig(0.3f, NEW_SWAY_SLIDERS, "VerticalDropMulti", "", -10f, 10f);
-            HyperVerticalClamp = ConstructFloatConfig(0.2f, NEW_SWAY_SLIDERS, "HyperVerticalClamp", "", -1f, 1f);
-            HyperVerticalMulti = ConstructFloatConfig(10f, NEW_SWAY_SLIDERS, "HyperVerticalMulti", "", 0, 30f);
-            HyperVerticalDT = ConstructFloatConfig(0.8f, NEW_SWAY_SLIDERS, "HyperVerticalDT", "", -10f, 10f);
+            VerticalDropMulti = ConstructFloatConfig(0.2f, NEW_SWAY_SLIDERS, "VerticalDropMulti", "", -10f, 10f);
+            HyperVerticalClamp = ConstructFloatConfig(0.1f, NEW_SWAY_SLIDERS, "HyperVerticalClamp", "", -1f, 1f);
+            HyperVerticalMulti = ConstructFloatConfig(3f, NEW_SWAY_SLIDERS, "HyperVerticalMulti", "", 0, 30f);
+            HyperVerticalDT = ConstructFloatConfig(3.5f, NEW_SWAY_SLIDERS, "HyperVerticalDT", "", -10f, 10f);
+            NewSwayADSRotClamp = ConstructFloatConfig(0.03f, NEW_SWAY_SLIDERS, "NewSwayADSRotClamp", "", 0, 1f);
+            NewSwayRotDeltaClamp = ConstructFloatConfig(0.02f, NEW_SWAY_SLIDERS, "NewSwayRotDeltaClamp", "", 0, 0.1f);
+            NewSwayRotFinalClamp = ConstructFloatConfig(0.06f, NEW_SWAY_SLIDERS, "NewSwayRotFinalClamp", "", 0, 0.1f);
 
             // parallax sliders
             ParallaxMulti = ConstructFloatConfig(ParallaxMultiDefault, PARALLAX_SLIDERS,"Parallax multiplier", "", 1f, 100f);
@@ -277,7 +286,7 @@ namespace TarkovIRL
             ShotParallaxResetTimeMulti = ConstructFloatConfig(ShotParallaxResetTimeMultiDefault, PARALLAX_SLIDERS, "Shot-parallax cooldown multiplier", "Higher = d", 0, 20f);
             AdsParallaxTimeMulti = ConstructFloatConfig(AdsParallaxTimeMultiDefault, PARALLAX_SLIDERS, "Ads-parallax cooldown multiplier", "", 0, 160f);
             ShotParallaxWeaponWeightMulti = ConstructFloatConfig(ShotParallaxWeaponWeightMultiDefault, PARALLAX_SLIDERS, "Shot parallax weapon weight factor multiplier", "", 0, 10f);
-            ParallaxRotationRecenterMulti = ConstructFloatConfig(80f, PARALLAX_SLIDERS, "ParallaxRotationRecenterMulti", "", 0.1f, 100f);
+            ParallaxRotationRecenterMulti = ConstructFloatConfig(1f, PARALLAX_SLIDERS, "ParallaxRotationRecenterMulti", "", 0.1f, 100f);
             ParallaxVerticalMulti = ConstructFloatConfig(8f, PARALLAX_SLIDERS, "ParallaxVerticalMulti", "", 0.1f, 100f);
 
             // efficiency sliders

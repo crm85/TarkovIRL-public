@@ -88,13 +88,13 @@ namespace TarkovIRL
 
             // up
             float extraPistolParallax = WeaponController.IsPistol ? PrimeMover.PistolSpecificParallax.Value : 1f;
-            float rotationDeltaMulti = PlayerMotionController.RotationDelta * PrimeMover.ParallaxRotationRecenterMulti.Value;
+            float rotationDeltaMulti = PlayerMotionController.RotationDelta;
 
             float parallaxMulti = PrimeMover.ParallaxMulti.Value * WeaponController.GetWeaponMulti(false) * extraPistolParallax;
 
             // down
             float inverseRotationDeltaMulti = 1f / rotationDeltaMulti;
-            float zeroLerpTime = dt * inverseEfficiencyMulti * inverseRotationDeltaMulti;
+            float zeroLerpTime = dt * inverseEfficiencyMulti * inverseRotationDeltaMulti * PrimeMover.ParallaxRotationRecenterMulti.Value;
             if (UtilsTIRL.IsPriority(2)) UtilsTIRL.Log($"zeroLerpTime {zeroLerpTime}, inverseEfficiencyMulti {inverseEfficiencyMulti}, inverseRotationDeltaMulti {inverseRotationDeltaMulti}, rotationDeltaMulti {rotationDeltaMulti}");
 
 
@@ -105,7 +105,7 @@ namespace TarkovIRL
             _posLerpXTarget = Mathf.Lerp(_posLerpXTarget, _rotAvgX * parallaxMulti, dt);
             _posLerpXTarget = Mathf.Lerp(_posLerpXTarget, 0, zeroLerpTime);
             //
-            _posLerpYTarget = Mathf.Lerp(_posLerpYTarget, _rotAvgY * parallaxMulti * PrimeMover.ParallaxVerticalMulti.Value, dt);
+            _posLerpYTarget = Mathf.Lerp(_posLerpYTarget, _rotAvgY * parallaxMulti, dt);
             _posLerpYTarget = Mathf.Lerp(_posLerpYTarget, 0, zeroLerpTime);
 
             //
@@ -115,7 +115,7 @@ namespace TarkovIRL
             _rotLerpXTarget = Mathf.Lerp(_rotLerpXTarget, _rotAvgX * parallaxMulti, dt);
             _rotLerpXTarget = Mathf.Lerp(_rotLerpXTarget, 0, zeroLerpTime);
             //
-            _rotLerpYTarget = Mathf.Lerp(_rotLerpYTarget, _rotAvgY * parallaxMulti * PrimeMover.ParallaxVerticalMulti.Value, dt);
+            _rotLerpYTarget = Mathf.Lerp(_rotLerpYTarget, _rotAvgY * parallaxMulti, dt);
             _rotLerpYTarget = Mathf.Lerp(_rotLerpYTarget, 0, zeroLerpTime);
 
             //

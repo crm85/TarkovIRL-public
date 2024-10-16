@@ -55,7 +55,7 @@ namespace TarkovIRL
                 finalHeadRotation = 0;
             }
 
-            _deadZoneLerp = Mathf.Lerp(_deadZoneLerp, finalHeadRotation, player.DeltaTime * lerpRate);
+            _deadZoneLerp = Mathf.Lerp(_deadZoneLerp, finalHeadRotation, PrimeMover.Instance.FixedDeltaTime * lerpRate);
             headRotThisFrame.y += _deadZoneLerp;
 
             if (UtilsTIRL.IsPriority(2)) UtilsTIRL.Log($"initial head rot {headRotInitial}, final output {headRotThisFrame}");

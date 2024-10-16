@@ -58,7 +58,7 @@ namespace TarkovIRL
 
         static void UpdateRotation(Vector2 newRot)
         {
-            float dt = PrimeMover.Instance.DeltaTime;
+            float dt = PrimeMover.Instance.FixedDeltaTime;
 
             // vertical 
             _verticalAvg = newRot.y > _playerRotLastFrame.y ? 1f : -1f;
@@ -67,8 +67,8 @@ namespace TarkovIRL
             float horizontalMovement = newRot.x - _playerRotLastFrame.x;
             float verticalMovement = newRot.y - _playerRotLastFrame.y;
 
-            horizontalMovement *= 0.01f;
-            verticalMovement *= 0.01f;
+            horizontalMovement *= dt;
+            verticalMovement *= dt;
 
             if (horizontalMovement < -1f)
             {

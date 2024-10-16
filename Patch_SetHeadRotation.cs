@@ -17,6 +17,15 @@ namespace TarkovIRL
 
         protected override MethodBase GetTargetMethod()
         {
+            /*
+            resetLookField = AccessTools.Field(typeof(Player), "_resetLook");
+            mouseLookControlField = AccessTools.Field(typeof(Player), "_mouseLookControl");
+            isResettingLookField = AccessTools.Field(typeof(Player), "_isResettingLook");
+            setResetedLookNextFrameField = AccessTools.Field(typeof(Player), "_setResetedLookNextFrame");
+            isLookingField = AccessTools.Field(typeof(Player), "_isLooking");
+            horizontalField = AccessTools.Field(typeof(Player), "_horizontal");
+            verticalField = AccessTools.Field(typeof(Player), "_vertical");
+            */
             _playerField = AccessTools.Field(typeof(Player.FirearmController), "_player");
             _fcField = AccessTools.Field(typeof(ProceduralWeaponAnimation), "_firearmController");
             return typeof(ProceduralWeaponAnimation).GetMethod("SetHeadRotation", BindingFlags.Instance | BindingFlags.Public);
@@ -63,7 +72,7 @@ namespace TarkovIRL
                 // it gets a wild error. Shrug.
                 player.HeadRotation = headRotModified;
                 AccessTools.Field(typeof(ProceduralWeaponAnimation), "_headRotationVec").SetValue(__instance, headRotModified);
-                
+
                 return false;
             }
             return true;
