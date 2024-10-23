@@ -1,0 +1,20 @@
+--- Version 0.3.5 ---
+- Fixed stance change visual not working (accidentally killed it).
+- Lowered again default sway value.
+- Added more randomness to arm shake visual effect.
+- Improved (greatly) breathing visual effect.
+- Added effect, when player is turning he pulls the weapon in a bit because I like visual complexity.
+- Added effect, when player is moving with unstocked weapon he lowers it a bit when ADSed (because I like visual complexity again).
+
+--- Version 0.3.3 ---
+
+- Updated for SPT 3.9.x.
+- Retweaked sway and deadzone values for new Realism version.
+- Reduced the influence of player's strength stat on sway: at max strength (50), sway is reduced up to 33%.
+
+--- Version 0.3.2 ---
+
+- Added F12 config menu
+- Tweaked animation curve and values for weapon sway, looks a bit more complex
+- Tweaked animation curve for pose change visual effect
+- Improved stuttering problem (something much smaller and less noticeable happens now)
