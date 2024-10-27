@@ -1,20 +1,20 @@
---- Version 0.3.5 ---
-- Fixed stance change visual not working (accidentally killed it).
-- Lowered again default sway value.
-- Added more randomness to arm shake visual effect.
-- Improved (greatly) breathing visual effect.
-- Added effect, when player is turning he pulls the weapon in a bit because I like visual complexity.
-- Added effect, when player is moving with unstocked weapon he lowers it a bit when ADSed (because I like visual complexity again).
+--- Version 0.6.2 ---
+New Features:
+- Added new sway mechanics for movement in different directions.
+- Added new head movement visual effect for reloading and checking mags.
+- Pistol quickdraw stamina drain significantly reduced, it's simply unrealistic and silly.
+- Animation time significantly increased when swapping between weapon on sling and weapon on back.
 
---- Version 0.3.3 ---
+Updates and Fixes:
+- Huge repass on config entry names.
+- Fixed extra freelook range to work even if not using the Deadzone feature.
 
-- Updated for SPT 3.9.x.
-- Retweaked sway and deadzone values for new Realism version.
-- Reduced the influence of player's strength stat on sway: at max strength (50), sway is reduced up to 33%.
+--- Version 0.6.1 ---
+- Fixed version number not being correct
+- Lowered default sway value
+- Restored parallax feature and fixed default values
 
---- Version 0.3.2 ---
-
-- Added F12 config menu
-- Tweaked animation curve and values for weapon sway, looks a bit more complex
-- Tweaked animation curve for pose change visual effect
-- Improved stuttering problem (something much smaller and less noticeable happens now)
+--- Version 0.6 ---
+- Added new weapon sway model
+- Added new footstep visual effects
+- Added new lean visual effects and mechanics
