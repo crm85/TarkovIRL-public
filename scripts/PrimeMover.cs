@@ -14,7 +14,7 @@ namespace TarkovIRL
     {
         const string modGUID = "TarkovIRL";
         const string modName = "TarkovIRL - WHM";
-        const string modVersion = "0.6.1";
+        const string modVersion = "0.6.5";
 
         public static PrimeMover Instance;
 
@@ -53,13 +53,14 @@ namespace TarkovIRL
 
 
         const string BASE_FEATURES_SECTION = "1 - Toggle base features";
-        const string ADJUST_VAR_SECTION = "2 - Adjust main feature values";
+        const string GENERAL_SLIDERS = "2 - Adjust main feature values";
         const string NEW_SWAY_SLIDERS = "3 - Sway multipliers";
         const string PARALLAX_SLIDERS = "4 - Parallax multipliers";
         const string EFFICIENCY_SLIDERS = "5 - Efficiency multipliers";
         const string ROTATION_ENGINE_SLIDERS = "6 - Rotation engine multipliers";
         const string MISC_SLIDERS = "7 - Misc multipliers";
         const string DEV_SECTION = "99 - Only for dev/testing";
+        const string DIRECTIONAL_SWAY = "8 - Directional Sway Values";
 
 
         //
@@ -74,6 +75,7 @@ namespace TarkovIRL
         public static ConfigEntry<bool> IsSmallMovementsEffect;
         public static ConfigEntry<bool> IsFootstepEffect;
         public static ConfigEntry<bool> IsParallaxEffect;
+        public static ConfigEntry<bool> IsDirectionalSway;
 
         public static ConfigEntry<bool> IsLogging;
         public static ConfigEntry<bool> DebugSpam;
@@ -102,16 +104,16 @@ namespace TarkovIRL
         public static ConfigEntry<float> NewSwayRotationMulti;
         public static ConfigEntry<float> NewSwayPositionDTMulti;
         public static ConfigEntry<float> NewSwayRotationDTMulti;
-        public static ConfigEntry<float> NewSwayVerticalPosMulti;
-        public static ConfigEntry<float> NewSwayVerticalPosDTMulti;
-        public static ConfigEntry<float> WeaponTiltValue;
+        public static ConfigEntry<float> NewSwayWpnUnstockedDropValue;
+        public static ConfigEntry<float> NewSwayWpnUnstockedDropSpeed;
+        public static ConfigEntry<float> WeaponCantValue;
         public static ConfigEntry<float> SideToSideSwayMulti;
         public static ConfigEntry<float> SideToSideRotationDTMulti;
         public static ConfigEntry<float> SideToSidePositionDTMulti;
         public static ConfigEntry<float> FootstepCutoffRatio;
         public static ConfigEntry<float> MotionTrackingThreshold;
-        public static ConfigEntry<float> LeanVerticalMulti;
-        public static ConfigEntry<float> VerticalDropMulti;
+        public static ConfigEntry<float> LeanExtraVerticalMulti;
+        public static ConfigEntry<float> NewSwayWpnDropFromRotMulti;
         public static ConfigEntry<float> RotationAverageDTMulti;
         public static ConfigEntry<float> ParallaxRotationRecenterMulti;
         public static ConfigEntry<float> DevTestFloat7;
@@ -123,6 +125,18 @@ namespace TarkovIRL
         public static ConfigEntry<float> NewSwayRotDeltaClamp;
         public static ConfigEntry<float> NewSwayRotFinalClamp;
         public static ConfigEntry<float> LeanCounterRotateMod;
+        // directional sway
+        public static ConfigEntry<float> DirectionalSwayLateralPosValue;
+        public static ConfigEntry<float> DirectionalSwayProjectedPosValue;
+        public static ConfigEntry<float> DirectionalSwayLateralRotValue;
+        public static ConfigEntry<float> DirectionalSwayVerticalRotValue;
+        public static ConfigEntry<float> DirectionalSwayMulti;
+        public static ConfigEntry<float> DirectionalSwayLerpSpeed;
+        public static ConfigEntry<float> DirectionalSwayLerpOnAds;
+        // augmented reloads
+        public static ConfigEntry<float> DebugHeadRotX;
+        public static ConfigEntry<float> DebugHeadRotY;
+        public static ConfigEntry<float> DebugHeadRotZ;
 
         // config defaults
         readonly float AdsParallaxTimeMultiDefault = 30f;
@@ -214,7 +228,7 @@ namespace TarkovIRL
             ThrowAlphaCurve = new AnimationCurve
             (
                 new Keyframe(0f, 1f), new Keyframe(0.15f, 0), new Keyframe(0.6f, 0), new Keyframe(0.95f, 1f)
-            ); ;
+            );
 
             NewSwayCurve = new AnimationCurve
             (
@@ -234,6 +248,7 @@ namespace TarkovIRL
             TryLoadPatch(new Patch_CalculateCameraPosition_HandLayers());
             TryLoadPatch(new Patch_PlayStepSound());
             TryLoadPatch(new Patch_ThrowGrenade());
+            TryLoadPatch(new Patch_TranslateCommand());
 
             //TryLoadPatch(new Patch_ProcessRotation());
             //TryLoadPatch(new Patch_ProcessUpperbodyRotation());
@@ -245,71 +260,86 @@ namespace TarkovIRL
         void LoadConfigValues()
         {
             // toggles
-            IsWeaponDeadzone = ConstructBoolConfig(false, BASE_FEATURES_SECTION, "Enable weapon deadzone (experimental)", "Most people don't like this, so it's off by default. You probably won't, either.");
-            IsWeaponSway = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable custom weapon sway", "Weapon sway has been rewritten from scratch. When not ADS'd, your weapon mostly LEADS your aimpoint, and the sway characteristics are informed by your current efficiency and what kind of weapon you have. In the ADS, stocked weapons will LAG behind your aimpoint unless the stock is retracted.");
+            IsWeaponDeadzone = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable weapon deadzone", "Aiming deadzone, like in other games but better.");
+            IsWeaponSway = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable custom weapon sway", "Completely scratch-built weapon sway. Generally leads aimpoint instead of lagging behind it.");
             IsBreathingEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable breathing effect", "Adds a visual oscillation to your character's weapon, the intensity of which depends on your current stamina.");
             IsPoseEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable stance-dependent weapon position", "When you crouch, your weapon position is pulled in closer to your character.");
             IsPoseChangeEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable stance transition effect", "When you change your crouch position, you see a dip in your sight picture, the speed and intensity of which is driven by how much you change your stance (e.g. incrimental change versus full change.");
-            IsArmShakeEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable extra arms shaking", "Adds additional arm shake as arm stam decreases.");
+            IsArmShakeEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable extra arm stam shake", "Adds additional arm shake as arm stam decreases.");
             IsSmallMovementsEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable small visual effects", "Toggles small details: pulling the weapon in on rotation, lowering with unstocked weapon, new grenade throwing effects, alternative peek head position.");
             IsFootstepEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable footstep effect", "Player's weapon will bounce a bit more when taking steps, effect intesnity depends on several factors.");
             IsParallaxEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable parallax feature", "Extensive feature when causes the weapon to rotate in the player's hand and thus un-align the sights, when the player is rotating. The intensity of the effect depends on your efficiency and the weight and ergo of the weapon.");
+            IsDirectionalSway = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable directional sway feature", "Additional layer of weapon sway that is caused by forward-back-left-right movements.");
 
             // general sliders
-            WeaponDeadzoneMulti = ConstructFloatConfig(WeaponDeadzoneMultiDefault, ADJUST_VAR_SECTION, "Weapon deadzone multiplier", "", 0, 5f);
-            WeaponSwayMulti = ConstructFloatConfig(0.15f, ADJUST_VAR_SECTION, "Weapon sway multiplier", "", 0, 5f);
-            LeanCounterRotateMod = ConstructFloatConfig(-8f, ADJUST_VAR_SECTION, "LeanCounterRotateMod", "", -10f, 10f);
+            WeaponDeadzoneMulti = ConstructFloatConfig(WeaponDeadzoneMultiDefault, GENERAL_SLIDERS, "Deadzone multiplier", "Change overall deadzone effect strength.", 0, 5f);
+            WeaponSwayMulti = ConstructFloatConfig(0.15f, GENERAL_SLIDERS, "Sway multiplier", "Change overall sway effect strength.", 0, 5f);
+            ParallaxMulti = ConstructFloatConfig(20f, GENERAL_SLIDERS, "Parallax multiplier", "Change overall parallax effect strength.", 1f, 100f);
 
             // new sway sliders
-            NewSwayPositionMulti = ConstructFloatConfig(0.5f, NEW_SWAY_SLIDERS, "NewSwayPositionMulti", "", 0, 10f);
-            NewSwayRotationMulti = ConstructFloatConfig(3f, NEW_SWAY_SLIDERS, "NewSwayRotationMulti", "", 0, 10f);
-            NewSwayPositionDTMulti = ConstructFloatConfig(14f, NEW_SWAY_SLIDERS, "NewSwayPositionDTMulti", "", 0, 20f);
-            NewSwayRotationDTMulti = ConstructFloatConfig(2f, NEW_SWAY_SLIDERS, "NewSwayRotationDTMulti", "", 0, 10f);
-            NewSwayVerticalPosMulti = ConstructFloatConfig(0.3f, NEW_SWAY_SLIDERS, "NewSwayVerticalPosMulti", "", 0, 10f);
-            NewSwayVerticalPosDTMulti = ConstructFloatConfig(3f, NEW_SWAY_SLIDERS, "NewSwayVerticalPosDTMulti", "", 0, 10f);
-            WeaponTiltValue = ConstructFloatConfig(-0.5f, NEW_SWAY_SLIDERS, "WeaponTiltValue", "", -1f, 1f);
-            LeanVerticalMulti = ConstructFloatConfig(0.01f, NEW_SWAY_SLIDERS, "LeanVerticalMulti", "", 0, 0.05f);
-            VerticalDropMulti = ConstructFloatConfig(0.2f, NEW_SWAY_SLIDERS, "VerticalDropMulti", "", -10f, 10f);
-            HyperVerticalClamp = ConstructFloatConfig(0.1f, NEW_SWAY_SLIDERS, "HyperVerticalClamp", "", -1f, 1f);
-            HyperVerticalMulti = ConstructFloatConfig(3f, NEW_SWAY_SLIDERS, "HyperVerticalMulti", "", 0, 30f);
-            HyperVerticalDT = ConstructFloatConfig(3.5f, NEW_SWAY_SLIDERS, "HyperVerticalDT", "", -10f, 10f);
-            NewSwayADSRotClamp = ConstructFloatConfig(0.9f, NEW_SWAY_SLIDERS, "NewSwayADSRotClamp", "", 0, 1f);
-            NewSwayRotDeltaClamp = ConstructFloatConfig(0.02f, NEW_SWAY_SLIDERS, "NewSwayRotDeltaClamp", "", 0, 0.1f);
-            NewSwayRotFinalClamp = ConstructFloatConfig(0.06f, NEW_SWAY_SLIDERS, "NewSwayRotFinalClamp", "", 0, 0.1f);
+            NewSwayPositionMulti = ConstructFloatConfig(0.5f, NEW_SWAY_SLIDERS, "Sway position multiplier", "", 0, 10f);
+            NewSwayRotationMulti = ConstructFloatConfig(3f, NEW_SWAY_SLIDERS, "Sway rotation multiplier", "", 0, 10f);
+            NewSwayPositionDTMulti = ConstructFloatConfig(14f, NEW_SWAY_SLIDERS, "Sway position change speed", "", 0, 20f);
+            NewSwayRotationDTMulti = ConstructFloatConfig(2f, NEW_SWAY_SLIDERS, "Sway rotation change speed", "", 0, 10f);
+            NewSwayWpnUnstockedDropValue = ConstructFloatConfig(0.3f, NEW_SWAY_SLIDERS, "Weapon drop for unstocked value", "Unstocked weapons will drop a little when rotating.", 0, 10f);
+            NewSwayWpnUnstockedDropSpeed = ConstructFloatConfig(3f, NEW_SWAY_SLIDERS, "Weapon drop for unstocked speed", "", 0, 10f);
+            WeaponCantValue = ConstructFloatConfig(0, NEW_SWAY_SLIDERS, "Weapon cant value", "", -1f, 1f);
+            LeanExtraVerticalMulti = ConstructFloatConfig(0.01f, NEW_SWAY_SLIDERS, "Lean vertical change value", "When you peek, your weapon points up/down a little to complicate aiming.", 0, 0.05f);
+            NewSwayWpnDropFromRotMulti = ConstructFloatConfig(0.2f, NEW_SWAY_SLIDERS, "Weapon aimpoint drop on rotation", "When rotating, your weapon will point down a little consonent with the rotation speed. A slight emulation of manipulating a physical object, stacks with weapon weight etc.", -10f, 10f);
+            HyperVerticalClamp = ConstructFloatConfig(0.1f, NEW_SWAY_SLIDERS, "Hyper-vertical effect input clamp", "The 'hyper-vertical' effect emulates gravity, so to speak. Figure it out.", -1f, 1f);
+            HyperVerticalMulti = ConstructFloatConfig(3f, NEW_SWAY_SLIDERS, "Hyper-vertical effect value", "The 'hyper-vertical' effect emulates gravity, so to speak. Figure it out.", 0, 30f);
+            HyperVerticalDT = ConstructFloatConfig(3.5f, NEW_SWAY_SLIDERS, "Hyper-vertical change speed", "The 'hyper-vertical' effect emulates gravity, so to speak. Figure it out.", -10f, 10f);
+            NewSwayADSRotClamp = ConstructFloatConfig(0.9f, NEW_SWAY_SLIDERS, "Clamp sway effect specifically in ADS", "", 0, 1f);
+            NewSwayRotDeltaClamp = ConstructFloatConfig(0.02f, NEW_SWAY_SLIDERS, "Sway rotation input clamp", "Touch at your own risk kek", 0, 0.1f);
+            NewSwayRotFinalClamp = ConstructFloatConfig(0.06f, NEW_SWAY_SLIDERS, "Sway input smoothing clamp", "Touch at your own risk kek", 0, 0.1f);
 
             // parallax sliders
-            ParallaxMulti = ConstructFloatConfig(20f, PARALLAX_SLIDERS,"Parallax multiplier", "", 1f, 100f);
-            ParallaxSetSizeMulti = ConstructFloatConfig(ParallaxSetSizeMultiDefault, PARALLAX_SLIDERS, "Parallax set size", "", 0, 20f);
+            ParallaxSetSizeMulti = ConstructFloatConfig(ParallaxSetSizeMultiDefault, PARALLAX_SLIDERS, "Parallax set size", "Amount of parallax that is possible per player rotation.", 0, 20f);
             ParallaxInAds = ConstructFloatConfig(ParallaxInAdsDefault, PARALLAX_SLIDERS, "Parallax effect in ADS", "The % of parallax effect that you see in ADS (with a stocked weapon)", 0, 1f);
             PistolSpecificParallax = ConstructFloatConfig(PistolSpecificParallaxDefault, PARALLAX_SLIDERS, "Parallax effect value specifically for pistols", "", 0, 10f); 
-            ShotParallaxResetTimeMulti = ConstructFloatConfig(ShotParallaxResetTimeMultiDefault, PARALLAX_SLIDERS, "Shot-parallax cooldown multiplier", "", 0, 20f);
+            ShotParallaxResetTimeMulti = ConstructFloatConfig(ShotParallaxResetTimeMultiDefault, PARALLAX_SLIDERS, "Shot-parallax cooldown multiplier", "Rate of return to reduced parallax in the ADS, after a shot.", 0, 20f);
             AdsParallaxTimeMulti = ConstructFloatConfig(AdsParallaxTimeMultiDefault, PARALLAX_SLIDERS, "Ads-parallax cooldown multiplier", "", 0, 160f);
-            ShotParallaxWeaponWeightMulti = ConstructFloatConfig(ShotParallaxWeaponWeightMultiDefault, PARALLAX_SLIDERS, "Shot parallax weapon weight factor multiplier", "", 0, 10f);
-            ParallaxRotationRecenterMulti = ConstructFloatConfig(0.1f, PARALLAX_SLIDERS, "ParallaxRotationRecenterMulti", "", 0.05f, 0.5f);
+            ShotParallaxWeaponWeightMulti = ConstructFloatConfig(ShotParallaxWeaponWeightMultiDefault, PARALLAX_SLIDERS, "Shot parallax weapon weight factor multiplier", "After a shot in ADS, the parallax effect is momentarilly returned to full strength.", 0, 10f);
+            ParallaxRotationRecenterMulti = ConstructFloatConfig(0.1f, PARALLAX_SLIDERS, "Parallax rotation recenter force", "The strength with which the parallax effect is bled-off when not rotating.", 0.05f, 0.5f);
 
             // efficiency sliders
-            EfficiencyLerpMulti = ConstructFloatConfig(EfficiencyLerpMultiDefault, EFFICIENCY_SLIDERS, "Efficiency lerp multiplier", "", 0, 10f);
-            EfficiencyNegativeEffectsMulti = ConstructFloatConfig(EfficiencyNegativeEffectsMultiDefault, EFFICIENCY_SLIDERS, "Efficiency negative effect multi", "Controls how much negative effects (such as fatigue and damage) negatively affect your efficiency stat.", 0f, 2f);
+            EfficiencyLerpMulti = ConstructFloatConfig(EfficiencyLerpMultiDefault, EFFICIENCY_SLIDERS, "Efficiency change rate multiplier", "", 0, 10f);
+            EfficiencyNegativeEffectsMulti = ConstructFloatConfig(EfficiencyNegativeEffectsMultiDefault, EFFICIENCY_SLIDERS, "Efficiency negative effect multi", "Control how much player efficiency can be affected by damage, health, stamina, nutrition, etc.", 0f, 2f);
 
             // misc fine tuning sliders
-            BreathingEffectMulti = ConstructFloatConfig(BreathingEffectMultiDefault, MISC_SLIDERS, "Breathing effect multiplier", "", 0, 5f);
+            LeanCounterRotateMod = ConstructFloatConfig(-8f, MISC_SLIDERS, "Peek counter-rotate value", "Just a small visual effect so that your head does not rotate perfectly with the weapon when peeking; I find this more immersive.", -10f, 10f);
+            BreathingEffectMulti = ConstructFloatConfig(BreathingEffectMultiDefault, MISC_SLIDERS, "Breathing effect multiplier", "Adjust the strength of the breathing effect which comes with non-full stamina.", 0, 5f);
             ArmShakeMulti = ConstructFloatConfig(ArmShakeMultiDefault, MISC_SLIDERS, "Arm shake multiplier", "", 0, 5f);
-            ArmShakeRateMulti = ConstructFloatConfig(ArmShakeRateMultiDefault, MISC_SLIDERS, "Arm shake effect speed multiplier", "", 0, 5f);
-            FootstepLerpMulti = ConstructFloatConfig(FootstepLerpMultiDefault, MISC_SLIDERS, "Footstep lerp speed multiplier", "How quickly the footstep animation plays", 0, 1f);
+            ArmShakeRateMulti = ConstructFloatConfig(ArmShakeRateMultiDefault, MISC_SLIDERS, "Arm shake effect speed multiplier", "The arm shake effect is an animation, this changes the speed of the animation playback.", 0, 5f);
+            FootstepLerpMulti = ConstructFloatConfig(FootstepLerpMultiDefault, MISC_SLIDERS, "Footstep lerp speed multiplier", "The footstep effect is an animation, this changes the speed of the animation playback", 0, 1f);
             FootstepIntesnityMulti = ConstructFloatConfig(9f, MISC_SLIDERS, "Footstep intensity multiplier", "", 0, 10f);
-            ThrowStrengthMulti = ConstructFloatConfig(ThrowStrengthMultiDefault, MISC_SLIDERS, "Throw visual effect multi", "", 0, 100f);
-            ThrowSpeedMulti = ConstructFloatConfig(ThrowSpeedMultiDefault, MISC_SLIDERS, "Throw effect speed", "", 0, 10f);
-            SideToSideSwayMulti = ConstructFloatConfig(0.01f, MISC_SLIDERS, "SideToSideSwayMulti", "", 0, 0.03f);
-            SideToSideRotationDTMulti = ConstructFloatConfig(0.9f, MISC_SLIDERS, "SideToSideRotationDTMulti", "", 0, 10f);
-            SideToSidePositionDTMulti = ConstructFloatConfig(0.35f, MISC_SLIDERS, "SideToSidePositionDTMulti", "", 0, 10f);
-            FootstepCutoffRatio = ConstructFloatConfig(0.65f, MISC_SLIDERS, "FootstepCutoffRatio", "", 0, 1f);
-            MotionTrackingThreshold = ConstructFloatConfig(0.005f, MISC_SLIDERS, "MotionTrackingThreshold", "", 0, 0.01f);
+            ThrowStrengthMulti = ConstructFloatConfig(ThrowStrengthMultiDefault, MISC_SLIDERS, "Throw visual effect multi", "Change the strength of the throw animation", 0, 100f);
+            ThrowSpeedMulti = ConstructFloatConfig(ThrowSpeedMultiDefault, MISC_SLIDERS, "Throw effect speed", "The throw effect is an animation, this changes the speed of the animation playback.", 0, 10f);
+            SideToSideSwayMulti = ConstructFloatConfig(0.01f, MISC_SLIDERS, "Footstep side-to-side value", "", 0, 0.03f);
+            SideToSideRotationDTMulti = ConstructFloatConfig(0.9f, MISC_SLIDERS, "Footstep side-to-side rotation speed", "", 0, 10f);
+            SideToSidePositionDTMulti = ConstructFloatConfig(0.35f, MISC_SLIDERS, "Footstep side-to-side position speed", "", 0, 10f);
+            FootstepCutoffRatio = ConstructFloatConfig(0.65f, MISC_SLIDERS, "Footstep animation cutoff", "Just don't touch this.", 0, 1f);
+            MotionTrackingThreshold = ConstructFloatConfig(0.005f, MISC_SLIDERS, "Motion tracking threshold", "Just don't touch this.", 0, 0.01f);
             
             // rotation engine
-            RotationAverageDTMulti = ConstructFloatConfig(80f, ROTATION_ENGINE_SLIDERS, "RotationAverageDTMulti", "", 0.1f, 100f);
-            RotationHistoryClamp = ConstructFloatConfig(0.1f, ROTATION_ENGINE_SLIDERS, "RotationHistoryClamp", "", 0f, 1f);
+            RotationAverageDTMulti = ConstructFloatConfig(80f, ROTATION_ENGINE_SLIDERS, "RotationAverageDTMulti", "Just don't touch this.", 0.1f, 100f);
+            RotationHistoryClamp = ConstructFloatConfig(0.1f, ROTATION_ENGINE_SLIDERS, "RotationHistoryClamp", "Just don't touch this.", 0f, 1f);
+
+            // directional sway
+            DirectionalSwayLateralPosValue = ConstructFloatConfig(-0.02f, DIRECTIONAL_SWAY, "Directional Sway Lateral Pos Value", "", -0.1f, 0.1f);
+            DirectionalSwayProjectedPosValue = ConstructFloatConfig(-0.04f, DIRECTIONAL_SWAY, "Directional Sway Projected Pos Value", "", -0.1f, 0.1f);
+            DirectionalSwayLateralRotValue = ConstructFloatConfig(0.05f, DIRECTIONAL_SWAY, "Directional Sway Lateral Rot Value", "", -0.1f, 0.1f);
+            DirectionalSwayVerticalRotValue = ConstructFloatConfig(0.008f, DIRECTIONAL_SWAY, "Directional Sway Vertical Rot Value", "", -0.1f, 0.1f);
+            DirectionalSwayMulti = ConstructFloatConfig(0.9f, DIRECTIONAL_SWAY, "Directional Sway Final Modifier", "", 0, 5f);
+            DirectionalSwayLerpSpeed = ConstructFloatConfig(3f, DIRECTIONAL_SWAY, "Directional Sway Lerp Speed", "", 1f, 20f);
+            DirectionalSwayLerpOnAds = ConstructFloatConfig(0.25f, DIRECTIONAL_SWAY, "Directional Sway % During ADS", "", 0, 1f);
+
+            // augmented reloads
 
             // dev
+            DebugHeadRotX = ConstructFloatConfig(0, DEV_SECTION, "AugmentedReloadX", "", -20f, 20f);
+            DebugHeadRotY = ConstructFloatConfig(0, DEV_SECTION, "AugmentedReloadY", "", -20f, 20f);
+            DebugHeadRotZ = ConstructFloatConfig(0, DEV_SECTION, "AugmentedReloadZ", "", -20f, 20f);
             IsLogging = ConstructBoolConfig(false, DEV_SECTION, "Enable debug logging", "");
             DebugSpam = ConstructBoolConfig(false, DEV_SECTION, "Enable debug spam", "");
         }
@@ -334,6 +364,7 @@ namespace TarkovIRL
             ThrowController.UpdateLerp(DeltaTime);
             NewSwayController.UpdateLerp(DeltaTime);
             HeadRotController.UpdateLerp(DeltaTime);
+            DirectionalSwayController.UpdateDirectionalSwayLerp(DeltaTime);
         }
 
         void FixedUpdate()

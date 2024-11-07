@@ -95,8 +95,11 @@ namespace TarkovIRL
                 {
                     __instance.HandsContainer.WeaponRoot.localPosition += addedSwayPosition;
                     __instance.HandsContainer.WeaponRoot.localRotation *= addedSwayRotation;
-
                 }
+
+                DirectionalSwayController.GetDirectionalSway(out Vector3 directionalSwayPos, out Quaternion directionalSwayRot);
+                __instance.HandsContainer.WeaponRoot.localPosition += directionalSwayPos;
+                __instance.HandsContainer.WeaponRoot.localRotation *= directionalSwayRot;
             }
         }
     }

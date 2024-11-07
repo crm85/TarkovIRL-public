@@ -28,8 +28,6 @@ namespace TarkovIRL
         private static float _rotLerpX = 0;
         private static float _rotLerpY = 0;
 
-        private static float _lerpToLerp = 0;
-
         private static Vector2 _playerRotationLastFrame = Vector2.zero;
         private static float _parallaxWeightADS = 1f;
 

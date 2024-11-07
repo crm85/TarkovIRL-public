@@ -28,8 +28,6 @@ namespace TarkovIRL
             }
 
             Vector3 headRotThisFrame = headRotInitial;
-            headRotThisFrame.y *= 1.5f;
-            bool isChangeingStance = AnimStateController.IsTurning;
 
             float headDeltaRaw = player.MovementContext.DeltaRotation;
             float headDeltaTaperMulti = Mathf.Abs(headDeltaRaw / 45f);

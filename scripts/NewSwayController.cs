@@ -1,6 +1,4 @@
-﻿using EFT;
-using System.CodeDom;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace TarkovIRL
 {
@@ -36,16 +34,16 @@ namespace TarkovIRL
             float b = value * num * num2 * num3 * WeaponController.GetWeaponMulti(getInverse: false) * EfficiencyController.EfficiencyModifier;
             float b2 = Mathf.Abs(value) * num10 * num11 * num12;
             _lerpPosHorizontal = Mathf.Lerp(_lerpPosHorizontal, b, deltaTime * num9 * num4 * num5 * PrimeMover.NewSwayPositionDTMulti.Value);
-            _lerpPosVertical = Mathf.Lerp(_lerpPosVertical, b2, deltaTime * num9 * PrimeMover.NewSwayVerticalPosDTMulti.Value);
+            _lerpPosVertical = Mathf.Lerp(_lerpPosVertical, b2, deltaTime * num9 * PrimeMover.NewSwayWpnUnstockedDropSpeed.Value);
             float value3 = value * num6 * WeaponController.GetWeaponMulti(getInverse: false) * EfficiencyController.EfficiencyModifier;
             float num13 = (PlayerMotionController.IsAiming ? (PrimeMover.NewSwayADSRotClamp.Value * value2) : 1f);
             value3 = Mathf.Clamp(value3, 0f - num13, num13);
             _lerpRot = Mathf.Lerp(_lerpRot, value3, deltaTime * num9 * num7 * num8 * PrimeMover.NewSwayRotationDTMulti.Value);
             float value4 = PrimeMover.NewSwayRotFinalClamp.Value;
             _lerpRot = Mathf.Clamp(_lerpRot, 0f - value4, value4);
-            float b3 = (PlayerMotionController.IsAiming ? 0f : (PrimeMover.WeaponTiltValue.Value * 0.1f));
+            float b3 = (PlayerMotionController.IsAiming ? 0f : (PrimeMover.WeaponCantValue.Value * 0.1f));
             _weaponTiltLerp = Mathf.Lerp(_weaponTiltLerp, b3, deltaTime * 20f);
-            float num14 = (PlayerMotionController.IsAiming ? 0f : (PlayerMotionController.LeanNormal * PrimeMover.LeanVerticalMulti.Value * WeaponController.GetWeaponMulti(getInverse: false)));
+            float num14 = (PlayerMotionController.IsAiming ? 0f : (PlayerMotionController.LeanNormal * PrimeMover.LeanExtraVerticalMulti.Value * WeaponController.GetWeaponMulti(getInverse: false)));
             num14 *= -1f;
             if (AnimStateController.IsLeftShoulder)
             {
@@ -53,8 +51,8 @@ namespace TarkovIRL
             }
             _leanVerticalLerp = Mathf.Lerp(_leanVerticalLerp, num14, deltaTime * 10f);
             float num15 = ((WeaponController.IsStocked && PlayerMotionController.IsAiming) ? 0.2f : 1f);
-            float b4 = PlayerMotionController.RotationDelta * PrimeMover.VerticalDropMulti.Value * WeaponController.GetWeaponMulti(getInverse: false) * EfficiencyController.EfficiencyModifier * num15;
-            _vertDropFromRotLerp = Mathf.Lerp(_vertDropFromRotLerp, b4, deltaTime * PrimeMover.NewSwayVerticalPosDTMulti.Value);
+            float b4 = PlayerMotionController.RotationDelta * PrimeMover.NewSwayWpnDropFromRotMulti.Value * WeaponController.GetWeaponMulti(getInverse: false) * EfficiencyController.EfficiencyModifier * num15;
+            _vertDropFromRotLerp = Mathf.Lerp(_vertDropFromRotLerp, b4, deltaTime * PrimeMover.NewSwayWpnUnstockedDropSpeed.Value);
             float verticalRotationDelta = PlayerMotionController.VerticalRotationDelta;
             float num16 = ((verticalRotationDelta < 0f) ? (-1f) : 1f);
             float value5 = (PlayerMotionController.IsAiming ? 0f : (verticalRotationDelta * num16 * PrimeMover.HyperVerticalMulti.Value * WeaponController.GetWeaponMulti(getInverse: false) * EfficiencyController.EfficiencyModifier));
@@ -76,7 +74,7 @@ namespace TarkovIRL
             }
             Vector3 zero = Vector3.zero;
             zero.x = _lerpPosHorizontal * PrimeMover.NewSwayPositionMulti.Value * WeaponController.GetWeaponMulti(getInverse: false);
-            zero.y = _lerpPosVertical * PrimeMover.NewSwayVerticalPosMulti.Value * WeaponController.GetWeaponMulti(getInverse: false);
+            zero.y = _lerpPosVertical * PrimeMover.NewSwayWpnUnstockedDropValue.Value * WeaponController.GetWeaponMulti(getInverse: false);
             return zero;
         }
 

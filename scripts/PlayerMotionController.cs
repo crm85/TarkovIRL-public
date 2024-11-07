@@ -11,8 +11,8 @@ namespace TarkovIRL
 {
     internal class PlayerMotionController
     {
-        // readonlys
-        static readonly float _RotationHistoryClamp = 0.015f;
+        public enum EPlayerDir { FWD, BWD, LEFT, RIGHT, FWDLEFT, FWDRIGHT, BWDLEFT, BWDRIGHT, NONE };
+        static EPlayerDir _dir;
 
         //vars
         static Vector2 _playerRotLastFrame = Vector2.zero;
@@ -41,6 +41,7 @@ namespace TarkovIRL
             IsAiming = player.ProceduralWeaponAnimation.IsAiming;
             _playerSpeed = player.Speed;
             _leanNormalized = player.MovementContext.Tilt / 5f;
+            UpdateMovementDirection(player.InputDirection);
         }
         static void UpdateMoving(Vector3 position)
         {
@@ -135,6 +136,29 @@ namespace TarkovIRL
             {
                 return _leanNormalized;
             }
+        }
+
+        static void UpdateMovementDirection(Vector3 playerInput)
+        {
+            bool forward = playerInput.y > 0;
+            bool backward = playerInput.y < 0;
+            bool leftward = playerInput.x < 0;
+            bool rightward = playerInput.x > 0;
+
+            if (forward && !leftward && !rightward) _dir = EPlayerDir.FWD;
+            else if (forward && leftward) _dir = EPlayerDir.FWDLEFT;
+            else if (forward && rightward) _dir = EPlayerDir.FWDRIGHT;
+            else if (backward && !leftward && !rightward) _dir = EPlayerDir.BWD;
+            else if (backward && leftward) _dir = EPlayerDir.BWDLEFT;
+            else if (backward && rightward) _dir = EPlayerDir.BWDRIGHT;
+            else if (leftward) _dir = EPlayerDir.LEFT;
+            else if (rightward) _dir = EPlayerDir.RIGHT;
+            else _dir = EPlayerDir.NONE;
+        }
+
+        public static EPlayerDir Direction
+        {
+            get { return _dir; }
         }
     }
 }

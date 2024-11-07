@@ -34,11 +34,6 @@ namespace TarkovIRL
         [PatchPrefix]
         private static bool Prefix(ProceduralWeaponAnimation __instance, Vector3 headRot)
         {
-            if (!PrimeMover.IsWeaponDeadzone.Value)
-            {
-                return true;
-            }
-
             if ((UnityEngine.Object)(object)__instance == (UnityEngine.Object)null)
             {
                 return true;
@@ -66,10 +61,17 @@ namespace TarkovIRL
             Player player = (Player)_playerField.GetValue(firearmController);
             if ((UnityEngine.Object)(object)player != (UnityEngine.Object)null && player.IsYourPlayer && player.MovementContext.CurrentState.Name != EPlayerState.Stationary)
             {
-                Vector3 headRotModified = DeadzoneController.GetHeadRotationWithDeadzone(player, PrimeMover.WeaponDeadzoneMulti.Value, headRot);
+                Vector3 headRotModified = headRot;
+                if (PrimeMover.IsWeaponDeadzone.Value)
+                {
+                    headRotModified = DeadzoneController.GetHeadRotationWithDeadzone(player, PrimeMover.WeaponDeadzoneMulti.Value, headRot);
+                }
+
                 // ^^
                 // for some reason I have to inject the config value here, if I try to do it in the deadzone controller 
                 // it gets a wild error. Shrug.
+
+                headRotModified.y *= 1.5f;
                 player.HeadRotation = headRotModified;
                 AccessTools.Field(typeof(ProceduralWeaponAnimation), "_headRotationVec").SetValue(__instance, headRotModified);
 

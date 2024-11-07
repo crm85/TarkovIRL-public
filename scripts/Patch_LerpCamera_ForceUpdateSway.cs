@@ -34,7 +34,7 @@ namespace TarkovIRL
             Player player = (Player)playerField.GetValue(firearmController);
 
             //
-            AnimStateController.SetCurrentState(player.MovementContext.CurrentState.AnimatorStateHash);
+            AnimStateController.SetCurrentBodyAnimState(player.MovementContext.CurrentState.AnimatorStateHash);
 
             //
             PlayerMotionController.UpdateMovement(player);

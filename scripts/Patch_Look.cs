@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static EFT.Player;
 
 namespace TarkovIRL
 {
@@ -22,11 +23,14 @@ namespace TarkovIRL
         [PatchPostfix]
         private static void Postfix(Player __instance)
         {
-            if (PrimeMover.IsSmallMovementsEffect.Value)
+            if ((UnityEngine.Object)(object)__instance != (UnityEngine.Object)null && __instance.IsYourPlayer && __instance.MovementContext.CurrentState.Name != EPlayerState.Stationary)
             {
-                Vector3 headRotThisFrame = HeadRotController.GetHeadRotThisFrame(__instance.HeadRotation);
-                __instance.HeadRotation = headRotThisFrame;
-                __instance.ProceduralWeaponAnimation.SetHeadRotation(__instance.HeadRotation);
+                if (PrimeMover.IsSmallMovementsEffect.Value)
+                {
+                    Vector3 headRotThisFrame = HeadRotController.GetHeadRotThisFrame(__instance.HeadRotation);
+                    __instance.HeadRotation = headRotThisFrame;
+                    __instance.ProceduralWeaponAnimation.SetHeadRotation(__instance.HeadRotation);
+                }
             }
         }
     }

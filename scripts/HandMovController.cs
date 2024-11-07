@@ -16,7 +16,7 @@ namespace TarkovIRL
         // readonlys
         static readonly float _RotPullInDeltaThresh = 0.0002f;
         static readonly float _RotPullInValue = 0.05f;
-        static readonly float _LerpRate = 4f;
+        static readonly float _LerpRate = 8f;
         static readonly float _PullInGateTime = 0.8f;
         static readonly float _StockMovementAddedPosValue = 0.005f;
 
@@ -53,7 +53,8 @@ namespace TarkovIRL
                 {
                     _pullInGateOpen = false;
                     _pullInGateTimer = 0;
-                    _rotPullInTarget = _RotPullInValue;
+                    float pullInValue = WeaponController.IsStocked ? _RotPullInValue * 0.25f : _RotPullInValue;
+                    _rotPullInTarget = pullInValue;
                 }
                 else if (rotDelta <= _RotPullInDeltaThresh && _pullInGateOpen)
                 {

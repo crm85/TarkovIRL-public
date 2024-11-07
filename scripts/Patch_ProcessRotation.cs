@@ -15,7 +15,6 @@ namespace TarkovIRL
     public class Patch_ProcessRotation : ModulePatch
     {
         static FieldInfo movementContextField;
-        static FieldInfo playerField;
 
         protected override MethodBase GetTargetMethod()
         {

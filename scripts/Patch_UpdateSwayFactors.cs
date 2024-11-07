@@ -12,7 +12,6 @@ namespace TarkovIRL
 
         private static FieldInfo playerField;
         private static FieldInfo fcField;
-        private static readonly float _BaseSwayValue = -0.5f;
 
         protected override MethodBase GetTargetMethod()
         {

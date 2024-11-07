@@ -15,8 +15,6 @@ namespace TarkovIRL
         public static ManualLogSource Logger;
         static float _dt = 0;
 
-        static float _updateResolution = 0.1f;
-
         public static void Log(string toPrint)
         {
             Logger.LogError((object)toPrint);

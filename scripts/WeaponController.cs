@@ -14,6 +14,9 @@ namespace TarkovIRL
         public static bool IsPistol = false;
         public static bool SwayThisFrame = false;
         
+        static int _currentWeaponHash = 0;
+        static readonly int _MP5KHash = 25347301;
+
         public static void UpdateWpnStats(Player.FirearmController fc)
         {
             if (fc != null)
@@ -37,6 +40,10 @@ namespace TarkovIRL
             {
                 return false;
             }
+            else if (_currentWeaponHash == _MP5KHash)
+            {
+                return false;
+            }
             else
             {
                 if (weapon.GetFoldable() != null)
@@ -55,6 +62,12 @@ namespace TarkovIRL
             float weaponMulti = CurrentWeaponWeight * (1f - CurrentWeaponErgoNorm);
             if (getInverse) return 1f / weaponMulti;
             return weaponMulti;
+        }
+
+        public static void CurrentWeaponHash(int weaponHash)
+        {
+            _currentWeaponHash = weaponHash;
+            //UtilsTIRL.Log($"weapon hash {_currentWeaponHash}");
         }
     }
 }

@@ -1,13 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Reflection;
 using SPT.Reflection.Patching;
-using Comfort.Common;
 using EFT;
-using EFT.InventoryLogic;
-using HarmonyLib;
 using TarkovIRL;
 using UnityEngine;
-using EFT.Animations;
 
 public class Patch_LateUpdate_UpdateWpnStats : ModulePatch
 {
@@ -26,11 +21,30 @@ public class Patch_LateUpdate_UpdateWpnStats : ModulePatch
 	private static void PatchPostfix(Player __instance)
     {
         _updateWeightTimer += Time.deltaTime;
+
         if (!__instance.IsYourPlayer)
         {
             return;
         }
+
+        // get weapon name hash
+        //int weaponHash = __instance.HandsAnimator.Animator.
+        //WeaponController.CurrentWeaponHash(weaponHash);
+
+        // get firearm controller
         Player.FirearmController fc = __instance.HandsController as Player.FirearmController;
+        if (fc == null) return;
+
+        //UtilsTIRL.Log($"{fc.Weapon.Name.GetHashCode()}");
+        WeaponController.CurrentWeaponHash(fc.Weapon.Name.GetHashCode());
+
+        // get weapon anim state
+        AnimStateController.SetCurrentWeaponAnimState(__instance.HandsAnimator.Animator.GetCurrentAnimatorStateInfo(1).nameHash);
+
+        // update augmented reload controller
+        AugmentedReloadController.Update(__instance.HandsAnimator);
+
+        // refresh weapon info
         if (_updateWeightTimer > _UpdateStatsTime)
         {
             WeaponController.UpdateWpnStats(fc);
