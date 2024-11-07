@@ -1,3 +1,9 @@
+--- Version 0.6.6 ---
+Updates and Fixes:
+- As of 0.6.6, Realism mod is a REQUIREMENT. I have long anticipated this necessity, and the day has finally come. It was necessary to fix the bugs in my new reload system, and I imagine this change will bear much fruit.
+- Fixed bugs related to the new Augmented Reload system.
+- Added slider for Augmented Reload speed.
+
 --- Version 0.6.5 ---
 New Features:
 - Added new Directional Sway feature for movement in different directions, your weapon has more complex movement when moving in all directions.
