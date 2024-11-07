@@ -1,13 +1,13 @@
---- Version 0.6.2 ---
+--- Version 0.6.5 ---
 New Features:
-- Added new sway mechanics for movement in different directions.
-- Added new head movement visual effect for reloading and checking mags.
-- Pistol quickdraw stamina drain significantly reduced, it's simply unrealistic and silly.
-- Animation time significantly increased when swapping between weapon on sling and weapon on back.
+- Added new Directional Sway feature for movement in different directions, your weapon has more complex movement when moving in all directions.
+- Added new Augmented Reloads feature: when reloading or checking mag, if you press again your reload button, your character will look down at what he's doing and the animation speed will be increased by 30%.
 
 Updates and Fixes:
-- Huge repass on config entry names.
+- Huge repass on config entry names, things should be easier to read now.
+- Fixed MP5k thinking he has a stock.
 - Fixed extra freelook range to work even if not using the Deadzone feature.
+- Default weapon cant value reduced to zero in recognition that Realism's new canting feature is better - and this mod is always meant to be played, let's say it together, with Realism maxed out very good.
 
 --- Version 0.6.1 ---
 - Fixed version number not being correct
