@@ -1,8 +1,18 @@
+- Version 0.6.7 -
+Updates and Fixes:
+- This is basically a hotfix of a hotfix. I rewrote the augmented reload code to be much more reliable leveraging Realism's API. Everything is working well now -- I swear ...
+
+New Features:
+- Added reload speed debuff while sprinting, which is also in turn buffed by Augmented Reload. There is a slider for this if you don't want it.
+- Slightly reduced intensity of 'Hyper-Vertical' feature. I should rename that to just ... Emulated Gravity Effect. Yes.
+
 --- Version 0.6.6 ---
 Updates and Fixes:
 - As of 0.6.6, Realism mod is a REQUIREMENT. I have long anticipated this necessity, and the day has finally come. It was necessary to fix the bugs in my new reload system, and I imagine this change will bear much fruit.
 - Fixed bugs related to the new Augmented Reload system.
 - Added slider for Augmented Reload speed.
+- Lowered the effect of overall health on efficiency by 40%.
+- Lowered the effect of heavy bleeds on efficiency by 33%.
 
 --- Version 0.6.5 ---
 New Features:
