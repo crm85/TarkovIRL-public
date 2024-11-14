@@ -1,3 +1,13 @@
+-- Version 0.6.8.1 --
+
+I wouldn't even call this a hotfix, really just a small pass on the config. I had a little time today to play with the config values. Nothing you couldn't have done yourself, so if you're happy with things then I would say don't upgrade. The only code changes are that I put a couple of the config values into the Main Feature Values config tab, at the top, because they are important.
+
+- Slightly changed the shoulder-to-sling animation timing to be a bit longer.
+- Slightly reduced the default efficiency penalty of negative effects (like damage). Altered the parallax to be a bit less intense.
+- Slightly reduced the default Directional Sway value.
+
+Honestly I would suggest just deleting your old config values, it's tedious to result all the defaults as you might miss an important one.
+
 -- Version 0.6.8 --
 
 New Features:
