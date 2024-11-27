@@ -1,4 +1,5 @@
--- Version 0.6.9 --
+-- Version 0.7 --
+
 New Features:
 - Complete rewrite of the Deadzone. The new deadzone is in the style of Bodycam, its intensity depends on your weapon's size and ergo. Smaller weapons with better ergo get a smaller deadzone.- Added new Augmented Hold Breath mechanism. Now when holding your breath, the exhaling portion of my custom breathing animation will slow down to 25% speed; in addition, the arm shake effect intensity is reduce by 50% while within the exhaling window. To balance these buffs, you will lose stamina regen entirely during that window.
 	- When ADSed with a stocked weapon, the deadzone is reduced by 80%.
@@ -17,6 +18,7 @@ Updates and Fixes:
 - Added hard clamps to how much weapon sway and parallax is possible. These will stop the effect from increasing in intensity regardless of your situation, for those frustrated with the noodle arms.
 - Fixed bug (feature?) where weapon would drop a lot during a sidestep-peek; weapon now drops a very tiny bit, but you take a 20% efficiency debuff during the sidestop.
 - Changed logic of weapon pulling in while rotating (because angular momentum), it's not smooth per rotation instead of binary.
+- Increased time to reduce parallax during ADS, depending on efficiency and weapon.
 
 -- Version 0.6.8.1 --
 
