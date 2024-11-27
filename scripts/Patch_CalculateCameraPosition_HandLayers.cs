@@ -100,6 +100,21 @@ namespace TarkovIRL
                 DirectionalSwayController.GetDirectionalSway(out Vector3 directionalSwayPos, out Quaternion directionalSwayRot);
                 __instance.HandsContainer.WeaponRoot.localPosition += directionalSwayPos;
                 __instance.HandsContainer.WeaponRoot.localRotation *= directionalSwayRot;
+
+                // weapon selection transitions
+                WeaponSelectionController.GetWeaponSelectionTransforms(out Vector3 WeaponTransitionPos, out Quaternion WeaponTransitionRot);
+                __instance.HandsContainer.WeaponRoot.localPosition += WeaponTransitionPos;
+                __instance.HandsContainer.WeaponRoot.localRotation *= WeaponTransitionRot;
+
+                // add debug pos rot
+                Vector3 debugPos = new Vector3(PrimeMover.DebugHandsPosX.Value, PrimeMover.DebugHandsPosY.Value, PrimeMover.DebugHandsPosZ.Value);
+                Quaternion debugRot = Quaternion.identity;
+                debugRot.x = PrimeMover.DebugHandsRotX.Value;
+                debugRot.y = PrimeMover.DebugHandsRotY.Value;
+                debugRot.z = PrimeMover.DebugHandsRotZ.Value;
+
+                __instance.HandsContainer.WeaponRoot.localPosition += debugPos;
+                __instance.HandsContainer.WeaponRoot.localRotation *= debugRot;
             }
         }
     }

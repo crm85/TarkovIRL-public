@@ -64,10 +64,15 @@ namespace TarkovIRL
             return weaponMulti;
         }
 
-        public static void CurrentWeaponHash(int weaponHash)
+        public static void SetCurrentWeaponHash(int weaponHash)
         {
             _currentWeaponHash = weaponHash;
-            //UtilsTIRL.Log($"weapon hash {_currentWeaponHash}");
+            //UtilsTIRL.Log($"weapon hash set {_currentWeaponHash}");
+        }
+
+        public static int WeaponHash
+        {
+            get { return _currentWeaponHash; }
         }
     }
 }

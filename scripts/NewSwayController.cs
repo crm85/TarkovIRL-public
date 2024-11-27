@@ -12,6 +12,9 @@ namespace TarkovIRL
         static float _vertDropFromRotLerp = 0;
         static float _hyperVerticalLerp = 0;
 
+        static Vector3 _posSmoothed = Vector3.zero;
+        static Vector3 _rotSmoothed = Vector3.zero;
+
         public static void UpdateLerp(float deltaTime)
         {
             float value = PlayerMotionController.HorizontalRotationDelta * PrimeMover.WeaponSwayMulti.Value;
@@ -64,6 +67,9 @@ namespace TarkovIRL
 
         public static Vector3 GetNewSwayPosition()
         {
+            Vector3 posTarget = new Vector3(_lerpPosHorizontal, _lerpPosVertical, 0);
+            _posSmoothed = Vector3.Lerp(_posSmoothed, posTarget, PrimeMover.Instance.DeltaTime * 15f);
+
             if (!PrimeMover.IsWeaponSway.Value)
             {
                 return Vector3.zero;
@@ -73,13 +79,19 @@ namespace TarkovIRL
                 return Vector3.zero;
             }
             Vector3 zero = Vector3.zero;
-            zero.x = _lerpPosHorizontal * PrimeMover.NewSwayPositionMulti.Value * WeaponController.GetWeaponMulti(getInverse: false);
-            zero.y = _lerpPosVertical * PrimeMover.NewSwayWpnUnstockedDropValue.Value * WeaponController.GetWeaponMulti(getInverse: false);
+            zero.x = _posSmoothed.x * PrimeMover.NewSwayPositionMulti.Value * WeaponController.GetWeaponMulti(getInverse: false);
+            zero.y = _posSmoothed.y * PrimeMover.NewSwayWpnUnstockedDropValue.Value * WeaponController.GetWeaponMulti(getInverse: false);
             return zero;
         }
 
         public static Quaternion GetNewSwayRotation()
         {
+            Vector3 rotTarget = new Vector3(_lerpPosHorizontal, _lerpPosVertical, 0);
+            rotTarget.x = _leanVerticalLerp + _vertDropFromRotLerp + _hyperVerticalLerp;
+            rotTarget.y = _weaponTiltLerp;
+            rotTarget.z = _lerpRot;
+            _rotSmoothed = Vector3.Lerp(_rotSmoothed, rotTarget, PrimeMover.Instance.DeltaTime * 7f);
+
             if (!PrimeMover.IsWeaponSway.Value)
             {
                 return Quaternion.identity;
@@ -89,9 +101,9 @@ namespace TarkovIRL
                 return Quaternion.identity;
             }
             Quaternion identity = Quaternion.identity;
-            identity.x = _leanVerticalLerp + _vertDropFromRotLerp + _hyperVerticalLerp;
-            identity.z = _lerpRot * PrimeMover.NewSwayRotationMulti.Value * WeaponController.GetWeaponMulti(getInverse: false);
-            identity.y = _weaponTiltLerp;
+            identity.x = _rotSmoothed.x;
+            identity.y = _rotSmoothed.y;
+            identity.z = _rotSmoothed.z * PrimeMover.NewSwayRotationMulti.Value * WeaponController.GetWeaponMulti(getInverse: false);
             return identity;
         }
     }

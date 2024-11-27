@@ -33,12 +33,26 @@ namespace TarkovIRL
         static float _leanNormalized = 0;
 
         static public bool IsAiming = false;
-        
+        static public bool IsSprinting = false;
+        static public bool IsProne = false;
+        static public bool IsHoldingBreath = false;
+        static public bool IsAugmentedBreath = false;
+
+        static Vector3 _lastPositionRecorded = Vector3.zero;
+        static Vector2 _lastRotationRecorded = Vector2.zero;
+
+        public static void UpdateMovementMeasurementsInFDT(float fdt)
+        {
+            UpdateMoving(_lastPositionRecorded);
+            UpdateRotation(_lastRotationRecorded, fdt);
+        }
+
         public static void UpdateMovement(Player player)
         {
-            UpdateMoving(player.Position);
-            UpdateRotation(player.Rotation);
+            _lastPositionRecorded = player.Position;
+            _lastRotationRecorded = player.Rotation;
             IsAiming = player.ProceduralWeaponAnimation.IsAiming;
+            IsProne = player.IsInPronePose;
             _playerSpeed = player.Speed;
             _leanNormalized = player.MovementContext.Tilt / 5f;
             UpdateMovementDirection(player.InputDirection);
@@ -57,10 +71,8 @@ namespace TarkovIRL
             _playerPosLastFrame = position;
         }
 
-        static void UpdateRotation(Vector2 newRot)
+        static void UpdateRotation(Vector2 newRot, float dt)
         {
-            float dt = PrimeMover.Instance.FixedDeltaTime;
-
             // vertical 
             _verticalAvg = newRot.y > _playerRotLastFrame.y ? 1f : -1f;
 

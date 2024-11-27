@@ -10,7 +10,7 @@ namespace TarkovIRL
 {
     public static class UtilsTIRL
     {
-        public enum E_DEBUG_PRIORITY { ERROR, SPAM, TESTING };
+        public enum E_DEBUG_PRIORITY { LOG, SPAM_LOG, ALWAYS_LOG };
 
         public static ManualLogSource Logger;
         static float _dt = 0;
@@ -18,6 +18,28 @@ namespace TarkovIRL
         public static void Log(string toPrint)
         {
             Logger.LogError((object)toPrint);
+        }
+
+        public static void LogPriority(E_DEBUG_PRIORITY priority, string toPrint)
+        {
+            if (priority == E_DEBUG_PRIORITY.SPAM_LOG)
+            {
+                if (PrimeMover.IsLogging.Value && PrimeMover.DebugSpam.Value)
+                {
+                    Logger.LogError((object)toPrint);
+                }
+            }
+            else if (priority == E_DEBUG_PRIORITY.LOG)
+            {
+                if (PrimeMover.IsLogging.Value && !PrimeMover.DebugSpam.Value)
+                {
+                    Logger.LogError((object)toPrint);
+                }
+            }
+            else if (priority == E_DEBUG_PRIORITY.ALWAYS_LOG)
+            {
+                Logger.LogError((object)toPrint);
+            }
         }
 
         public static void Update(float dt)
@@ -46,6 +68,28 @@ namespace TarkovIRL
                 }
             }
             return false;
+        }
+
+        public static float FulfilledLerp(float value, float target, float step)
+        {
+            value += step;
+            if (value > target)
+            {
+                value = target;
+            }
+            return value;
+        }
+
+        public static Quaternion GetQuatFromV3(Vector3 v)
+        {
+            Quaternion result = Quaternion.identity;
+            result.x = v.x;
+            result.y = v.y;
+            result.z = v.z;
+
+            //UtilsTIRL.Log($" returned quat {result}");
+
+            return result;
         }
     }
 

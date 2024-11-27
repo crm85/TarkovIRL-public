@@ -23,11 +23,17 @@ namespace TarkovIRL
             float stamNormalized = player.Physical.Stamina.Current / 104f;
             float stamModifier = 1f - stamNormalized;
             float breathModifier = 1f + stamModifier;
-            _breathUpdateTimer += player.DeltaTime * breathModifier * _BreathSpeedModifier;
+            bool isAugmentedBreath = _breathUpdateTimer < 0.55f && _breathUpdateTimer > 0.26f && PlayerMotionController.IsHoldingBreath;
+            isAugmentedBreath &= PlayerMotionController.IsAiming;
+            isAugmentedBreath &= player.Physical.Stamina.NormalValue > 0.01f;
+            PlayerMotionController.IsAugmentedBreath = isAugmentedBreath;
+            float holdBreathMulti = isAugmentedBreath ? 0.25f : 1f;
+            _breathUpdateTimer += player.DeltaTime * breathModifier * _BreathSpeedModifier * holdBreathMulti;
             if (_breathUpdateTimer >= 1f)
             {
                 _breathUpdateTimer -= 1f;
             }
+
             float breathValue = breathCurve.Evaluate(_breathUpdateTimer);
             float stamModClamped = Mathf.Clamp(stamModifier, 0.025f, 1f);
             float breathOffset = breathValue * _BreathVerticalOffsetModifier * stamModClamped * PrimeMover.BreathingEffectMulti.Value;

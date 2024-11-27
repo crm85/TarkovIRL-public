@@ -1,4 +1,5 @@
 ﻿using EFT;
+using RealismMod;
 using UnityEngine;
 
 namespace TarkovIRL
@@ -38,6 +39,8 @@ namespace TarkovIRL
 
         public static void UpdateEfficiency(Player player)
         {
+            PlayerMotionController.IsSprinting = player.IsSprintEnabled;
+
             //
             // get raw values
             //
@@ -47,11 +50,6 @@ namespace TarkovIRL
             if (UtilsTIRL.IsPriority(2)) UtilsTIRL.Log($"overWeightVal {overWeightVal}");
             float ergoPenalty = player.ErgonomicsPenalty;
             if (UtilsTIRL.IsPriority(2)) UtilsTIRL.Log($"ergoPenalty {ergoPenalty}");
-            //
-            float brokenArmR = player.HealthController.IsBodyPartBroken(EBodyPart.RightArm) ? 0 : 1f;
-            float brokenArmL = player.HealthController.IsBodyPartBroken(EBodyPart.LeftArm) ? 0 : 1f;
-            float brokenLegR = player.HealthController.IsBodyPartBroken(EBodyPart.RightLeg) ? 0 : 1f;
-            float brokenLegL = player.HealthController.IsBodyPartBroken(EBodyPart.LeftLeg) ? 0 : 1f;
             //
             int heavyBleedCount = 0;
             int lightBleedCount = 0;
@@ -66,7 +64,7 @@ namespace TarkovIRL
             {
                 if (!IsEffectKnown(effect, _NominalEffectStates) && !IsEffectKnown(effect, _KnownEffectStates))
                 {
-                    if (UtilsTIRL.IsPriority(2)) UtilsTIRL.Log($"effect type {effect.Type.FullName.GetHashCode()} on bodypart {effect.BodyPart}");
+                    if (UtilsTIRL.IsPriority(3)) UtilsTIRL.Log($"effect type {effect.Type.FullName}({effect.Type.FullName.GetHashCode()}) on bodypart {effect.BodyPart}");
                 }
                 if (effect.Type.FullName.GetHashCode() == _HeavyBleedHash) heavyBleedCount++;
                 if (effect.Type.FullName.GetHashCode() == _LightBleedHash) lightBleedCount++;
@@ -92,12 +90,12 @@ namespace TarkovIRL
             float nutritionMulti = GetNormalizedEffectImpact(nutritionNorm, 5f);
             float overWeightMulti = GetNormalizedEffectImpact(overWeightVal, 50f);
             //
-            float healthMulti = GetNormalizedEffectImpact(healthCommon, 50f);
+            float healthMulti = GetNormalizedEffectImpact(healthCommon, 30f);
             float stamMulti = GetNormalizedEffectImpact(stamNormalized, 20f);
             float handStamMulti = GetNormalizedEffectImpact(handStamNormalized, 20f);
             //
-            float heavyBleedsMulti = GetNormalizedEffectImpact(15f, heavyBleedCount);
-            float boneBreakMulti = GetNormalizedEffectImpact(15f, boneBreakCount);
+            float heavyBleedsMulti = GetNormalizedEffectImpact(10f, heavyBleedCount);
+            float boneBreakMulti = GetNormalizedEffectImpact(10f, boneBreakCount);
             float lightBleedsMulti = GetNormalizedEffectImpact(5f, lightBleedCount);
             float woundMulti = GetNormalizedEffectImpact(5f, freshWoundCount);
             //
@@ -105,15 +103,27 @@ namespace TarkovIRL
             float painMulti = GetNormalizedEffectImpact(5f, painCount);
             float fatigueMulti = GetNormalizedEffectImpact(5f, fatigueCount);
             //
-            float injuryMulti = heavyBleedsMulti * lightBleedsMulti * woundMulti * boneBreakMulti * tremorMulti * painMulti * fatigueMulti;
+            float injuryMulti = heavyBleedsMulti * lightBleedsMulti * woundMulti * boneBreakMulti * tremorMulti * painMulti;
+            injuryMulti *= PrimeMover.EfficiencyInjuryDebuffMulti.Value;
 
             //
             // negative effects
             //
-            float negativeEffects = hydroMulti * nutritionMulti * overWeightMulti * healthMulti * stamMulti * handStamMulti * injuryMulti;
-            negativeEffects *= PrimeMover.EfficiencyNegativeEffectsMulti.Value;
+            float negativeEffects = hydroMulti * nutritionMulti * overWeightMulti * healthMulti * stamMulti * fatigueMulti * handStamMulti * injuryMulti;
 
-            // reduce negetive effects per speed and pose
+            // positive effects (incl from Realism)
+            float adrenalineBuff = RealismWrapper.IsAdrenaline ? 0.5f : 1f;
+            if (RealismWrapper.IsAdrenaline)
+            {
+                UtilsTIRL.Log("adrenaline is on!");
+            }
+            float sidestepDebuff = AnimStateController.IsSideStep ? 1.3f : 1f;
+            float highReadyBuff = StanceController.CurrentStance == EStance.HighReady ? 0.85f : 1f;
+            float lowReadyDebuff = StanceController.CurrentStance == EStance.LowReady ? 1.1f : 1f;
+            float shortStockBuff = StanceController.CurrentStance == EStance.ShortStock ? 0.7f : 1f;
+            float activeAimDebuff = StanceController.CurrentStance == EStance.ActiveAiming ? 1.05f : 1f;
+            float mountedBuff = StanceController.IsMounting ? 0.5f : 1f;
+            float leftShoulderDebuff = StanceController.IsLeftShoulder ? 1.1f : 1f;
             float sprintingmulti = player.IsSprintEnabled ? 1.5f : 1f;
             float speedMulti = 0.5f + (player.Speed * 0.5f);
             if (!PlayerMotionController.IsPlayerMovement)
@@ -124,10 +134,10 @@ namespace TarkovIRL
             float proneMulti = player.IsInPronePose ? 0.5f : 1f;
 
             // final mobility
-            float mobilityMulti = speedMulti * poseMulti * proneMulti * sprintingmulti;
+            float positiveEffects = speedMulti * poseMulti * proneMulti * sprintingmulti * highReadyBuff * lowReadyDebuff * mountedBuff * shortStockBuff * leftShoulderDebuff * activeAimDebuff * sidestepDebuff * adrenalineBuff;
 
             // final output
-            _efficiencyLerpTarget = negativeEffects * mobilityMulti;
+            _efficiencyLerpTarget = negativeEffects * positiveEffects;
 
             // debug
             if (UtilsTIRL.IsPriority(2))

@@ -18,6 +18,8 @@ namespace TarkovIRL
         static float _handShakeLoopTimeX = 0;
         static float _handShakeLoopTimeY = 0;
 
+        static float _handShakeStrengthLerp = 0;
+
         public static Vector3 GetHandsShakePosition(Player player)
         {
             if (!player.ProceduralWeaponAnimation.IsAiming)
@@ -40,11 +42,14 @@ namespace TarkovIRL
 
             float pistolFactor = WeaponController.IsPistol ? 2f : 1f;
             float unstockedFactor = !WeaponController.IsPistol && !WeaponController.IsStocked ? 1.8f : 1f;
-            float finalMulti = EfficiencyController.EfficiencyModifier * PrimeMover.ArmShakeMulti.Value * _HandShakeMultiGeneral * pistolFactor * unstockedFactor * WeaponController.CurrentWeaponWeight;
+            float augmentedBreathMulti = PlayerMotionController.IsAugmentedBreath ? 0.5f : 1f;
+            float finalMulti = EfficiencyController.EfficiencyModifier * PrimeMover.ArmShakeMulti.Value * _HandShakeMultiGeneral * pistolFactor * unstockedFactor * WeaponController.CurrentWeaponWeight * augmentedBreathMulti;
+
+            _handShakeStrengthLerp = Mathf.Lerp(_handShakeStrengthLerp, finalMulti, player.DeltaTime * 7f);
 
             AnimationCurve shakeCurve = PrimeMover.Instance.HandsShakeCurve;
-            float handsShakeX = shakeCurve.Evaluate(_handShakeLoopTimeX) * finalMulti;
-            float handsShakeY = shakeCurve.Evaluate(_handShakeLoopTimeY) * finalMulti;
+            float handsShakeX = shakeCurve.Evaluate(_handShakeLoopTimeX) * _handShakeStrengthLerp;
+            float handsShakeY = shakeCurve.Evaluate(_handShakeLoopTimeY) * _handShakeStrengthLerp;
 
             return new Vector3(handsShakeX, handsShakeY, 0);
         }

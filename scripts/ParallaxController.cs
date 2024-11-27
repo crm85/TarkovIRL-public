@@ -86,46 +86,42 @@ namespace TarkovIRL
 
             // up
             float extraPistolParallax = WeaponController.IsPistol ? PrimeMover.PistolSpecificParallax.Value : 1f;
-            float parallaxMulti = PrimeMover.ParallaxMulti.Value * WeaponController.GetWeaponMulti(false) * extraPistolParallax;
+
+            float newValue = Mathf.Pow(1f - Mathf.Clamp01(PlayerMotionController.RotationDelta / 0.1f), 2f);
+
+
+            float parallaxMulti = PrimeMover.ParallaxMulti.Value * WeaponController.GetWeaponMulti(false) * EfficiencyController.EfficiencyModifier * extraPistolParallax * newValue;
+            parallaxMulti = Mathf.Pow(parallaxMulti, 2f) / 100f;
+            //UtilsTIRL.Log($"newValue {newValue}, parallaxMulti {parallaxMulti}");
 
             // down
-            float inverseRotationDeltaMulti = 1f / PlayerMotionController.RotationDelta;
-            float zeroLerpTime = dt * inverseEfficiencyMulti * inverseRotationDeltaMulti * PrimeMover.ParallaxRotationRecenterMulti.Value;
-            if (UtilsTIRL.IsPriority(2)) UtilsTIRL.Log($"zeroLerpTime {zeroLerpTime}, inverseEfficiencyMulti {inverseEfficiencyMulti}, inverseRotationDeltaMulti {inverseRotationDeltaMulti}");
 
-
-            //
             // calc the position lerps
-            //
+            _posLerpXTarget = Mathf.Lerp(_posLerpXTarget, _rotAvgX * parallaxMulti, dt * PrimeMover.ParallaxDTMulti.Value);
+            _posLerpYTarget = Mathf.Lerp(_posLerpYTarget, _rotAvgY * parallaxMulti, dt * PrimeMover.ParallaxDTMulti.Value);
 
-            _posLerpXTarget = Mathf.Lerp(_posLerpXTarget, _rotAvgX * parallaxMulti, dt);
-            _posLerpXTarget = Mathf.Lerp(_posLerpXTarget, 0, zeroLerpTime);
-            //
-            _posLerpYTarget = Mathf.Lerp(_posLerpYTarget, _rotAvgY * parallaxMulti, dt);
-            _posLerpYTarget = Mathf.Lerp(_posLerpYTarget, 0, zeroLerpTime);
-
-            //
             // calc the rotation lerps
-            //
+            _rotLerpXTarget = Mathf.Lerp(_rotLerpXTarget, _rotAvgX * parallaxMulti, dt * PrimeMover.ParallaxDTMulti.Value);
+            _rotLerpYTarget = Mathf.Lerp(_rotLerpYTarget, _rotAvgY * parallaxMulti, dt * PrimeMover.ParallaxDTMulti.Value);
 
-            _rotLerpXTarget = Mathf.Lerp(_rotLerpXTarget, _rotAvgX * parallaxMulti, dt);
-            _rotLerpXTarget = Mathf.Lerp(_rotLerpXTarget, 0, zeroLerpTime);
-            //
-            _rotLerpYTarget = Mathf.Lerp(_rotLerpYTarget, _rotAvgY * parallaxMulti, dt);
-            _rotLerpYTarget = Mathf.Lerp(_rotLerpYTarget, 0, zeroLerpTime);
+            float clampValueRot = PrimeMover.ParallaxHardClamp.Value;
+            float clampValuePos = PrimeMover.ParallaxHardClamp.Value * 0.5f;
 
-            //
-            // final lerp
-            //
-            _rotLerpX = Mathf.Lerp(_rotLerpX, _rotLerpXTarget, dt);
-            _posLerpX = Mathf.Lerp(_posLerpX, _posLerpXTarget, dt);
-            //
-            _rotLerpY = Mathf.Lerp(_rotLerpY, _rotLerpYTarget, dt);
-            _posLerpY = Mathf.Lerp(_posLerpY, _posLerpYTarget, dt);
+            _rotLerpXTarget = Mathf.Clamp(_rotLerpXTarget, -clampValueRot, clampValueRot);
+            _rotLerpYTarget = Mathf.Clamp(_rotLerpYTarget, -clampValueRot, clampValueRot);
+            _posLerpXTarget = Mathf.Clamp(_posLerpXTarget, -clampValuePos, clampValuePos);
+            _posLerpYTarget = Mathf.Clamp(_posLerpYTarget, -clampValuePos, clampValuePos);
 
-            //
+            // smoothing lerp
+            _rotLerpX = Mathf.Lerp(_rotLerpX, _rotLerpXTarget, dt * PrimeMover.ParallaxRotationSmoothingMulti.Value);
+            _rotLerpY = Mathf.Lerp(_rotLerpY, _rotLerpYTarget, dt * PrimeMover.ParallaxRotationSmoothingMulti.Value);
+            _posLerpX = Mathf.Lerp(_posLerpX, _posLerpXTarget, dt * PrimeMover.ParallaxRotationSmoothingMulti.Value);
+            _posLerpY = Mathf.Lerp(_posLerpY, _posLerpYTarget, dt * PrimeMover.ParallaxRotationSmoothingMulti.Value);
+
+            //UtilsTIRL.Log($"_rotLerpX {_rotLerpX}, _rotLerpY {_rotLerpY}, _posLerpX {_posLerpX}, _posLerpY {_posLerpY}");
+
+
             // fill the references
-            //
             rotation = Quaternion.Euler(0, -_rotLerpY * 100f * _parallaxWeightADS, -_rotLerpX * 100f * _parallaxWeightADS);
             position = new Vector3(_posLerpX * _parallaxWeightADS, -_posLerpY * _parallaxWeightADS, 0);
         }

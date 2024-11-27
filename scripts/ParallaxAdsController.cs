@@ -1,4 +1,5 @@
 ﻿using EFT.InventoryLogic;
+using EFT.UI;
 using UnityEngine;
 
 namespace TarkovIRL
@@ -15,6 +16,9 @@ namespace TarkovIRL
         static bool _intoShot = false;
         static float _shotLerp = 1f;
         static float _shotWeight = 1f;
+
+        static readonly float _HeadTiltValY = 2f;
+        static readonly float _HeadTiltValZ = 6f;
 
         public static void UpdateLerps()
         {
@@ -68,5 +72,19 @@ namespace TarkovIRL
         // sole output of class
         //
         public static float ParallaxWeight { get { return _parallaxWeight; } }
+
+        public static void GetParallaxADSHeadTilt(out float Y, out float Z)
+        {
+            if (PlayerMotionController.IsAiming && WeaponController.IsStocked)
+            {
+                float shoulderSwap = RealismMod.StanceController.IsLeftShoulder ? -1f : 1f;
+                Y = _HeadTiltValY * _adsLerpWeight * shoulderSwap;
+                Z = _HeadTiltValZ * _adsLerpWeight * shoulderSwap;
+                return;
+            }
+
+            Y = 0;
+            Z = 0;
+        }
     }
 }

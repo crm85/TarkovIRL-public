@@ -29,8 +29,6 @@ namespace TarkovIRL
             //y *= 0.5f;
             MContext.ApplyRotation(Quaternion.Lerp(MContext.TransformRotation, MContext.TransformRotation * Quaternion.Euler(0f, y, 0f), 30f * PrimeMover.Instance.DeltaTime));
             //
-            UtilsTIRL.Log($"y is {y}");
-            //
             return false;
         }
     }

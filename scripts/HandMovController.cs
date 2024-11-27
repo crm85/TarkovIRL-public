@@ -31,6 +31,7 @@ namespace TarkovIRL
 
         public static Vector3 GetModifiedHandPosZMovement(Player player)
         {
+
             float dt = player.DeltaTime;
             _pullInGateTimer += dt;
 
@@ -44,27 +45,14 @@ namespace TarkovIRL
             }
             else
             {
-                if (_pullInGateTimer > _PullInGateTime)
-                {
-                    _pullInGateOpen = true;
-                }
-                float rotDelta = PlayerMotionController.RotationDelta;
-                if (rotDelta > _RotPullInDeltaThresh && _pullInGateOpen)
-                {
-                    _pullInGateOpen = false;
-                    _pullInGateTimer = 0;
-                    float pullInValue = WeaponController.IsStocked ? _RotPullInValue * 0.25f : _RotPullInValue;
-                    _rotPullInTarget = pullInValue;
-                }
-                else if (rotDelta <= _RotPullInDeltaThresh && _pullInGateOpen)
-                {
-                    _pullInGateOpen = false;
-                    _pullInGateTimer = 0;
-                    _rotPullInTarget = 0;
-                }
+                float rotDelta = Mathf.Abs(PlayerMotionController.HorizontalRotationDelta * 100f);
+                rotDelta = Mathf.Clamp01( rotDelta );
+                float pullInValue = WeaponController.IsStocked ? _RotPullInValue * 0.5f : _RotPullInValue;
+                pullInValue *= rotDelta;
+                _rotPullInTarget = pullInValue;
             }
 
-            _rotPullInLerp = Mathf.Lerp(_rotPullInLerp, _rotPullInTarget, dt * _LerpRate * 0.6f);
+            _rotPullInLerp = Mathf.Lerp(_rotPullInLerp, _rotPullInTarget, dt * 2f);
             float finalValue = PrimeMover.Instance.SmoothEdgesCurve.Evaluate(_rotPullInLerp / _RotPullInValue) * _RotPullInValue;
             return new Vector3(0, 0, -finalValue);
         }
@@ -74,10 +62,9 @@ namespace TarkovIRL
             float dt = player.DeltaTime;
             if (AnimStateController.IsSideStep)
             {
-                _stockedMovementAddedPosTarget = _StockMovementAddedPosValue * WeaponController.GetWeaponMulti(false);
-                dt *= 2.5f;
+                _stockedMovementAddedPosTarget = _StockMovementAddedPosValue * 0.2f * WeaponController.GetWeaponMulti(false);
             }
-            else if (!WeaponController.IsStocked && !WeaponController.IsPistol && PlayerMotionController.IsPlayerMovement)
+            else if (!WeaponController.IsStocked && !WeaponController.IsPistol && PlayerMotionController.IsPlayerMovement)  
             {
                 _stockedMovementAddedPosTarget = _StockMovementAddedPosValue * WeaponController.GetWeaponMulti(false);
             }

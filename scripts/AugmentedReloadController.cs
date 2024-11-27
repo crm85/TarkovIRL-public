@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using EFT;
 using static TarkovIRL.AnimStateController;
 
 namespace TarkovIRL
@@ -10,20 +9,17 @@ namespace TarkovIRL
         static readonly float _IntoReloadY = 4f;
         static readonly float _IntoReloadZ = 5f;
 
-        static readonly float _OutReloadX = 7;
-        static readonly float _OutReloadY = 2;
+        static readonly float _OutReloadX = 7f;
+        static readonly float _OutReloadY = 2f;
         static readonly float _OutReloadZ = -3f;
-
-        static readonly float _AugmentedSpeed = 1.3f;
 
         static bool _AugmentedModeOn = false;
         static EWeaponState _state;
-        static EWeaponState _stateLastFrame;
-        static ObjectInHandsAnimator _animator = null;
+        static FirearmsAnimator _animator = null;
+        static float _refreshAnimatorTimer = 0;
 
         public static Vector3 GetAugmentedReloadHeadOffset()
         {
-            _stateLastFrame = _state;
             _state = AnimStateController.WeaponState;
 
             if (!_AugmentedModeOn)
@@ -41,7 +37,7 @@ namespace TarkovIRL
                 return new Vector3(_IntoReloadX, _IntoReloadY, _IntoReloadZ);
             }
 
-            else if (_state == EWeaponState.OUT_OF_RELOAD)
+            else if (_state == EWeaponState.MID_RELOAD_2)
             {
                 return new Vector3(_OutReloadX, _OutReloadY, _OutReloadZ);
             }
@@ -56,75 +52,65 @@ namespace TarkovIRL
 
         public static void ToggleAugmentedMode()
         {
-            if (_state == EWeaponState.INTO_RELOAD || _state == EWeaponState.MID_RELOAD || _state == EWeaponState.CHECK_MAG)
+            if (AugmentedSwitchOpen())
             {
                 _AugmentedModeOn = !_AugmentedModeOn;
-                float newAnimSpeed = _animator.Animator.GetCurrentAnimatorStateInfo(1).speed * _AugmentedSpeed;
-                SetAnimSpeed(newAnimSpeed);
             }
             else
             {
                 _AugmentedModeOn = false;
-                float newAnimSpeed = _animator.Animator.GetCurrentAnimatorStateInfo(1).speed * (1f / _AugmentedSpeed);
-                SetAnimSpeed(newAnimSpeed);
             }
         }
 
-        public static void Update(ObjectInHandsAnimator animator)
+        public static void Update(FirearmsAnimator animator)
         {
+            _refreshAnimatorTimer += PrimeMover.Instance.DeltaTime;
+
             if (_animator == null)
             {
                 _animator = animator;
             }
-            else
+            else if (_refreshAnimatorTimer > 1f)
             {
-                if (_animator.Animator != null)
-                {
-                    MaintainCorrectSpeedDuringReload();
-                    float currentAnimSpeed = _animator.Animator.GetCurrentAnimatorStateInfo(1).speed;
-                    //UtilsTIRL.Log($"anim speed {currentAnimSpeed}");
-                }
+                _refreshAnimatorTimer = 0;
+                _animator = animator;
             }
-            if (_state == EWeaponState.IDLE)
+
+            UpdateSpeed();
+        }
+
+        static void UpdateSpeed()
+        {
+            if (!AugmentedSwitchOpen())
             {
                 _AugmentedModeOn = false;
             }
-        }
-
-        static void MaintainCorrectSpeedDuringReload()
-        {
-            if (_stateLastFrame != _state)
+            else
             {
-                if (_stateLastFrame == EWeaponState.INTO_RELOAD && _state == EWeaponState.MID_RELOAD)
-                {
-                    if (_AugmentedModeOn)
-                    {
-                        float newAnimSpeed = _animator.Animator.GetCurrentAnimatorStateInfo(1).speed * _AugmentedSpeed;
-                        SetAnimSpeed(newAnimSpeed);
-                    }
-                }
-                if (_stateLastFrame == EWeaponState.MID_RELOAD && _state == EWeaponState.OUT_OF_RELOAD)
-                {
-                    if (_AugmentedModeOn)
-                    {
-                        float newAnimSpeed = _animator.Animator.GetCurrentAnimatorStateInfo(1).speed * _AugmentedSpeed;
-                        SetAnimSpeed(newAnimSpeed);
-                    }
-                }
-                else if (_stateLastFrame == EWeaponState.OUT_OF_RELOAD && _state == EWeaponState.IDLE)
-                {
-                    if (_AugmentedModeOn)
-                    {
-                        float newAnimSpeed = _animator.Animator.GetCurrentAnimatorStateInfo(1).speed * (1f / _AugmentedSpeed);
-                        //SetAnimSpeed(newAnimSpeed);
-                    }
-                }
+                SetAnimSpeed(GetReloadSpeedFromContext());
             }
         }
 
         static void SetAnimSpeed(float speed)
         {
+            if (_animator == null)
+            {
+                return;
+            }
             _animator.SetAnimationSpeed(speed);
+        }
+
+        static float GetReloadSpeedFromContext()
+        {
+            float sprintingMulti = PlayerMotionController.IsSprinting ? PrimeMover.AugmentedReloadSprintingDebuff.Value : 1f;
+            float augmentedMulti = _AugmentedModeOn ? PrimeMover.AugmentedReloadSpeed.Value : 1f;
+            float realismSpeed = _state == EWeaponState.CHECK_MAG ? RealismWrapper.GetRealismCheckMagSpeed() : RealismWrapper.GetRealismReloadSpeed();
+            return sprintingMulti * augmentedMulti * realismSpeed;
+        }
+
+        static bool AugmentedSwitchOpen()
+        {
+            return _state == EWeaponState.INTO_RELOAD || _state == EWeaponState.MID_RELOAD || _state == EWeaponState.MID_RELOAD_2 || _state == EWeaponState.OUT_OF_RELOAD || _state == EWeaponState.RELOAD_FAST || _state == EWeaponState.CHECK_MAG;
         }
     }
 }

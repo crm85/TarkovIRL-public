@@ -1,3 +1,23 @@
+-- Version 0.6.9 --
+New Features:
+- Complete rewrite of the Deadzone. The new deadzone is in the style of Bodycam, its intensity depends on your weapon's size and ergo. Smaller weapons with better ergo get a smaller deadzone.- Added new Augmented Hold Breath mechanism. Now when holding your breath, the exhaling portion of my custom breathing animation will slow down to 25% speed; in addition, the arm shake effect intensity is reduce by 50% while within the exhaling window. To balance these buffs, you will lose stamina regen entirely during that window.
+	- When ADSed with a stocked weapon, the deadzone is reduced by 80%.
+	- When in Active Aim mode (Realism), the deadzone is reduced by half.
+- Added significant amount of complexity to weapon transition system:
+	- Each half of weapon transition animation independently affected by weapon weight characteristics, lighter + better ergo weapons go faster.
+	- Weapon transition time affected by player efficiency.
+	- Weapon transition while prone takes a 66% speed debuff.
+	- Added a smoothing layer to weapon transition animations.
+	- Reworked the transition animations, they are better (??).
+- Added Realism's adrenaline to player efficiency calculation; efficiency gets 50% buff if adrenaline is pumping. This is a big change and will add a lot of complexity to how you behave when getting shot / shot at; it will definitely help with noodle arms.
+
+Updates and Fixes:
+- Fixed bug where you can get some 'orphaned' transitions, especially when trying to select a slot that is empty!
+- Generally added more cases to transition controller so that you get fewer 'vanilla' transitions. Ideally it would be zero but ain't nobody got time for that.
+- Added hard clamps to how much weapon sway and parallax is possible. These will stop the effect from increasing in intensity regardless of your situation, for those frustrated with the noodle arms.
+- Fixed bug (feature?) where weapon would drop a lot during a sidestep-peek; weapon now drops a very tiny bit, but you take a 20% efficiency debuff during the sidestop.
+- Changed logic of weapon pulling in while rotating (because angular momentum), it's not smooth per rotation instead of binary.
+
 -- Version 0.6.8.1 --
 
 I wouldn't even call this a hotfix, really just a small pass on the config. I had a little time today to play with the config values. Nothing you couldn't have done yourself, so if you're happy with things then I would say don't upgrade. The only code changes are that I put a couple of the config values into the Main Feature Values config tab, at the top, because they are important.

@@ -3,9 +3,8 @@ using SPT.Reflection.Patching;
 using BepInEx;
 using BepInEx.Configuration;
 using UnityEngine;
-using EFT;
-using static System.Net.Mime.MediaTypeNames;
-using JetBrains.Annotations;
+using EFT.UI;
+using HarmonyLib;
 
 namespace TarkovIRL
 {
@@ -14,7 +13,7 @@ namespace TarkovIRL
     {
         const string modGUID = "TarkovIRL";
         const string modName = "TarkovIRL - WHM";
-        const string modVersion = "0.6.5";
+        const string modVersion = "0.7";
 
         public static PrimeMover Instance;
 
@@ -59,8 +58,11 @@ namespace TarkovIRL
         const string EFFICIENCY_SLIDERS = "5 - Efficiency multipliers";
         const string ROTATION_ENGINE_SLIDERS = "6 - Rotation engine multipliers";
         const string MISC_SLIDERS = "7 - Misc multipliers";
-        const string DEV_SECTION = "99 - Only for dev/testing";
         const string DIRECTIONAL_SWAY = "8 - Directional Sway Values";
+        const string AUGMENTED_RELOAD = "9 - Augmented Reload Values";
+        const string WEAPON_TRANSITIONS = "99 - Weapon Transition Values";
+
+        const string DEV_SECTION = "999 - Only for dev/testing";
 
 
         //
@@ -76,7 +78,8 @@ namespace TarkovIRL
         public static ConfigEntry<bool> IsFootstepEffect;
         public static ConfigEntry<bool> IsParallaxEffect;
         public static ConfigEntry<bool> IsDirectionalSway;
-
+        public static ConfigEntry<bool> IsHeadTiltADS;
+        
         public static ConfigEntry<bool> IsLogging;
         public static ConfigEntry<bool> DebugSpam;
 
@@ -98,7 +101,7 @@ namespace TarkovIRL
         public static ConfigEntry<float> PistolSpecificParallax;
         public static ConfigEntry<float> ThrowStrengthMulti;
         public static ConfigEntry<float> ThrowSpeedMulti;
-        public static ConfigEntry<float> EfficiencyNegativeEffectsMulti;
+        public static ConfigEntry<float> EfficiencyInjuryDebuffMulti;
         public static ConfigEntry<float> ParallaxRecenterFactor;
         public static ConfigEntry<float> NewSwayPositionMulti;
         public static ConfigEntry<float> NewSwayRotationMulti;
@@ -115,7 +118,8 @@ namespace TarkovIRL
         public static ConfigEntry<float> LeanExtraVerticalMulti;
         public static ConfigEntry<float> NewSwayWpnDropFromRotMulti;
         public static ConfigEntry<float> RotationAverageDTMulti;
-        public static ConfigEntry<float> ParallaxRotationRecenterMulti;
+        public static ConfigEntry<float> ParallaxDTMulti;
+        public static ConfigEntry<float> ParallaxRotationSmoothingMulti;
         public static ConfigEntry<float> DevTestFloat7;
         public static ConfigEntry<float> RotationHistoryClamp;
         public static ConfigEntry<float> HyperVerticalClamp;
@@ -125,6 +129,8 @@ namespace TarkovIRL
         public static ConfigEntry<float> NewSwayRotDeltaClamp;
         public static ConfigEntry<float> NewSwayRotFinalClamp;
         public static ConfigEntry<float> LeanCounterRotateMod;
+        public static ConfigEntry<float> ParallaxHardClamp;
+
         // directional sway
         public static ConfigEntry<float> DirectionalSwayLateralPosValue;
         public static ConfigEntry<float> DirectionalSwayProjectedPosValue;
@@ -133,10 +139,137 @@ namespace TarkovIRL
         public static ConfigEntry<float> DirectionalSwayMulti;
         public static ConfigEntry<float> DirectionalSwayLerpSpeed;
         public static ConfigEntry<float> DirectionalSwayLerpOnAds;
+
         // augmented reloads
+        public static ConfigEntry<float> AugmentedReloadSpeed;
+        public static ConfigEntry<float> AugmentedReloadSprintingDebuff;
+
+        // weapon transitions
+        public static ConfigEntry<float> TransitionSpeedPhase1;
+        public static ConfigEntry<float> TransitionSpeedPhase2;
+
+        // sling vals
+        public static ConfigEntry<float> SlingPositionStartX;
+        public static ConfigEntry<float> SlingPositionStartY;
+        public static ConfigEntry<float> SlingPositionStartZ;
+
+        public static ConfigEntry<float> SlingRotationStartX;
+        public static ConfigEntry<float> SlingRotationStartY;
+        public static ConfigEntry<float> SlingRotationStartZ;
+
+        public static ConfigEntry<float> SlingPositionEndX;
+        public static ConfigEntry<float> SlingPositionEndY;
+        public static ConfigEntry<float> SlingPositionEndZ;
+
+        public static ConfigEntry<float> SlingRotationEndX;
+        public static ConfigEntry<float> SlingRotationEndY;
+        public static ConfigEntry<float> SlingRotationEndZ;
+
+        // shoulder vals
+        public static ConfigEntry<float> ShoulderPositionStartX;
+        public static ConfigEntry<float> ShoulderPositionStartY;
+        public static ConfigEntry<float> ShoulderPositionStartZ;
+
+        public static ConfigEntry<float> ShoulderRotationStartX;
+        public static ConfigEntry<float> ShoulderRotationStartY;
+        public static ConfigEntry<float> ShoulderRotationStartZ;
+
+        public static ConfigEntry<float> ShoulderPositionEndX;
+        public static ConfigEntry<float> ShoulderPositionEndY;
+        public static ConfigEntry<float> ShoulderPositionEndZ;
+
+        public static ConfigEntry<float> ShoulderRotationEndX;
+        public static ConfigEntry<float> ShoulderRotationEndY;
+        public static ConfigEntry<float> ShoulderRotationEndZ;
+
+        // holster vals
+        public static ConfigEntry<float> HolsterPositionStartX;
+        public static ConfigEntry<float> HolsterPositionStartY;
+        public static ConfigEntry<float> HolsterPositionStartZ;
+
+        public static ConfigEntry<float> HolsterRotationStartX;
+        public static ConfigEntry<float> HolsterRotationStartY;
+        public static ConfigEntry<float> HolsterRotationStartZ;
+
+        public static ConfigEntry<float> HolsterPositionEndX;
+        public static ConfigEntry<float> HolsterPositionEndY;
+        public static ConfigEntry<float> HolsterPositionEndZ;
+
+        public static ConfigEntry<float> HolsterRotationEndX;
+        public static ConfigEntry<float> HolsterRotationEndY;
+        public static ConfigEntry<float> HolsterRotationEndZ;
+
+        // transition curves
+        public static ConfigEntry<float> Sling2ShoulderSpeed1;
+        public static ConfigEntry<float> Sling2ShoulderSpeed2;
+
+        public static ConfigEntry<float> Sling2ShoulderCurve1_1;
+        public static ConfigEntry<float> Sling2ShoulderCurve2_1;
+        public static ConfigEntry<float> Sling2ShoulderCurve3_1;
+        public static ConfigEntry<float> Sling2ShoulderCurve4_1;
+        public static ConfigEntry<float> Sling2ShoulderCurve5_1;
+        public static ConfigEntry<float> Sling2ShoulderCurve6_1;
+
+        public static ConfigEntry<float> Sling2ShoulderCurve1_2;
+        public static ConfigEntry<float> Sling2ShoulderCurve2_2;
+        public static ConfigEntry<float> Sling2ShoulderCurve3_2;
+        public static ConfigEntry<float> Sling2ShoulderCurve4_2;
+        public static ConfigEntry<float> Sling2ShoulderCurve5_2;
+        public static ConfigEntry<float> Sling2ShoulderCurve6_2;
+
+        public static ConfigEntry<float> Shoulder2SlingSpeed1;
+        public static ConfigEntry<float> Shoulder2SlingSpeed2;
+
+        public static ConfigEntry<float> Shoulder2SlingCurve1_1;
+        public static ConfigEntry<float> Shoulder2SlingCurve2_1;
+        public static ConfigEntry<float> Shoulder2SlingCurve3_1;
+        public static ConfigEntry<float> Shoulder2SlingCurve4_1;
+        public static ConfigEntry<float> Shoulder2SlingCurve5_1;
+        public static ConfigEntry<float> Shoulder2SlingCurve6_1;
+        public static ConfigEntry<float> Shoulder2SlingCurve1_2;
+        public static ConfigEntry<float> Shoulder2SlingCurve2_2;
+        public static ConfigEntry<float> Shoulder2SlingCurve3_2;
+        public static ConfigEntry<float> Shoulder2SlingCurve4_2;
+        public static ConfigEntry<float> Shoulder2SlingCurve5_2;
+        public static ConfigEntry<float> Shoulder2SlingCurve6_2;
+
+        public static ConfigEntry<float> TransformSmoothingDTMulti;
+
+
+        // debug 
         public static ConfigEntry<float> DebugHeadRotX;
         public static ConfigEntry<float> DebugHeadRotY;
         public static ConfigEntry<float> DebugHeadRotZ;
+
+        public static ConfigEntry<float> DebugHandsRotX;
+        public static ConfigEntry<float> DebugHandsRotY;
+        public static ConfigEntry<float> DebugHandsRotZ;
+
+        public static ConfigEntry<float> DebugHandsRotX2;
+        public static ConfigEntry<float> DebugHandsRotY2;
+        public static ConfigEntry<float> DebugHandsRotZ2;
+
+        public static ConfigEntry<float> DebugHandsPosX;
+        public static ConfigEntry<float> DebugHandsPosY;
+        public static ConfigEntry<float> DebugHandsPosZ;
+
+        public static ConfigEntry<float> DebugFloat1;
+        public static ConfigEntry<float> DebugFloat2;
+
+        // anim curve builder
+        public static ConfigEntry<float> AnimCurveTime0;
+        public static ConfigEntry<float> AnimCurveTime0_2;
+        public static ConfigEntry<float> AnimCurveTime0_4;
+        public static ConfigEntry<float> AnimCurveTime0_6;
+        public static ConfigEntry<float> AnimCurveTime0_8;
+        public static ConfigEntry<float> AnimCurveTime1;
+
+        public static ConfigEntry<float> AnimCurveTime0p2;
+        public static ConfigEntry<float> AnimCurveTime0_2p2;
+        public static ConfigEntry<float> AnimCurveTime0_4p2;
+        public static ConfigEntry<float> AnimCurveTime0_6p2;
+        public static ConfigEntry<float> AnimCurveTime0_8p2;
+        public static ConfigEntry<float> AnimCurveTime1p2;
 
         // config defaults
         readonly float AdsParallaxTimeMultiDefault = 30f;
@@ -146,14 +279,16 @@ namespace TarkovIRL
         readonly float EfficiencyLerpMultiDefault = 0.8f;
         readonly float FootstepLerpMultiDefault = 0.1f;
         readonly float ParallaxInAdsDefault = 0.3f;
-        readonly float PistolSpecificParallaxDefault = 2f;
-        readonly float ParallaxSetSizeMultiDefault = 2f;
         readonly float ShotParallaxWeaponWeightMultiDefault = 5f;
         readonly float ShotParallaxResetTimeMultiDefault = 10f;
         readonly float WeaponDeadzoneMultiDefault = 0.3f;
         readonly float ThrowStrengthMultiDefault = 14;
         readonly float ThrowSpeedMultiDefault = 2.25f;
-        readonly float EfficiencyNegativeEffectsMultiDefault = 0.8f;
+
+        // head rot smoothing
+        public static ConfigEntry<float> HeadRotationSmoothing;
+        public static ConfigEntry<float> HeadRotationSmoothing2;
+        public static ConfigEntry<float> HeadRotationSmoothing3;
 
 
         void Awake()
@@ -249,6 +384,8 @@ namespace TarkovIRL
             TryLoadPatch(new Patch_PlayStepSound());
             TryLoadPatch(new Patch_ThrowGrenade());
             TryLoadPatch(new Patch_TranslateCommand());
+            TryLoadPatch(new StaminaRegenRatePatch());
+            //TryLoadPatch(new Patch_SetAnimatorAndProceduralValues());
 
             //TryLoadPatch(new Patch_ProcessRotation());
             //TryLoadPatch(new Patch_ProcessUpperbodyRotation());
@@ -270,41 +407,45 @@ namespace TarkovIRL
             IsFootstepEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable footstep effect", "Player's weapon will bounce a bit more when taking steps, effect intesnity depends on several factors.");
             IsParallaxEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable parallax feature", "Extensive feature when causes the weapon to rotate in the player's hand and thus un-align the sights, when the player is rotating. The intensity of the effect depends on your efficiency and the weight and ergo of the weapon.");
             IsDirectionalSway = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable directional sway feature", "Additional layer of weapon sway that is caused by forward-back-left-right movements.");
+            IsHeadTiltADS = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable ADS head tilt", "Additional slight head tilt on ADS when using a stocked weapon stock.");
 
             // general sliders
             WeaponDeadzoneMulti = ConstructFloatConfig(WeaponDeadzoneMultiDefault, GENERAL_SLIDERS, "Deadzone multiplier", "Change overall deadzone effect strength.", 0, 5f);
-            WeaponSwayMulti = ConstructFloatConfig(0.15f, GENERAL_SLIDERS, "Sway multiplier", "Change overall sway effect strength.", 0, 5f);
-            ParallaxMulti = ConstructFloatConfig(20f, GENERAL_SLIDERS, "Parallax multiplier", "Change overall parallax effect strength.", 1f, 100f);
+            WeaponSwayMulti = ConstructFloatConfig(0.3f, GENERAL_SLIDERS, "Sway multiplier", "Change overall sway effect strength.", 0, 2f);
+            ParallaxMulti = ConstructFloatConfig(30f, GENERAL_SLIDERS, "Parallax multiplier", "Change overall parallax effect strength.", 1f, 100f);
+            DirectionalSwayMulti = ConstructFloatConfig(0.3f, GENERAL_SLIDERS, "Directional Sway Final Modifier", "", 0, 5f);
+            EfficiencyInjuryDebuffMulti = ConstructFloatConfig(0.5f, GENERAL_SLIDERS, "Efficiency injury effect multi", "Controls how much injuries affect your Efficiency stat. This is to prevent noodle-arms as soon as you get hit. Bone breaks, bleeds, tremors, pain, and fresh wounds only are affected by this slider - not your overall HP.", 0f, 2f);
 
             // new sway sliders
             NewSwayPositionMulti = ConstructFloatConfig(0.5f, NEW_SWAY_SLIDERS, "Sway position multiplier", "", 0, 10f);
             NewSwayRotationMulti = ConstructFloatConfig(3f, NEW_SWAY_SLIDERS, "Sway rotation multiplier", "", 0, 10f);
-            NewSwayPositionDTMulti = ConstructFloatConfig(14f, NEW_SWAY_SLIDERS, "Sway position change speed", "", 0, 20f);
+            NewSwayPositionDTMulti = ConstructFloatConfig(20f, NEW_SWAY_SLIDERS, "Sway position change speed", "", 0, 40f);
             NewSwayRotationDTMulti = ConstructFloatConfig(2f, NEW_SWAY_SLIDERS, "Sway rotation change speed", "", 0, 10f);
             NewSwayWpnUnstockedDropValue = ConstructFloatConfig(0.3f, NEW_SWAY_SLIDERS, "Weapon drop for unstocked value", "Unstocked weapons will drop a little when rotating.", 0, 10f);
             NewSwayWpnUnstockedDropSpeed = ConstructFloatConfig(3f, NEW_SWAY_SLIDERS, "Weapon drop for unstocked speed", "", 0, 10f);
             WeaponCantValue = ConstructFloatConfig(0, NEW_SWAY_SLIDERS, "Weapon cant value", "", -1f, 1f);
             LeanExtraVerticalMulti = ConstructFloatConfig(0.01f, NEW_SWAY_SLIDERS, "Lean vertical change value", "When you peek, your weapon points up/down a little to complicate aiming.", 0, 0.05f);
-            NewSwayWpnDropFromRotMulti = ConstructFloatConfig(0.2f, NEW_SWAY_SLIDERS, "Weapon aimpoint drop on rotation", "When rotating, your weapon will point down a little consonent with the rotation speed. A slight emulation of manipulating a physical object, stacks with weapon weight etc.", -10f, 10f);
+            NewSwayWpnDropFromRotMulti = ConstructFloatConfig(0.15f, NEW_SWAY_SLIDERS, "Weapon aimpoint drop on rotation", "When rotating, your weapon will point down a little consonent with the rotation speed. A slight emulation of manipulating a physical object, stacks with weapon weight etc.", -10f, 10f);
             HyperVerticalClamp = ConstructFloatConfig(0.1f, NEW_SWAY_SLIDERS, "Hyper-vertical effect input clamp", "The 'hyper-vertical' effect emulates gravity, so to speak. Figure it out.", -1f, 1f);
-            HyperVerticalMulti = ConstructFloatConfig(3f, NEW_SWAY_SLIDERS, "Hyper-vertical effect value", "The 'hyper-vertical' effect emulates gravity, so to speak. Figure it out.", 0, 30f);
-            HyperVerticalDT = ConstructFloatConfig(3.5f, NEW_SWAY_SLIDERS, "Hyper-vertical change speed", "The 'hyper-vertical' effect emulates gravity, so to speak. Figure it out.", -10f, 10f);
+            HyperVerticalMulti = ConstructFloatConfig(2f, NEW_SWAY_SLIDERS, "Hyper-vertical effect value", "The 'hyper-vertical' effect emulates gravity, so to speak. Figure it out.", 0, 30f);
+            HyperVerticalDT = ConstructFloatConfig(2.5f, NEW_SWAY_SLIDERS, "Hyper-vertical change speed", "The 'hyper-vertical' effect emulates gravity, so to speak. Figure it out.", -10f, 10f);
             NewSwayADSRotClamp = ConstructFloatConfig(0.9f, NEW_SWAY_SLIDERS, "Clamp sway effect specifically in ADS", "", 0, 1f);
-            NewSwayRotDeltaClamp = ConstructFloatConfig(0.02f, NEW_SWAY_SLIDERS, "Sway rotation input clamp", "Touch at your own risk kek", 0, 0.1f);
+            NewSwayRotDeltaClamp = ConstructFloatConfig(0.01f, NEW_SWAY_SLIDERS, "Sway rotation input clamp", "Touch at your own risk kek", 0, 0.1f);
             NewSwayRotFinalClamp = ConstructFloatConfig(0.06f, NEW_SWAY_SLIDERS, "Sway input smoothing clamp", "Touch at your own risk kek", 0, 0.1f);
 
             // parallax sliders
-            ParallaxSetSizeMulti = ConstructFloatConfig(ParallaxSetSizeMultiDefault, PARALLAX_SLIDERS, "Parallax set size", "Amount of parallax that is possible per player rotation.", 0, 20f);
+            ParallaxSetSizeMulti = ConstructFloatConfig(0.5f, PARALLAX_SLIDERS, "Parallax set size", "Amount of parallax that is possible per player rotation.", 0, 20f);
             ParallaxInAds = ConstructFloatConfig(ParallaxInAdsDefault, PARALLAX_SLIDERS, "Parallax effect in ADS", "The % of parallax effect that you see in ADS (with a stocked weapon)", 0, 1f);
-            PistolSpecificParallax = ConstructFloatConfig(PistolSpecificParallaxDefault, PARALLAX_SLIDERS, "Parallax effect value specifically for pistols", "", 0, 10f); 
+            PistolSpecificParallax = ConstructFloatConfig(3f, PARALLAX_SLIDERS, "Parallax effect value specifically for pistols", "", 0, 10f); 
             ShotParallaxResetTimeMulti = ConstructFloatConfig(ShotParallaxResetTimeMultiDefault, PARALLAX_SLIDERS, "Shot-parallax cooldown multiplier", "Rate of return to reduced parallax in the ADS, after a shot.", 0, 20f);
-            AdsParallaxTimeMulti = ConstructFloatConfig(AdsParallaxTimeMultiDefault, PARALLAX_SLIDERS, "Ads-parallax cooldown multiplier", "", 0, 160f);
+            AdsParallaxTimeMulti = ConstructFloatConfig(2f, PARALLAX_SLIDERS, "Ads-parallax cooldown multiplier", "", 0, 160f);
             ShotParallaxWeaponWeightMulti = ConstructFloatConfig(ShotParallaxWeaponWeightMultiDefault, PARALLAX_SLIDERS, "Shot parallax weapon weight factor multiplier", "After a shot in ADS, the parallax effect is momentarilly returned to full strength.", 0, 10f);
-            ParallaxRotationRecenterMulti = ConstructFloatConfig(0.1f, PARALLAX_SLIDERS, "Parallax rotation recenter force", "The strength with which the parallax effect is bled-off when not rotating.", 0.05f, 0.5f);
+            ParallaxDTMulti = ConstructFloatConfig(10f, PARALLAX_SLIDERS, "Parallax main lerp multiplier", "How fast the main parallax routine processes (so, responsiveness we can say).", 0.05f, 1000f);
+            ParallaxRotationSmoothingMulti = ConstructFloatConfig(10f, PARALLAX_SLIDERS, "ParallaxRotationSmoothingMulti", "The strength with which the parallax effect is bled-off when not rotating.", 0.05f, 1000f);
+            ParallaxHardClamp = ConstructFloatConfig(0.2f, PARALLAX_SLIDERS, "Parallax Hard Stop", "Absolute maximum value of the parallax effect -- if you want to prevent noodle-arms, this is a good place to start.", 0, 1f);
 
             // efficiency sliders
             EfficiencyLerpMulti = ConstructFloatConfig(EfficiencyLerpMultiDefault, EFFICIENCY_SLIDERS, "Efficiency change rate multiplier", "", 0, 10f);
-            EfficiencyNegativeEffectsMulti = ConstructFloatConfig(EfficiencyNegativeEffectsMultiDefault, EFFICIENCY_SLIDERS, "Efficiency negative effect multi", "Control how much player efficiency can be affected by damage, health, stamina, nutrition, etc.", 0f, 2f);
 
             // misc fine tuning sliders
             LeanCounterRotateMod = ConstructFloatConfig(-8f, MISC_SLIDERS, "Peek counter-rotate value", "Just a small visual effect so that your head does not rotate perfectly with the weapon when peeking; I find this more immersive.", -10f, 10f);
@@ -312,7 +453,7 @@ namespace TarkovIRL
             ArmShakeMulti = ConstructFloatConfig(ArmShakeMultiDefault, MISC_SLIDERS, "Arm shake multiplier", "", 0, 5f);
             ArmShakeRateMulti = ConstructFloatConfig(ArmShakeRateMultiDefault, MISC_SLIDERS, "Arm shake effect speed multiplier", "The arm shake effect is an animation, this changes the speed of the animation playback.", 0, 5f);
             FootstepLerpMulti = ConstructFloatConfig(FootstepLerpMultiDefault, MISC_SLIDERS, "Footstep lerp speed multiplier", "The footstep effect is an animation, this changes the speed of the animation playback", 0, 1f);
-            FootstepIntesnityMulti = ConstructFloatConfig(9f, MISC_SLIDERS, "Footstep intensity multiplier", "", 0, 10f);
+            FootstepIntesnityMulti = ConstructFloatConfig(6f, MISC_SLIDERS, "Footstep intensity multiplier", "", 0, 10f);
             ThrowStrengthMulti = ConstructFloatConfig(ThrowStrengthMultiDefault, MISC_SLIDERS, "Throw visual effect multi", "Change the strength of the throw animation", 0, 100f);
             ThrowSpeedMulti = ConstructFloatConfig(ThrowSpeedMultiDefault, MISC_SLIDERS, "Throw effect speed", "The throw effect is an animation, this changes the speed of the animation playback.", 0, 10f);
             SideToSideSwayMulti = ConstructFloatConfig(0.01f, MISC_SLIDERS, "Footstep side-to-side value", "", 0, 0.03f);
@@ -320,7 +461,7 @@ namespace TarkovIRL
             SideToSidePositionDTMulti = ConstructFloatConfig(0.35f, MISC_SLIDERS, "Footstep side-to-side position speed", "", 0, 10f);
             FootstepCutoffRatio = ConstructFloatConfig(0.65f, MISC_SLIDERS, "Footstep animation cutoff", "Just don't touch this.", 0, 1f);
             MotionTrackingThreshold = ConstructFloatConfig(0.005f, MISC_SLIDERS, "Motion tracking threshold", "Just don't touch this.", 0, 0.01f);
-            
+                
             // rotation engine
             RotationAverageDTMulti = ConstructFloatConfig(80f, ROTATION_ENGINE_SLIDERS, "RotationAverageDTMulti", "Just don't touch this.", 0.1f, 100f);
             RotationHistoryClamp = ConstructFloatConfig(0.1f, ROTATION_ENGINE_SLIDERS, "RotationHistoryClamp", "Just don't touch this.", 0f, 1f);
@@ -328,21 +469,147 @@ namespace TarkovIRL
             // directional sway
             DirectionalSwayLateralPosValue = ConstructFloatConfig(-0.02f, DIRECTIONAL_SWAY, "Directional Sway Lateral Pos Value", "", -0.1f, 0.1f);
             DirectionalSwayProjectedPosValue = ConstructFloatConfig(-0.04f, DIRECTIONAL_SWAY, "Directional Sway Projected Pos Value", "", -0.1f, 0.1f);
-            DirectionalSwayLateralRotValue = ConstructFloatConfig(0.05f, DIRECTIONAL_SWAY, "Directional Sway Lateral Rot Value", "", -0.1f, 0.1f);
+            DirectionalSwayLateralRotValue = ConstructFloatConfig(0.2f, DIRECTIONAL_SWAY, "Directional Sway Lateral Rot Value", "", -0.2f, 0.2f);
             DirectionalSwayVerticalRotValue = ConstructFloatConfig(0.008f, DIRECTIONAL_SWAY, "Directional Sway Vertical Rot Value", "", -0.1f, 0.1f);
-            DirectionalSwayMulti = ConstructFloatConfig(0.9f, DIRECTIONAL_SWAY, "Directional Sway Final Modifier", "", 0, 5f);
             DirectionalSwayLerpSpeed = ConstructFloatConfig(3f, DIRECTIONAL_SWAY, "Directional Sway Lerp Speed", "", 1f, 20f);
             DirectionalSwayLerpOnAds = ConstructFloatConfig(0.25f, DIRECTIONAL_SWAY, "Directional Sway % During ADS", "", 0, 1f);
 
             // augmented reloads
+            AugmentedReloadSpeed = ConstructFloatConfig(1.3f, AUGMENTED_RELOAD, "Augmented reload speed modifier", "", 1f, 5f);
+            AugmentedReloadSprintingDebuff = ConstructFloatConfig(0.7f, AUGMENTED_RELOAD, "Reloading while sprinting debuff %", "", 0.1f, 1f);
+
+            // weapon transitions
+            TransitionSpeedPhase1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "TransitionSpeedPhase1", "", 0.1f, 5f);
+            TransitionSpeedPhase2 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "TransitionSpeedPhase2", "", 0.1f, 5f);
+
+            // sling transforms
+            SlingPositionStartX = ConstructFloatConfig(0.06f, WEAPON_TRANSITIONS, "SlingPositionStartX", "", -1f, 1f);
+            SlingPositionStartY = ConstructFloatConfig(-0.16f, WEAPON_TRANSITIONS, "SlingPositionStartY", "", -1f, 1f);
+            SlingPositionStartZ = ConstructFloatConfig(-0.1f, WEAPON_TRANSITIONS, "SlingPositionStartZ", "", -1f, 1f);
+
+            SlingRotationStartX = ConstructFloatConfig(0, WEAPON_TRANSITIONS, "SlingRotationStartX", "", -1f, 1f);
+            SlingRotationStartY = ConstructFloatConfig(-0.75f, WEAPON_TRANSITIONS, "SlingRotationStartY", "", -1f, 1f);
+            SlingRotationStartZ = ConstructFloatConfig(-0.24f, WEAPON_TRANSITIONS, "SlingRotationStartZ", "", -1f, 1f);
+
+            SlingPositionEndX = ConstructFloatConfig(0.37f, WEAPON_TRANSITIONS, "SlingPositionEndX", "", -1f, 1f);
+            SlingPositionEndY = ConstructFloatConfig(-0.16f, WEAPON_TRANSITIONS, "SlingPositionEndY", "", -1f, 1f);
+            SlingPositionEndZ = ConstructFloatConfig(-0.46f, WEAPON_TRANSITIONS, "SlingPositionEndZ", "", -1f, 1f);
+
+            SlingRotationEndX = ConstructFloatConfig(0, WEAPON_TRANSITIONS, "SlingRotationEndX", "", -1f, 1f);
+            SlingRotationEndY = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "SlingRotationEndY", "", -1f, 1f);
+            SlingRotationEndZ = ConstructFloatConfig(-0.24f, WEAPON_TRANSITIONS, "SlingRotationEndZ", "", -1f, 1f);
+
+            // shoulder transforms
+            ShoulderPositionStartX = ConstructFloatConfig(0.27f, WEAPON_TRANSITIONS, "ShoulderPositionStartX", "", -1f, 1f);
+            ShoulderPositionStartY = ConstructFloatConfig(-0.5f, WEAPON_TRANSITIONS, "ShoulderPositionStartY", "", -1f, 1f);
+            ShoulderPositionStartZ = ConstructFloatConfig(-0.12f, WEAPON_TRANSITIONS, "ShoulderPositionStartZ", "", -1f, 1f);
+
+            ShoulderRotationStartX = ConstructFloatConfig(-0.4f, WEAPON_TRANSITIONS, "ShoulderRotationStartX", "", -1f, 1f);
+            ShoulderRotationStartY = ConstructFloatConfig(-0.56f, WEAPON_TRANSITIONS, "ShoulderRotationStartY", "", -1f, 1f);
+            ShoulderRotationStartZ = ConstructFloatConfig(0, WEAPON_TRANSITIONS, "ShoulderRotationStartZ", "", -1f, 1f);
+
+            ShoulderPositionEndX = ConstructFloatConfig(0.25f, WEAPON_TRANSITIONS, "ShoulderPositionEndX", "", -1f, 1f);
+            ShoulderPositionEndY = ConstructFloatConfig(-0.50f, WEAPON_TRANSITIONS, "ShoulderPositionEndY", "", -1f, 1f);
+            ShoulderPositionEndZ = ConstructFloatConfig(-0.19f, WEAPON_TRANSITIONS, "ShoulderPositionEndZ", "", -1f, 1f);
+
+            ShoulderRotationEndX = ConstructFloatConfig(-0.4f, WEAPON_TRANSITIONS, "ShoulderRotationEndX", "", -1f, 1f);
+            ShoulderRotationEndY = ConstructFloatConfig(-0.57f, WEAPON_TRANSITIONS, "ShoulderRotationEndY", "", -1f, 1f);
+            ShoulderRotationEndZ = ConstructFloatConfig(0f, WEAPON_TRANSITIONS, "ShoulderRotationEndZ", "", -1f, 1f);
+
+            // holster transforms
+            HolsterPositionStartX = ConstructFloatConfig(0, WEAPON_TRANSITIONS, "HolsterPositionStartX", "", -1f, 1f);
+            HolsterPositionStartY = ConstructFloatConfig(-0.05f, WEAPON_TRANSITIONS, "HolsterPositionStartY", "", -1f, 1f);
+            HolsterPositionStartZ = ConstructFloatConfig(-0.2f, WEAPON_TRANSITIONS, "HolsterPositionStartZ", "", -1f, 1f);
+
+            HolsterRotationStartX = ConstructFloatConfig(-0.1f, WEAPON_TRANSITIONS, "HolsterRotationStartX", "", -1f, 1f);
+            HolsterRotationStartY = ConstructFloatConfig(-0.2f, WEAPON_TRANSITIONS, "HolsterRotationStartY", "", -1f, 1f);
+            HolsterRotationStartZ = ConstructFloatConfig(0, WEAPON_TRANSITIONS, "HolsterRotationStartZ", "", -1f, 1f);
+
+            HolsterPositionEndX = ConstructFloatConfig(0, WEAPON_TRANSITIONS, "HolsterPositionEndX", "", -1f, 1f);
+            HolsterPositionEndY = ConstructFloatConfig(0, WEAPON_TRANSITIONS, "HolsterPositionEndY", "", -1f, 1f);
+            HolsterPositionEndZ = ConstructFloatConfig(0, WEAPON_TRANSITIONS, "HolsterPositionEndZ", "", -1f, 1f);
+
+            HolsterRotationEndX = ConstructFloatConfig(0, WEAPON_TRANSITIONS, "HolsterRotationEndX", "", -1f, 1f);
+            HolsterRotationEndY = ConstructFloatConfig(0, WEAPON_TRANSITIONS, "HolsterRotationEndY", "", -1f, 1f);
+            HolsterRotationEndZ = ConstructFloatConfig(0, WEAPON_TRANSITIONS, "HolsterRotationEndZ", "", -1f, 1f);
+
+            // sling-to-shoulder curve
+            Sling2ShoulderSpeed1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "Sling2ShoulderSpeed1", "", -10f, 10f);
+            Sling2ShoulderSpeed2 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "Sling2ShoulderSpeed2", "", -10f, 10f);
+
+            Sling2ShoulderCurve1_1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "1 - Sling2ShoulderCurve1_1", "", 0.1f, 3f);
+            Sling2ShoulderCurve2_1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "2 - Sling2ShoulderCurve2_1", "", 0.1f, 3f);
+            Sling2ShoulderCurve3_1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "3 - Sling2ShoulderCurve3_1", "", 0.1f, 3f);
+            Sling2ShoulderCurve4_1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "4 - Sling2ShoulderCurve4_1", "", 0.1f, 3f);
+            Sling2ShoulderCurve5_1 = ConstructFloatConfig(0.75f, WEAPON_TRANSITIONS, "5 - Sling2ShoulderCurve5_1", "", 0.1f, 3f);
+            Sling2ShoulderCurve6_1 = ConstructFloatConfig(0.2f, WEAPON_TRANSITIONS, "6 - Sling2ShoulderCurve6_1", "", 0.1f, 3f);
+
+            Sling2ShoulderCurve1_2 = ConstructFloatConfig(0.3f, WEAPON_TRANSITIONS, "7 - Sling2ShoulderCurve1_2", "", 0.1f, 3f);
+            Sling2ShoulderCurve2_2 = ConstructFloatConfig(1.5f, WEAPON_TRANSITIONS, "8 - Sling2ShoulderCurve2_2", "", 0.1f, 3f);
+            Sling2ShoulderCurve3_2 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "9 - Sling2ShoulderCurve3_2", "", 0.1f, 3f);
+            Sling2ShoulderCurve4_2 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "99 - Sling2ShoulderCurve4_2", "", 0.1f, 3f);
+            Sling2ShoulderCurve5_2 = ConstructFloatConfig(2f, WEAPON_TRANSITIONS, "999 - Sling2ShoulderCurve5_2", "", 0.1f, 3f);
+            Sling2ShoulderCurve6_2 = ConstructFloatConfig(3f, WEAPON_TRANSITIONS, "9999 - Sling2ShoulderCurve6_2", "", 0.1f, 3f);
+
+            // shoulder-to-sling curve
+            Shoulder2SlingSpeed1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "Shoulder2SlingSpeed1", "", -10f, 10f);
+            Shoulder2SlingSpeed2 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "Shoulder2SlingSpeed2", "", -10f, 10f);
+
+            Shoulder2SlingCurve1_1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "1 - Shoulder2SlingCurve1_1", "", 0.1f, 3f);
+            Shoulder2SlingCurve2_1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "2 - Shoulder2SlingCurve2_1", "", 0.1f, 3f);
+            Shoulder2SlingCurve3_1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "3 - Shoulder2SlingCurve3_1", "", 0.1f, 3f);
+            Shoulder2SlingCurve4_1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "4 - Shoulder2SlingCurve4_1", "", 0.1f, 3f);
+            Shoulder2SlingCurve5_1 = ConstructFloatConfig(0.75f, WEAPON_TRANSITIONS, "5 - Shoulder2SlingCurve5_1", "", 0.1f, 3f);
+            Shoulder2SlingCurve6_1 = ConstructFloatConfig(0.2f, WEAPON_TRANSITIONS, "6 - Shoulder2SlingCurve6_1", "", 0.1f, 3f);
+
+            Shoulder2SlingCurve1_2 = ConstructFloatConfig(0.3f, WEAPON_TRANSITIONS, "7 - Shoulder2SlingCurve1_2", "", 0.1f, 3f);
+            Shoulder2SlingCurve2_2 = ConstructFloatConfig(1.5f, WEAPON_TRANSITIONS, "8 - Shoulder2SlingCurve2_2", "", 0.1f, 3f);
+            Shoulder2SlingCurve3_2 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "9 - Shoulder2SlingCurve3_2", "", 0.1f, 3f);
+            Shoulder2SlingCurve4_2 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "99 - Shoulder2SlingCurve4_2", "", 0.1f, 3f);
+            Shoulder2SlingCurve5_2 = ConstructFloatConfig(2f, WEAPON_TRANSITIONS, "999 - Shoulder2SlingCurve5_2", "", 0.1f, 3f);
+            Shoulder2SlingCurve6_2 = ConstructFloatConfig(3f, WEAPON_TRANSITIONS, "9999 - Shoulder2SlingCurve6_2", "", 0.1f, 3f);
+
+            TransformSmoothingDTMulti = ConstructFloatConfig(12f, WEAPON_TRANSITIONS, "99999 - TransformSmoothingDTMulti", "", 0.1f, 100f);
+
 
             // dev
-            DebugHeadRotX = ConstructFloatConfig(0, DEV_SECTION, "AugmentedReloadX", "", -20f, 20f);
-            DebugHeadRotY = ConstructFloatConfig(0, DEV_SECTION, "AugmentedReloadY", "", -20f, 20f);
-            DebugHeadRotZ = ConstructFloatConfig(0, DEV_SECTION, "AugmentedReloadZ", "", -20f, 20f);
+            DebugHeadRotX = ConstructFloatConfig(0, DEV_SECTION, "DebugHeadRotX", "", -20f, 20f);
+            DebugHeadRotY = ConstructFloatConfig(0, DEV_SECTION, "DebugHeadRotY", "", -20f, 20f);
+            DebugHeadRotZ = ConstructFloatConfig(0, DEV_SECTION, "DebugHeadRotZ", "", -20f, 20f);
+
+            DebugHandsRotX = ConstructFloatConfig(0, DEV_SECTION, "DebugHandsRotX", "", -1.5f, 1.5f);
+            DebugHandsRotY = ConstructFloatConfig(0, DEV_SECTION, "DebugHandsRotY", "", -1.5f, 1.5f);
+            DebugHandsRotZ = ConstructFloatConfig(0, DEV_SECTION, "DebugHandsRotZ", "", -1.5f, 1.5f);
+
+            DebugHandsPosX = ConstructFloatConfig(0, DEV_SECTION, "DebugHandsPosX", "", -0.5f, 0.5f);
+            DebugHandsPosY = ConstructFloatConfig(0, DEV_SECTION, "DebugHandsPosY", "", -0.5f, 0.5f);
+            DebugHandsPosZ = ConstructFloatConfig(0, DEV_SECTION, "DebugHandsPosZ", "", -0.5f, 0.5f);
+
             IsLogging = ConstructBoolConfig(false, DEV_SECTION, "Enable debug logging", "");
             DebugSpam = ConstructBoolConfig(false, DEV_SECTION, "Enable debug spam", "");
+
+
+            // anim curve
+
+            DebugFloat1 = ConstructFloatConfig(0, ANIM_CURVE, "DebugFloat1", "", -10f, 10f);
+            DebugFloat2 = ConstructFloatConfig(0, ANIM_CURVE, "DebugFloat2", "", -10f, 10f);
+
+            AnimCurveTime0 = ConstructFloatConfig(1f, ANIM_CURVE, "1 - AnimCurveTime0", "", 0.1f, 3f);
+            AnimCurveTime0_2 = ConstructFloatConfig(1f, ANIM_CURVE, "2 - AnimCurveTime0_2", "", 0.1f, 3f);
+            AnimCurveTime0_4 = ConstructFloatConfig(1f, ANIM_CURVE, "3 - AnimCurveTime0_4", "", 0.1f, 3f);
+            AnimCurveTime0_6 = ConstructFloatConfig(1f, ANIM_CURVE, "4 - AnimCurveTime0_6", "", 0.1f, 3f);
+            AnimCurveTime0_8 = ConstructFloatConfig(1f, ANIM_CURVE, "5 - AnimCurveTime0_8", "", 0.1f, 3f);
+            AnimCurveTime1 = ConstructFloatConfig(1f, ANIM_CURVE, "6 - AnimCurveTime1", "", 0.1f, 3f);
+
+            AnimCurveTime0p2 = ConstructFloatConfig(1f, ANIM_CURVE, "7 - AnimCurveTime0p2", "", 0.1f, 10f);
+            AnimCurveTime0_2p2 = ConstructFloatConfig(1f, ANIM_CURVE, "8 - AnimCurveTime0_2p2", "", 0.1f, 10f);
+            AnimCurveTime0_4p2 = ConstructFloatConfig(1f, ANIM_CURVE, "9 - AnimCurveTime0_4p2", "", 0.1f, 10f);
+            AnimCurveTime0_6p2 = ConstructFloatConfig(1f, ANIM_CURVE, "10 - AnimCurveTime0_6p2", "", 0.1f, 10f);
+            AnimCurveTime0_8p2 = ConstructFloatConfig(1f, ANIM_CURVE, "11 - AnimCurveTime0_8p2", "", 0.1f, 10f);
+            AnimCurveTime1p2 = ConstructFloatConfig(1f, ANIM_CURVE, "12 - AnimCurveTime1p2", "", 0.1f, 10f);
         }
+
+        static readonly string ANIM_CURVE = "999 - Anim curve builder";
 
         void Update()
         {
@@ -362,7 +629,6 @@ namespace TarkovIRL
             FootstepController.UpdateStep(DeltaTime);
             SwayController.UpdateLerp(DeltaTime);
             ThrowController.UpdateLerp(DeltaTime);
-            NewSwayController.UpdateLerp(DeltaTime);
             HeadRotController.UpdateLerp(DeltaTime);
             DirectionalSwayController.UpdateDirectionalSwayLerp(DeltaTime);
         }
@@ -370,6 +636,11 @@ namespace TarkovIRL
         void FixedUpdate()
         {
             FixedDeltaTime += (UnityEngine.Time.unscaledDeltaTime - FixedDeltaTime);
+
+            PlayerMotionController.UpdateMovementMeasurementsInFDT(FixedDeltaTime);
+            WeaponSelectionController.UpdateAnimationPump(FixedDeltaTime);
+            NewDeadzoneController.Update(FixedDeltaTime);
+            NewSwayController.UpdateLerp(FixedDeltaTime);
         }
 
         void LateUpdate()

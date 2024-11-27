@@ -9,7 +9,7 @@ namespace TarkovIRL
 {
     internal class AnimStateController
     {
-        public enum EWeaponState { INTO_RELOAD, MID_RELOAD, OUT_OF_RELOAD, IDLE, CHECK_MAG };
+        public enum EWeaponState { INTO_RELOAD, MID_RELOAD, MID_RELOAD_2, OUT_OF_RELOAD, IDLE, CHECK_MAG, RELOAD_FAST, UNKNOWN_STATE, ORDER_ARM, PRESENT_ARM, TRIGGER_PULL, CHECK_CHAMBER, SHOOT };
         static EWeaponState _weaponState;
 
         // body states
@@ -39,8 +39,14 @@ namespace TarkovIRL
         public static readonly int _ReturnHandWithoutCharging = 32228103;
         public static readonly int _ReturnHandNoMag = 1392741434;
         //
+        public static readonly int _FastReloadDumpMag = -1162171678;
+        //
         public static readonly int _WithdrawWeapon = -1205675207;
         public static readonly int _PresentWeapon = -965243548;
+        //
+        public static readonly int _Shoot = 590329303;
+        public static readonly int _TriggerPull = -1160784120;
+        public static readonly int _CheckChamber = -131286203;
 
         static int _currentBodyStateHash = 0;
 
@@ -60,7 +66,11 @@ namespace TarkovIRL
             {
                 _weaponState = EWeaponState.MID_RELOAD;
             }
-            else if (state == _ReplaceMag || state == _ReturnHandAfterCharging || state == _ReturnHandWithoutCharging || state == _ReturnHandNoMag)
+            else if (state == _ReplaceMag)
+            {
+                _weaponState = EWeaponState.MID_RELOAD_2;
+            }
+            else if (state == _ReturnHandAfterCharging || state == _ReturnHandWithoutCharging || state == _ReturnHandNoMag)
             {
                 _weaponState = EWeaponState.OUT_OF_RELOAD;
             }
@@ -68,9 +78,37 @@ namespace TarkovIRL
             {
                 _weaponState = EWeaponState.CHECK_MAG;
             }
+            else if (state == _FastReloadDumpMag)
+            {
+                _weaponState = EWeaponState.RELOAD_FAST;
+            }
             else if (state == _WeaponIdle)
             {
                 _weaponState = EWeaponState.IDLE;
+            }
+            else if (state == _WithdrawWeapon)
+            {
+                _weaponState = EWeaponState.ORDER_ARM;
+            }
+            else if (state == _PresentWeapon)
+            {
+                _weaponState = EWeaponState.PRESENT_ARM;
+            }
+            else if (state == _Shoot)
+            {
+                _weaponState = EWeaponState.SHOOT;
+            }
+            else if (state == _TriggerPull)
+            {
+                _weaponState = EWeaponState.TRIGGER_PULL;
+            }
+            else if (state == _CheckChamber)
+            {
+                _weaponState = EWeaponState.CHECK_CHAMBER;
+            }
+            else
+            {
+                _weaponState = EWeaponState.UNKNOWN_STATE;
             }
         }
 

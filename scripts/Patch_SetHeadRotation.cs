@@ -64,7 +64,8 @@ namespace TarkovIRL
                 Vector3 headRotModified = headRot;
                 if (PrimeMover.IsWeaponDeadzone.Value)
                 {
-                    headRotModified = DeadzoneController.GetHeadRotationWithDeadzone(player, PrimeMover.WeaponDeadzoneMulti.Value, headRot);
+                    //headRotModified = DeadzoneController.GetHeadRotationWithDeadzone(player, PrimeMover.WeaponDeadzoneMulti.Value, headRot);
+                    headRotModified = NewDeadzoneController.GetHeadRotWithDeadzone(headRotModified);
                 }
 
                 // ^^
