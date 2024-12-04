@@ -1,3 +1,18 @@
+-- Version 0.7.1 --
+This version is mostly a polish pass on the new Deadzone from 0.7.
+
+Updates and Fixes:
+- Fixed bug where efficiency was not being calculated correctly vis-a-vis injuries, reworked some values.
+- Increased effect of weight on efficiency.
+- Increased effect of overall health (not specific injuries) on efficiency.
+- Added debug option to show efficiency stat in console.
+- Added more sliders for Deadzone values: separate values for ADS, when in Active Aim, Shortstock, and the vanilla BSG pose (which in my playstyle takes stam).
+- Added efficiency weight to camera rotation speed (optional).
+- Added multiplier slider for camera rotation speed.
+- Added option to factor in player Efficiency to Deadzone camera rotation recenter speed.
+- Removed some accidental debug console spam.
+- Increased default reload speed penalty while sprinting.
+
 -- Version 0.7 --
 
 New Features:
