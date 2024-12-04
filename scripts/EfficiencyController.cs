@@ -29,12 +29,24 @@ namespace TarkovIRL
         static float _efficiencyLerp = 0;
         static float _efficiencyLastFrame = 0;
 
+        static float debugTimer = 0;
+
         public static void UpdateEfficiencyLerp(float dt)
         {
             float efficiencyLerpMulti = _efficiencyLerpTarget < _efficiencyLastFrame ? 1f / _efficiencyLerpTarget : _efficiencyLerpTarget;
             _efficiencyLerp = Mathf.Lerp(_efficiencyLerp, _efficiencyLerpTarget, dt * _LerpSpeed * PrimeMover.EfficiencyLerpMulti.Value * efficiencyLerpMulti);
             _efficiencyLastFrame = _efficiencyLerpTarget;
             if (UtilsTIRL.IsPriority(2)) UtilsTIRL.Log($"_efficiencyLerp {_efficiencyLerp}, _efficiencyLerpTarget {_efficiencyLerpTarget}, efficiencyLerpMulti {efficiencyLerpMulti}");
+
+            debugTimer += dt;
+            if (debugTimer > 0.2f)
+            {
+                if (PrimeMover.DebugEfficiency.Value)
+                {
+                    UtilsTIRL.Log($"Efficiency value normal (lower is better) {EfficiencyModifier} || Efficiency value inverse (higher is better) : {EfficiencyModifierInverse}");
+                }
+                debugTimer = 0;
+            }
         }
 
         public static void UpdateEfficiency(Player player)
@@ -86,25 +98,24 @@ namespace TarkovIRL
             //
             // compute outcomes
             //
-            float hydroMulti = GetNormalizedEffectImpact(hydrationNorm, 5f);
-            float nutritionMulti = GetNormalizedEffectImpact(nutritionNorm, 5f);
-            float overWeightMulti = GetNormalizedEffectImpact(overWeightVal, 50f);
+            float hydroMulti = GetInjuryImpact(hydrationNorm, 5f);
+            float nutritionMulti = GetInjuryImpact(nutritionNorm, 5f);
+            float overWeightMulti = GetInjuryImpact(overWeightVal, 80f);
             //
-            float healthMulti = GetNormalizedEffectImpact(healthCommon, 30f);
-            float stamMulti = GetNormalizedEffectImpact(stamNormalized, 20f);
-            float handStamMulti = GetNormalizedEffectImpact(handStamNormalized, 20f);
+            float healthMulti = GetInjuryImpact(healthCommon, 40f);
+            float stamMulti = GetInjuryImpact(stamNormalized, 20f);
+            float handStamMulti = GetInjuryImpact(handStamNormalized, 20f);
             //
-            float heavyBleedsMulti = GetNormalizedEffectImpact(10f, heavyBleedCount);
-            float boneBreakMulti = GetNormalizedEffectImpact(10f, boneBreakCount);
-            float lightBleedsMulti = GetNormalizedEffectImpact(5f, lightBleedCount);
-            float woundMulti = GetNormalizedEffectImpact(5f, freshWoundCount);
+            float heavyBleedsMulti = GetInjuryImpact(10f, heavyBleedCount);
+            float boneBreakMulti = GetInjuryImpact(10f, boneBreakCount);
+            float lightBleedsMulti = GetInjuryImpact(5f, lightBleedCount);
+            float woundMulti = GetInjuryImpact(5f, freshWoundCount);
             //
-            float tremorMulti = GetNormalizedEffectImpact(5f, tremorCount);
-            float painMulti = GetNormalizedEffectImpact(5f, painCount);
-            float fatigueMulti = GetNormalizedEffectImpact(5f, fatigueCount);
+            float tremorMulti = GetInjuryImpact(5f, tremorCount);
+            float painMulti = GetInjuryImpact(5f, painCount);
+            float fatigueMulti = GetInjuryImpact(5f, fatigueCount);
             //
             float injuryMulti = heavyBleedsMulti * lightBleedsMulti * woundMulti * boneBreakMulti * tremorMulti * painMulti;
-            injuryMulti *= PrimeMover.EfficiencyInjuryDebuffMulti.Value;
 
             //
             // negative effects
@@ -113,10 +124,6 @@ namespace TarkovIRL
 
             // positive effects (incl from Realism)
             float adrenalineBuff = RealismWrapper.IsAdrenaline ? 0.5f : 1f;
-            if (RealismWrapper.IsAdrenaline)
-            {
-                UtilsTIRL.Log("adrenaline is on!");
-            }
             float sidestepDebuff = AnimStateController.IsSideStep ? 1.3f : 1f;
             float highReadyBuff = StanceController.CurrentStance == EStance.HighReady ? 0.85f : 1f;
             float lowReadyDebuff = StanceController.CurrentStance == EStance.LowReady ? 1.1f : 1f;
@@ -156,20 +163,20 @@ namespace TarkovIRL
             get { return 1f / _efficiencyLerp; }
         }
 
-        static float GetNormalizedEffectImpact(float value, float impactWeightPercent)
+        static float GetInjuryImpact(float value, float impactWeightPercent)
         {
-            float impactWeightAdjusted = impactWeightPercent * 0.01f;
+            float impactWeightAdjusted = impactWeightPercent * 0.01f * PrimeMover.EfficiencyInjuryDebuffMulti.Value;
             return 1f + ((1f - value) * impactWeightAdjusted);
         }
 
-        static float GetNormalizedEffectImpact(float impactWeightPercent, int multipleInstances)
+        static float GetInjuryImpact(float impactWeightPercent, int multipleInstances)
         {
             if (multipleInstances == 0)
             {
                 return 1f;
             }
 
-            float impactWeightAdjusted = impactWeightPercent * 0.01f;
+            float impactWeightAdjusted = impactWeightPercent * 0.01f * PrimeMover.EfficiencyInjuryDebuffMulti.Value;
             float finalEffectImpact = (1f + impactWeightAdjusted) * multipleInstances;
             return finalEffectImpact;
         }

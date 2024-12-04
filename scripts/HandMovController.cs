@@ -14,17 +14,13 @@ namespace TarkovIRL
     public static class HandMovController
     {
         // readonlys
-        static readonly float _RotPullInDeltaThresh = 0.0002f;
-        static readonly float _RotPullInValue = 0.05f;
+        static readonly float _RotPullInValue = 0.07f;
         static readonly float _LerpRate = 8f;
-        static readonly float _PullInGateTime = 0.8f;
         static readonly float _StockMovementAddedPosValue = 0.005f;
 
         // vars
         static float _rotPullInTarget = 0;
         static float _rotPullInLerp = 0;
-        static float _pullInGateTimer = 0;
-        static bool _pullInGateOpen = false;
 
         static float _stockedMovementAddedPosTarget = 0;
         static float _stockedMovementAddedPosLerp = 0;
@@ -33,7 +29,6 @@ namespace TarkovIRL
         {
 
             float dt = player.DeltaTime;
-            _pullInGateTimer += dt;
 
             if (player.ProceduralWeaponAnimation.IsAiming)
             {
@@ -47,7 +42,7 @@ namespace TarkovIRL
             {
                 float rotDelta = Mathf.Abs(PlayerMotionController.HorizontalRotationDelta * 100f);
                 rotDelta = Mathf.Clamp01( rotDelta );
-                float pullInValue = WeaponController.IsStocked ? _RotPullInValue * 0.5f : _RotPullInValue;
+                float pullInValue = WeaponController.IsStocked ? _RotPullInValue * 0.75f : _RotPullInValue;
                 pullInValue *= rotDelta;
                 _rotPullInTarget = pullInValue;
             }

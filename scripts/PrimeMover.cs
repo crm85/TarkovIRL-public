@@ -13,7 +13,7 @@ namespace TarkovIRL
     {
         const string modGUID = "TarkovIRL";
         const string modName = "TarkovIRL - WHM";
-        const string modVersion = "0.7";
+        const string modVersion = "0.7.1";
 
         public static PrimeMover Instance;
 
@@ -60,9 +60,10 @@ namespace TarkovIRL
         const string MISC_SLIDERS = "7 - Misc multipliers";
         const string DIRECTIONAL_SWAY = "8 - Directional Sway Values";
         const string AUGMENTED_RELOAD = "9 - Augmented Reload Values";
-        const string WEAPON_TRANSITIONS = "99 - Weapon Transition Values";
+        const string DEADZONE = "99 - Deadzone Values";
+        const string WEAPON_TRANSITIONS = "999 - Weapon Transition Values";
 
-        const string DEV_SECTION = "999 - Only for dev/testing";
+        const string DEV_SECTION = "9999 - Only for dev/testing";
 
 
         //
@@ -130,6 +131,13 @@ namespace TarkovIRL
         public static ConfigEntry<float> NewSwayRotFinalClamp;
         public static ConfigEntry<float> LeanCounterRotateMod;
         public static ConfigEntry<float> ParallaxHardClamp;
+        public static ConfigEntry<float> DeadzoneInShortStock;
+        public static ConfigEntry<float> DeadzoneInVanilla;
+        public static ConfigEntry<float> DeadzoneInActiveAim;
+        public static ConfigEntry<float> DeadzoneInADS;
+        public static ConfigEntry<float> DeadzoneHeadFollowSpeedMulti;
+        public static ConfigEntry<bool> DeadzoneWeightForEfficiency;
+        public static ConfigEntry<bool> DebugEfficiency;
 
         // directional sway
         public static ConfigEntry<float> DirectionalSwayLateralPosValue;
@@ -412,8 +420,8 @@ namespace TarkovIRL
             // general sliders
             WeaponDeadzoneMulti = ConstructFloatConfig(WeaponDeadzoneMultiDefault, GENERAL_SLIDERS, "Deadzone multiplier", "Change overall deadzone effect strength.", 0, 5f);
             WeaponSwayMulti = ConstructFloatConfig(0.3f, GENERAL_SLIDERS, "Sway multiplier", "Change overall sway effect strength.", 0, 2f);
-            ParallaxMulti = ConstructFloatConfig(30f, GENERAL_SLIDERS, "Parallax multiplier", "Change overall parallax effect strength.", 1f, 100f);
-            DirectionalSwayMulti = ConstructFloatConfig(0.3f, GENERAL_SLIDERS, "Directional Sway Final Modifier", "", 0, 5f);
+            ParallaxMulti = ConstructFloatConfig(17f, GENERAL_SLIDERS, "Parallax multiplier", "Change overall parallax effect strength.", 1f, 100f);
+            DirectionalSwayMulti = ConstructFloatConfig(0.1f, GENERAL_SLIDERS, "Directional Sway Final Modifier", "", 0, 5f);
             EfficiencyInjuryDebuffMulti = ConstructFloatConfig(0.5f, GENERAL_SLIDERS, "Efficiency injury effect multi", "Controls how much injuries affect your Efficiency stat. This is to prevent noodle-arms as soon as you get hit. Bone breaks, bleeds, tremors, pain, and fresh wounds only are affected by this slider - not your overall HP.", 0f, 2f);
 
             // new sway sliders
@@ -425,7 +433,7 @@ namespace TarkovIRL
             NewSwayWpnUnstockedDropSpeed = ConstructFloatConfig(3f, NEW_SWAY_SLIDERS, "Weapon drop for unstocked speed", "", 0, 10f);
             WeaponCantValue = ConstructFloatConfig(0, NEW_SWAY_SLIDERS, "Weapon cant value", "", -1f, 1f);
             LeanExtraVerticalMulti = ConstructFloatConfig(0.01f, NEW_SWAY_SLIDERS, "Lean vertical change value", "When you peek, your weapon points up/down a little to complicate aiming.", 0, 0.05f);
-            NewSwayWpnDropFromRotMulti = ConstructFloatConfig(0.15f, NEW_SWAY_SLIDERS, "Weapon aimpoint drop on rotation", "When rotating, your weapon will point down a little consonent with the rotation speed. A slight emulation of manipulating a physical object, stacks with weapon weight etc.", -10f, 10f);
+            NewSwayWpnDropFromRotMulti = ConstructFloatConfig(0.3f, NEW_SWAY_SLIDERS, "Weapon aimpoint drop on rotation", "When rotating, your weapon will point down a little consonent with the rotation speed. A slight emulation of manipulating a physical object, stacks with weapon weight etc.", -10f, 10f);
             HyperVerticalClamp = ConstructFloatConfig(0.1f, NEW_SWAY_SLIDERS, "Hyper-vertical effect input clamp", "The 'hyper-vertical' effect emulates gravity, so to speak. Figure it out.", -1f, 1f);
             HyperVerticalMulti = ConstructFloatConfig(2f, NEW_SWAY_SLIDERS, "Hyper-vertical effect value", "The 'hyper-vertical' effect emulates gravity, so to speak. Figure it out.", 0, 30f);
             HyperVerticalDT = ConstructFloatConfig(2.5f, NEW_SWAY_SLIDERS, "Hyper-vertical change speed", "The 'hyper-vertical' effect emulates gravity, so to speak. Figure it out.", -10f, 10f);
@@ -442,7 +450,7 @@ namespace TarkovIRL
             ShotParallaxWeaponWeightMulti = ConstructFloatConfig(ShotParallaxWeaponWeightMultiDefault, PARALLAX_SLIDERS, "Shot parallax weapon weight factor multiplier", "After a shot in ADS, the parallax effect is momentarilly returned to full strength.", 0, 10f);
             ParallaxDTMulti = ConstructFloatConfig(10f, PARALLAX_SLIDERS, "Parallax main lerp multiplier", "How fast the main parallax routine processes (so, responsiveness we can say).", 0.05f, 1000f);
             ParallaxRotationSmoothingMulti = ConstructFloatConfig(10f, PARALLAX_SLIDERS, "ParallaxRotationSmoothingMulti", "The strength with which the parallax effect is bled-off when not rotating.", 0.05f, 1000f);
-            ParallaxHardClamp = ConstructFloatConfig(0.2f, PARALLAX_SLIDERS, "Parallax Hard Stop", "Absolute maximum value of the parallax effect -- if you want to prevent noodle-arms, this is a good place to start.", 0, 1f);
+            ParallaxHardClamp = ConstructFloatConfig(0.1f, PARALLAX_SLIDERS, "Parallax Hard Stop", "Absolute maximum value of the parallax effect -- if you want to prevent noodle-arms, this is a good place to start.", 0, 1f);
 
             // efficiency sliders
             EfficiencyLerpMulti = ConstructFloatConfig(EfficiencyLerpMultiDefault, EFFICIENCY_SLIDERS, "Efficiency change rate multiplier", "", 0, 10f);
@@ -476,7 +484,15 @@ namespace TarkovIRL
 
             // augmented reloads
             AugmentedReloadSpeed = ConstructFloatConfig(1.3f, AUGMENTED_RELOAD, "Augmented reload speed modifier", "", 1f, 5f);
-            AugmentedReloadSprintingDebuff = ConstructFloatConfig(0.7f, AUGMENTED_RELOAD, "Reloading while sprinting debuff %", "", 0.1f, 1f);
+            AugmentedReloadSprintingDebuff = ConstructFloatConfig(0.5f, AUGMENTED_RELOAD, "Reloading while sprinting debuff %", "", 0.1f, 1f);
+
+            // deadzone
+            DeadzoneInShortStock = ConstructFloatConfig(0.35f, DEADZONE, "Deadzone % in Short Stock Pose", "", 0, 5f);
+            DeadzoneInActiveAim = ConstructFloatConfig(0.5f, DEADZONE, "Deadzone % in Active Aim Pose", "", 0, 5f);
+            DeadzoneInVanilla = ConstructFloatConfig(0.7f, DEADZONE, "Deadzone % in BSG Pose", "", 0, 5f);
+            DeadzoneInADS = ConstructFloatConfig(0.2f, DEADZONE, "Deadzone % in ADS", "", 0, 5f);
+            DeadzoneHeadFollowSpeedMulti = ConstructFloatConfig(3f, DEADZONE, "Headfollow Speed Multi", "", 0, 5f);
+            DeadzoneWeightForEfficiency = ConstructBoolConfig(true, DEADZONE, "Deadzone weighted for Efficiency", "Ties Efficiency stat (see documentation) to your camera deadzone; less efficiency will cause more lag in the camera to recenter");
 
             // weapon transitions
             TransitionSpeedPhase1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "TransitionSpeedPhase1", "", 0.1f, 5f);
@@ -587,6 +603,7 @@ namespace TarkovIRL
 
             IsLogging = ConstructBoolConfig(false, DEV_SECTION, "Enable debug logging", "");
             DebugSpam = ConstructBoolConfig(false, DEV_SECTION, "Enable debug spam", "");
+            DebugEfficiency = ConstructBoolConfig(false, DEV_SECTION, "Show efficiency value (inverse version)", "");
 
 
             // anim curve

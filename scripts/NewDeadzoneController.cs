@@ -29,13 +29,23 @@ namespace TarkovIRL
             float deadzoneMulti = PrimeMover.WeaponDeadzoneMulti.Value * WeaponController.GetWeaponMulti(false);
             if (WeaponController.IsStocked && PlayerMotionController.IsAiming)
             {
-                deadzoneMulti *= 0.2f;
+                deadzoneMulti *= PrimeMover.DeadzoneInADS.Value;
+            }
+            else if (StanceController.CurrentStance == EStance.ShortStock)
+            {
+                deadzoneMulti *= PrimeMover.DeadzoneInShortStock.Value;
             }
             else if (StanceController.CurrentStance == EStance.ActiveAiming)
             {
-                deadzoneMulti *= 0.5f;
+                deadzoneMulti *= PrimeMover.DeadzoneInActiveAim.Value;
             }
-            _rotDeltaSmoothedInDeltaTime = Mathf.Lerp(_rotDeltaSmoothedInDeltaTime, _rotDeltaSmoothed * deadzoneMulti, PrimeMover.Instance.DeltaTime * 5f);
+            else if (StanceController.CurrentStance == EStance.None)
+            {
+                deadzoneMulti *= PrimeMover.DeadzoneInVanilla.Value;
+            }
+            float efficiencyWeight = PrimeMover.DeadzoneWeightForEfficiency.Value ? EfficiencyController.EfficiencyModifierInverse : 1f;
+            //UtilsTIRL.Log($"efficiencyWeight on deadzone {efficiencyWeight}");
+            _rotDeltaSmoothedInDeltaTime = Mathf.Lerp(_rotDeltaSmoothedInDeltaTime, _rotDeltaSmoothed * deadzoneMulti, PrimeMover.Instance.DeltaTime * PrimeMover.DeadzoneHeadFollowSpeedMulti.Value * efficiencyWeight);
 
             Vector3 headRotFinal = headRotInitial;
             headRotFinal.y += _rotDeltaSmoothedInDeltaTime;

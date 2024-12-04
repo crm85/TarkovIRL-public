@@ -16,7 +16,7 @@ namespace TarkovIRL
         enum ETransitionPhase { FIRST_FRAME, ORDER_ARM, PRESENT_ARM, DONE_IDLE }
         static ETransitionPhase _transitionPhase = ETransitionPhase.DONE_IDLE;
 
-        enum ETransitionType { SLING_TO_SHOULDER, SHOULDER_TO_SLING, QUICK_PISTOL_TO_SLING, QUICK_SLING_TO_PISTOL, QUICK_SHOULDER_TO_PISTOL, PISTOL_TO_SHOULDER, SLING_TO_PISTOL, SHOULDER_TO_PISTOL, PISTOL_TO_SLING };
+        enum ETransitionType { SLING_TO_SHOULDER, SHOULDER_TO_SLING, QUICK_PISTOL_TO_SLING, QUICK_SLING_TO_PISTOL, QUICK_SHOULDER_TO_PISTOL, PISTOL_TO_SHOULDER, SLING_TO_PISTOL, SHOULDER_TO_PISTOL, PISTOL_TO_SLING, TO_KIT };
         static ETransitionType _transitionType;
 
         static Vector3 _posLerp = Vector3.zero;
@@ -138,11 +138,18 @@ namespace TarkovIRL
                 float proneMod = PlayerMotionController.IsProne ? 0.33f : 1f;
                 float speed = processSpeed * WeaponController.GetWeaponMulti(true) * efficiencyMod * proneMod;
 
+                // you just need to figure out how to get the normalized time out of the animator
+                // and use that as the process time -- these things need to be synced or else it fall apart
+
+                float leftHandProgress = _player.HandsAnimator.GetLeftHandProgress();
+                //UtilsTIRL.Log($"left progress {leftHandProgress}");
+
                 _processLerp = UtilsTIRL.FulfilledLerp(_processLerp, 1f, speed * dt);
                 SetAnimSpeed(_player, speed * 1.1f);
 
                 _posLerp = Vector3.Lerp(_posStart, _posEnd, _processLerp);
                 _rotLerp = Vector3.Lerp(_rotStart, _rotEnd, _processLerp);
+
 
                 //UtilsTIRL.Log($"speed {speed}, processlerp {_processLerp}, _changedStateWindowOpen {_changedStateWindowOpen}, _transitionPhase {_transitionPhase}, stateChange {WeaponController.WeaponHash != _weaponHashLastFrame}");
 
@@ -168,6 +175,7 @@ namespace TarkovIRL
                         _posEnd = Vector3.zero;
                         _rotStart = Vector3.zero;
                         _rotEnd = Vector3.zero;
+                        SetAnimSpeed(_player, 1f);
                     }
                 }
 
@@ -370,7 +378,32 @@ namespace TarkovIRL
             if (command == ECommand.SelectSecondPrimaryWeapon && _lastSelectedWeapon == EWeaponSelection.PISTOL)
             {
                 ProcessPistolToShoulder();
-                UtilsTIRL.Log($"pistol to shoulder");
+            }
+
+            // pistol to sling
+            if (command == ECommand.SelectFirstPrimaryWeapon && _lastSelectedWeapon == EWeaponSelection.PISTOL)
+            {
+                ProcessPistolToSling();
+            }
+
+            // transition to slot
+            bool selectionFromSlot = command == ECommand.PressSlot0;
+            selectionFromSlot &= command == ECommand.PressSlot4;
+            selectionFromSlot &= command == ECommand.PressSlot5;
+            selectionFromSlot &= command == ECommand.PressSlot6;
+            selectionFromSlot &= command == ECommand.PressSlot7;
+            selectionFromSlot &= command == ECommand.PressSlot8;
+            selectionFromSlot &= command == ECommand.PressSlot9;
+            selectionFromSlot &= command == ECommand.SelectFastSlot0;
+            selectionFromSlot &= command == ECommand.SelectFastSlot4;
+            selectionFromSlot &= command == ECommand.SelectFastSlot5;
+            selectionFromSlot &= command == ECommand.SelectFastSlot6;
+            selectionFromSlot &= command == ECommand.SelectFastSlot7;
+            selectionFromSlot &= command == ECommand.SelectFastSlot8;
+            selectionFromSlot &= command == ECommand.SelectFastSlot9;
+            if (selectionFromSlot)
+            {
+                ProcessToSlot();
             }
         }
 
@@ -419,8 +452,8 @@ namespace TarkovIRL
             _transitionPhase = ETransitionPhase.FIRST_FRAME;
             _changedStateWindowOpen = false;
 
-            _animSpeedCurvePhase1 = new AnimationCurve(new Keyframe(0, 1f), new Keyframe(0.2f, 3f), new Keyframe(0.4f, 3f), new Keyframe(0.6f, 3f), new Keyframe(0.8f, 3), new Keyframe(1, 3f));
-            _animSpeedCurvePhase2 = new AnimationCurve(new Keyframe(0, 3f), new Keyframe(1, 3f));
+            _animSpeedCurvePhase1 = new AnimationCurve(new Keyframe(0, 4f), new Keyframe(0.2f, 2f), new Keyframe(0.4f, 1f), new Keyframe(0.6f, 1f), new Keyframe(0.8f, 1f), new Keyframe(1, 4f));
+            _animSpeedCurvePhase2 = new AnimationCurve(new Keyframe(0, 4f), new Keyframe(0.2f, 2f), new Keyframe(0.4f, 1f), new Keyframe(0.6f, 2f), new Keyframe(0.8f, 2f), new Keyframe(1, 2f));
 
             _processSpeedPhase1 = 1f;
             _processSpeedPhase2 = 1f;
@@ -438,8 +471,8 @@ namespace TarkovIRL
             _animSpeedCurvePhase1 = new AnimationCurve(new Keyframe(0, PrimeMover.Shoulder2SlingCurve1_1.Value), new Keyframe(0.2f, PrimeMover.Shoulder2SlingCurve2_1.Value), new Keyframe(0.4f, PrimeMover.Shoulder2SlingCurve3_1.Value), new Keyframe(0.6f, PrimeMover.Shoulder2SlingCurve4_1.Value), new Keyframe(0.8f, PrimeMover.Shoulder2SlingCurve5_1.Value), new Keyframe(1, PrimeMover.Shoulder2SlingCurve6_1.Value));
             _animSpeedCurvePhase2 = new AnimationCurve(new Keyframe(0, 1f), new Keyframe(1, 1f));
 
-            _processSpeedPhase1 = PrimeMover.Sling2ShoulderSpeed1.Value;
-            _processSpeedPhase2 = PrimeMover.Sling2ShoulderSpeed2.Value;
+            _processSpeedPhase1 = PrimeMover.Shoulder2SlingSpeed1.Value;
+            _processSpeedPhase2 = 1f;
         }
         static void ProcessPistolToShoulder()
         {
@@ -447,7 +480,7 @@ namespace TarkovIRL
             _transitionPhase = ETransitionPhase.FIRST_FRAME;
             _changedStateWindowOpen = false;
 
-            _animSpeedCurvePhase1 = new AnimationCurve(new Keyframe(0, 1f), new Keyframe(1, 0.8f));
+            _animSpeedCurvePhase1 = new AnimationCurve(new Keyframe(0, 1f), new Keyframe(1f, 1f));
             _animSpeedCurvePhase2 = new AnimationCurve(new Keyframe(0, PrimeMover.Sling2ShoulderCurve1_2.Value), new Keyframe(0.2f, PrimeMover.Sling2ShoulderCurve2_2.Value), new Keyframe(0.4f, PrimeMover.Sling2ShoulderCurve3_2.Value), new Keyframe(0.6f, PrimeMover.Sling2ShoulderCurve4_2.Value), new Keyframe(0.8f, PrimeMover.Sling2ShoulderCurve5_2.Value), new Keyframe(1, 1f));
 
             _processSpeedPhase1 = 1f;
@@ -459,8 +492,20 @@ namespace TarkovIRL
             _transitionPhase = ETransitionPhase.FIRST_FRAME;
             _changedStateWindowOpen = false;
 
-            _animSpeedCurvePhase1 = new AnimationCurve(new Keyframe(0, 1f), new Keyframe(1, 0.8f));
+            _animSpeedCurvePhase1 = new AnimationCurve(new Keyframe(0, 1f), new Keyframe(1f, 1f));
             _animSpeedCurvePhase2 = new AnimationCurve(new Keyframe(0, PrimeMover.Sling2ShoulderCurve1_2.Value), new Keyframe(0.2f, PrimeMover.Sling2ShoulderCurve2_2.Value), new Keyframe(0.4f, PrimeMover.Sling2ShoulderCurve3_2.Value), new Keyframe(0.6f, PrimeMover.Sling2ShoulderCurve4_2.Value), new Keyframe(0.8f, PrimeMover.Sling2ShoulderCurve5_2.Value), new Keyframe(1, 1f));
+
+            _processSpeedPhase1 = 1f;
+            _processSpeedPhase2 = 1f;
+        }
+        static void ProcessToSlot()
+        {
+            _transitionType = ETransitionType.TO_KIT;
+            _transitionPhase = ETransitionPhase.FIRST_FRAME;
+            _changedStateWindowOpen = false;
+
+            _animSpeedCurvePhase1 = new AnimationCurve(new Keyframe(0, 1f), new Keyframe(1f, 1f));
+            _animSpeedCurvePhase2 = new AnimationCurve(new Keyframe(0, 1f), new Keyframe(1f, 1f));
 
             _processSpeedPhase1 = 1f;
             _processSpeedPhase2 = 1f;

@@ -51,6 +51,25 @@ namespace TarkovIRL
             {
                 PlayerMotionController.IsHoldingBreath = false;
             }
+
+            bool selectionFromSlot = command == ECommand.PressSlot0;
+            selectionFromSlot &= command == ECommand.PressSlot4;
+            selectionFromSlot &= command == ECommand.PressSlot5;
+            selectionFromSlot &= command == ECommand.PressSlot6;
+            selectionFromSlot &= command == ECommand.PressSlot7;
+            selectionFromSlot &= command == ECommand.PressSlot8;
+            selectionFromSlot &= command == ECommand.PressSlot9;
+            selectionFromSlot &= command == ECommand.SelectFastSlot0;
+            selectionFromSlot &= command == ECommand.SelectFastSlot4;
+            selectionFromSlot &= command == ECommand.SelectFastSlot5;
+            selectionFromSlot &= command == ECommand.SelectFastSlot6;
+            selectionFromSlot &= command == ECommand.SelectFastSlot7;
+            selectionFromSlot &= command == ECommand.SelectFastSlot8;
+            selectionFromSlot &= command == ECommand.SelectFastSlot9;
+            if (selectionFromSlot)
+            {
+                WeaponSelectionController.Process(command, player);
+            }
         }
     }
 }
