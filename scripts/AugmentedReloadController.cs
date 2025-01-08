@@ -104,8 +104,21 @@ namespace TarkovIRL
         {
             float sprintingMulti = PlayerMotionController.IsSprinting ? PrimeMover.AugmentedReloadSprintingDebuff.Value : 1f;
             float augmentedMulti = _AugmentedModeOn ? PrimeMover.AugmentedReloadSpeed.Value : 1f;
+            float slowerReloadMulti;
+            if (_animator != null)
+            {
+                float animTime = _animator.Animator.GetCurrentAnimatorStateInfo(1).normalizedTime;
+                slowerReloadMulti = animTime < 1f && _state == EWeaponState.MID_RELOAD ? PrimeMover.Instance.SlowReloadCurve.Evaluate(animTime) : 1f;
+            }
+            else
+            {
+                slowerReloadMulti = 1f;
+            }
             float realismSpeed = _state == EWeaponState.CHECK_MAG ? RealismWrapper.GetRealismCheckMagSpeed() : RealismWrapper.GetRealismReloadSpeed();
-            return sprintingMulti * augmentedMulti * realismSpeed;
+
+            //UtilsTIRL.Log($"reload state : {_state} at {_animator.Animator.GetCurrentAnimatorStateInfo(1).normalizedTime}");
+
+            return sprintingMulti * augmentedMulti * realismSpeed * slowerReloadMulti;
         }
 
         static bool AugmentedSwitchOpen()

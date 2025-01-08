@@ -1,7 +1,6 @@
 ﻿using EFT;
 using RealismMod;
 using UnityEngine;
-using static RootMotion.FinalIK.GenericPoser;
 
 namespace TarkovIRL
 {

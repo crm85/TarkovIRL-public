@@ -50,8 +50,8 @@ namespace TarkovIRL
                 Vector3 armStamOffset = HandShakeController.GetHandsShakePosition(player);
                 Vector3 poseOffset = HandPoseController.GetModifiedHandPosWithPose(player);
                 Vector3 changePoseOffset = HandPoseController.GetModifiedHandPosWithPoseChange(player);
-                Vector3 movementZOffsets = HandMovController.GetModifiedHandPosZMovement(player);
-                Vector3 unstockedOffset = HandMovController.GetModifiedHandPosForLoweredWeapon(player);
+                Vector3 movementZOffsets = HandMovWithRotController.GetModifiedHandPosZMovement(player);
+                Vector3 unstockedOffset = HandMovWithRotController.GetModifiedHandPosForLoweredWeapon(player);
                 Vector3 footstepOffset = FootstepController.GetModifiedHandPosFootstep;
                 Vector3 parallaxPosition = __instance.HandsContainer.WeaponRoot.localPosition;
                 Quaternion parallaxRotation = __instance.HandsContainer.WeaponRoot.localRotation;

@@ -1,3 +1,16 @@
+-- Version 0.7.2 --
+
+Important polish pass on previous features. At this point I estimate the WHM's feature set is complete, and my goal now is refining and maintenance.
+
+- Slower reloads: Reload speeds in Tarkov conspicuously lack the gap in time wherein your character replaces an old magazine and retrieves a new one from his vest. Even if you watched the most juiced guntubers, they spend much more time replacing a mag in the vest than operating the weapon. I have fixed this: there is not a noticeable time gap after your character removes the mag, making standard reloads significantly slower. Notably, this feature does not apply to emergency reloads, which is another great reason to use them when it's really necessary. Obviously, the slower reloads feature dovetails with the augmented reloads feature, which allows you to reload faster at a cost of reduced situational awareness.
+- Rewrote and improved the weapon transition feature; it was janky before and didn't work well. I've improve the feature's visual cohesion, made it more reliable so that it actually works, and added more transition cases;
+	- In particular, the pistol transitions have specific dynamics: your quickdraw transition from sling to pistol is very fast, and the re-transition back to sling is faster than vanilla; however, your shoulder weapon to pistol transitions -- even the quickdraw -- is quick slow. This is again in line with T-REX Arms' evaluation of weapon transitions in Tarkov, all my inspiration is from their feedback.
+- Added Realism's weapon balance stat as a function of my weapon handling: more front-heavy weapons will have more aiming mis-alignment.
+- Reworked pistol mis-alignment: pistols have increased mis-alignment sensitivity, but an overall lower max mis-alignment; this is to a) reflect reality, b) reflect pistols' function as emergency and limited-case weapons. Put more simply, they are harder to aim very accurately but easier to aim generally with respect to the previous patch.
+- Removed pistol directional sway. This should help if you're very injured and going to the sidearm as a last resort.
+- Small edits to sway effect, I think it's better.
+
+
 -- Version 0.7.1 --
 This version is mostly a polish pass on the new Deadzone from 0.7.
 

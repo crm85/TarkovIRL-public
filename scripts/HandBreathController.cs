@@ -21,7 +21,7 @@ namespace TarkovIRL
         {
             AnimationCurve breathCurve = PrimeMover.Instance.BreathCurve;
             float stamNormalized = player.Physical.Stamina.Current / 104f;
-            float stamModifier = 1f - stamNormalized;
+            float stamModifier = Mathf.Clamp( 1f - stamNormalized, 0.15f, 1f);
             float breathModifier = 1f + stamModifier;
             bool isAugmentedBreath = _breathUpdateTimer < 0.55f && _breathUpdateTimer > 0.26f && PlayerMotionController.IsHoldingBreath;
             isAugmentedBreath &= PlayerMotionController.IsAiming;

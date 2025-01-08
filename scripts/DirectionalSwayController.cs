@@ -54,6 +54,14 @@ namespace TarkovIRL
             float lateralRotTarget = lateralRotOffset * dirSwayLateralValue * PrimeMover.DirectionalSwayMulti.Value;
             float verticalRotTarget = verticalRotOffset * dirSwayVerticalValue * PrimeMover.DirectionalSwayMulti.Value;
 
+            if (WeaponController.IsPistol)
+            {
+                lateralPosTarget = 0;
+                lateralRotTarget = 0;
+                projectedPosTarget = 0;
+                verticalRotTarget = 0;
+            }
+
             float speedDTmulti = Mathf.Clamp(PlayerMotionController.GetNormalSpeed(), 0.5f, 1f);
             float finalDT = dt * PrimeMover.DirectionalSwayLerpSpeed.Value * speedDTmulti;
 

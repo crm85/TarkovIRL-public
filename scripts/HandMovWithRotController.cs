@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace TarkovIRL
 {
-    public static class HandMovController
+    public static class HandMovWithRotController
     {
         // readonlys
         static readonly float _RotPullInValue = 0.07f;
@@ -47,7 +47,7 @@ namespace TarkovIRL
                 _rotPullInTarget = pullInValue;
             }
 
-            _rotPullInLerp = Mathf.Lerp(_rotPullInLerp, _rotPullInTarget, dt * 2f);
+            _rotPullInLerp = Mathf.Lerp(_rotPullInLerp, _rotPullInTarget, dt * 0.5f);
             float finalValue = PrimeMover.Instance.SmoothEdgesCurve.Evaluate(_rotPullInLerp / _RotPullInValue) * _RotPullInValue;
             return new Vector3(0, 0, -finalValue);
         }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using EFT;
 using EFT.InventoryLogic;
+using RealismMod;
 
 namespace TarkovIRL
 {
@@ -71,7 +72,10 @@ namespace TarkovIRL
             Vector2 rotationalMotionThisFrame = _playerRotationLastFrame - player.Rotation;
             rotationalMotionThisFrame *= dt;
             _playerRotationLastFrame = player.Rotation;
-            float sizeMultiFinal = _ParallaxSetSizeFixed * PrimeMover.ParallaxSetSizeMulti.Value;
+
+            float weaponBalanceMulti = 1f + (Mathf.Pow(WeaponStats.Balance, 2f) * 0.001f);
+
+            float sizeMultiFinal = _ParallaxSetSizeFixed * PrimeMover.ParallaxSetSizeMulti.Value * weaponBalanceMulti;
 
             _rotAvgXSet += rotationalMotionThisFrame.x;
             _rotAvgYSet += rotationalMotionThisFrame.y;
@@ -104,8 +108,8 @@ namespace TarkovIRL
             _rotLerpXTarget = Mathf.Lerp(_rotLerpXTarget, _rotAvgX * parallaxMulti, dt * PrimeMover.ParallaxDTMulti.Value);
             _rotLerpYTarget = Mathf.Lerp(_rotLerpYTarget, _rotAvgY * parallaxMulti, dt * PrimeMover.ParallaxDTMulti.Value);
 
-            float clampValueRot = PrimeMover.ParallaxHardClamp.Value;
-            float clampValuePos = PrimeMover.ParallaxHardClamp.Value * 0.5f;
+            float clampValueRot = WeaponController.IsPistol ? PrimeMover.ParallaxHardClampPistols.Value : PrimeMover.ParallaxHardClamp.Value;
+            float clampValuePos = WeaponController.IsPistol ? PrimeMover.ParallaxHardClampPistols.Value * 0.5f : PrimeMover.ParallaxHardClamp.Value * 0.5f;
 
             _rotLerpXTarget = Mathf.Clamp(_rotLerpXTarget, -clampValueRot, clampValueRot);
             _rotLerpYTarget = Mathf.Clamp(_rotLerpYTarget, -clampValueRot, clampValueRot);

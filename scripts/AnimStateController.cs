@@ -42,6 +42,7 @@ namespace TarkovIRL
         public static readonly int _FastReloadDumpMag = -1162171678;
         //
         public static readonly int _WithdrawWeapon = -1205675207;
+        public static readonly int _WithdrawWeaponQuick = -896401840;
         public static readonly int _PresentWeapon = -965243548;
         //
         public static readonly int _Shoot = 590329303;
@@ -86,7 +87,7 @@ namespace TarkovIRL
             {
                 _weaponState = EWeaponState.IDLE;
             }
-            else if (state == _WithdrawWeapon)
+            else if (state == _WithdrawWeapon || state == _WithdrawWeaponQuick)
             {
                 _weaponState = EWeaponState.ORDER_ARM;
             }
