@@ -13,7 +13,7 @@ namespace TarkovIRL
     {
         const string modGUID = "TarkovIRL";
         const string modName = "TarkovIRL - WHM";
-        const string modVersion = "0.7.2";
+        const string modVersion = "0.7.4";
 
         public static PrimeMover Instance;
 
@@ -140,6 +140,9 @@ namespace TarkovIRL
         public static ConfigEntry<float> DeadzoneInActiveAim;
         public static ConfigEntry<float> DeadzoneInADS;
         public static ConfigEntry<float> DeadzoneHeadFollowSpeedMulti;
+        public static ConfigEntry<float> TransitionSpeedMulti;
+        public static ConfigEntry<float> RunFadeDTMulti;
+
         public static ConfigEntry<bool> DeadzoneWeightForEfficiency;
         public static ConfigEntry<bool> DebugEfficiency;
 
@@ -415,7 +418,7 @@ namespace TarkovIRL
             TryLoadPatch(new Patch_TranslateCommand());
             TryLoadPatch(new StaminaRegenRatePatch());
             
-            TryLoadPatch(new Patch_SetAnimatorAndProceduralValues());
+            //TryLoadPatch(new Patch_SetSprint());
 
             //TryLoadPatch(new Patch_ProcessRotation());
             //TryLoadPatch(new Patch_ProcessUpperbodyRotation());
@@ -442,10 +445,11 @@ namespace TarkovIRL
             // general sliders
             WeaponDeadzoneMulti = ConstructFloatConfig(WeaponDeadzoneMultiDefault, GENERAL_SLIDERS, "Deadzone multiplier", "Change overall deadzone effect strength.", 0, 5f);
             WeaponSwayMulti = ConstructFloatConfig(0.3f, GENERAL_SLIDERS, "Sway multiplier", "Change overall sway effect strength.", 0, 2f);
-            ParallaxMulti = ConstructFloatConfig(17f, GENERAL_SLIDERS, "Parallax multiplier", "Change overall parallax effect strength.", 1f, 100f);
-            DirectionalSwayMulti = ConstructFloatConfig(0.2f, GENERAL_SLIDERS, "Directional Sway Final Modifier", "", 0, 5f);
+            ParallaxMulti = ConstructFloatConfig(13f, GENERAL_SLIDERS, "Parallax multiplier", "Change overall parallax effect strength.", 1f, 100f);
+            DirectionalSwayMulti = ConstructFloatConfig(0.15f, GENERAL_SLIDERS, "Directional Sway Final Modifier", "", 0, 5f);
             EfficiencyInjuryDebuffMulti = ConstructFloatConfig(0.5f, GENERAL_SLIDERS, "Efficiency injury effect multi", "Controls how much injuries affect your Efficiency stat. This is to prevent noodle-arms as soon as you get hit. Bone breaks, bleeds, tremors, pain, and fresh wounds only are affected by this slider - not your overall HP.", 0f, 2f);
-
+            TransitionSpeedMulti = ConstructFloatConfig(1.3f, GENERAL_SLIDERS, "Weapon transition speed multiplier", "Global multiplier for how fast all weapon transitions occur", 0.1f, 5f);
+            
             // new sway sliders
             NewSwayPositionMulti = ConstructFloatConfig(0.5f, NEW_SWAY_SLIDERS, "Sway position multiplier", "", 0, 10f);
             NewSwayRotationMulti = ConstructFloatConfig(3f, NEW_SWAY_SLIDERS, "Sway rotation multiplier", "", 0, 10f);
@@ -492,7 +496,8 @@ namespace TarkovIRL
             SideToSidePositionDTMulti = ConstructFloatConfig(0.35f, MISC_SLIDERS, "Footstep side-to-side position speed", "", 0, 10f);
             FootstepCutoffRatio = ConstructFloatConfig(0.65f, MISC_SLIDERS, "Footstep animation cutoff", "Just don't touch this.", 0, 1f);
             MotionTrackingThreshold = ConstructFloatConfig(0.005f, MISC_SLIDERS, "Motion tracking threshold", "Just don't touch this.", 0, 0.01f);
-                
+            RunFadeDTMulti = ConstructFloatConfig(10f, MISC_SLIDERS, "Run Transition Animation Fade Speed Multi", "", 1f, 50f);
+
             // rotation engine
             RotationAverageDTMulti = ConstructFloatConfig(80f, ROTATION_ENGINE_SLIDERS, "RotationAverageDTMulti", "Just don't touch this.", 0.1f, 100f);
             RotationHistoryClamp = ConstructFloatConfig(0.1f, ROTATION_ENGINE_SLIDERS, "RotationHistoryClamp", "Just don't touch this.", 0f, 1f);
@@ -672,6 +677,7 @@ namespace TarkovIRL
             ThrowController.UpdateLerp(DeltaTime);
             HeadRotController.UpdateLerp(DeltaTime);
             DirectionalSwayController.UpdateDirectionalSwayLerp(DeltaTime);
+            //RunningFadeController.UpdateRunningFadeOffsets(DeltaTime);
         }
 
         void FixedUpdate()

@@ -34,6 +34,9 @@ namespace TarkovIRL
         static AnimationCurve _animSpeedCurvePhase2 = new AnimationCurve();
 
         static AnimationCurve _Flatcurve = new AnimationCurve(new Keyframe(0f, 1f), new Keyframe (1f, 1f));
+        static bool _transitionFirstFrame = false;
+        static bool _transitionWindowOpen = false;
+        static EWeaponState _previousState;
 
         public static void UpdateAnimationPump(float dt)
         {
@@ -64,15 +67,27 @@ namespace TarkovIRL
             _rotLerpSmoothed.y = _rotLerpHistory.y * dt * PrimeMover.TransformSmoothingDTMulti.Value;
             _rotLerpSmoothed.z = _rotLerpHistory.z * dt * PrimeMover.TransformSmoothingDTMulti.Value;
 
+
+            if (_transitionFirstFrame)
+            {
+                _transitionFirstFrame = false;
+                _transitionWindowOpen = true;
+            }
+
+            if (!_transitionWindowOpen)
+            {
+                return;
+            }
+
             EWeaponState state = AnimStateController.WeaponState;
             float animProgress = _player.HandsAnimator.Animator.GetCurrentAnimatorStateInfo(1).normalizedTime;
             float efficiencyMod = Mathf.Clamp(EfficiencyController.EfficiencyModifierInverse, 0.5f, 1.5f);
             float proneMod = PlayerMotionController.IsProne ? 0.33f : 1f;
-            float finalSpeedMulti = efficiencyMod * proneMod * WeaponController.GetWeaponMulti(true);
+            float finalSpeedMulti = efficiencyMod * proneMod * WeaponController.GetWeaponMulti(true) * PrimeMover.TransitionSpeedMulti.Value;
 
             if (state == EWeaponState.ORDER_ARM)
             {
-                float speed = _animSpeedCurvePhase1.Evaluate(animProgress);
+                float speed = _animSpeedCurvePhase1.Evaluate(animProgress) * finalSpeedMulti;
                 SetAnimSpeed(_player, speed);
                 _posLerp = Vector3.Lerp(Vector3.zero, _orderEndPos, animProgress);
                 _rotLerp = Vector3.Lerp(Vector3.zero, _orderEndRot, animProgress);
@@ -80,12 +95,25 @@ namespace TarkovIRL
             }
             else if (state == EWeaponState.PRESENT_ARM)
             {
-                float speed = _animSpeedCurvePhase2.Evaluate(animProgress);
+                float speed = _animSpeedCurvePhase2.Evaluate(animProgress) * finalSpeedMulti;
                 SetAnimSpeed(_player, speed);
                 _posLerp = Vector3.Lerp(_presentStartPos, Vector3.zero, animProgress);
                 _rotLerp = Vector3.Lerp(_presentStartRot, Vector3.zero, animProgress);
                 //UtilsTIRL.Log($" animProgress of {state} - {animProgress} at speed {speed}");
+
             }
+            // cleanup transition
+            if (_previousState == EWeaponState.PRESENT_ARM && state == EWeaponState.IDLE)
+            {
+                SetAnimSpeed(_player, 1f);
+                _transitionWindowOpen = false;
+                _posLerp = Vector3.zero;
+                _rotLerp = Vector3.zero;
+            }
+            _previousState = state;
+
+            //UtilsTIRL.Log($"transition open at state {state}/{AnimStateController.WeaponStateHash} - {animProgress}");
+
         }
 
         public static void GetWeaponSelectionTransforms(out Vector3 pos, out Quaternion rot)
@@ -96,6 +124,11 @@ namespace TarkovIRL
 
         public static void Process(ECommand command, Player player)
         {
+            if (player == null)
+            {
+                return;
+            }
+
             _player = player;
             if (AnimStateController.WeaponState == AnimStateController.EWeaponState.UNKNOWN_STATE)
             {
@@ -161,6 +194,9 @@ namespace TarkovIRL
                 return;
             }
 
+            // a new process is ensured
+            _transitionFirstFrame = true;
+
             // swap between sling and shoulder
             if (command == ECommand.SelectFirstPrimaryWeapon && _lastSelectedWeapon == EWeaponSelection.SHOULDER)
             {
@@ -184,6 +220,10 @@ namespace TarkovIRL
 
             // quick swap between pistol and shoulder should be disabled
             if (command == ECommand.SelectSecondaryWeapon && _lastSelectedWeapon == EWeaponSelection.SHOULDER)
+            {
+                ProcessShoulderToPistol();
+            }
+            if (command == ECommand.QuickSelectSecondaryWeapon && _lastSelectedWeapon == EWeaponSelection.SHOULDER)
             {
                 ProcessShoulderToPistol();
             }
@@ -262,7 +302,7 @@ namespace TarkovIRL
         static void ProcessSlingToPistol()
         {
             _animSpeedCurvePhase1 = new AnimationCurve(new Keyframe(0f, 1f), new Keyframe(1f, 1f));
-            _animSpeedCurvePhase2 = new AnimationCurve(new Keyframe(0f, 1f), new Keyframe(1f, 1f));
+            _animSpeedCurvePhase2 = new AnimationCurve(new Keyframe(0f, 0.3f), new Keyframe(1f, 0.3f));
 
             _orderEndPos = new Vector3(PrimeMover.SlingPositionEndX.Value, PrimeMover.SlingPositionEndY.Value, PrimeMover.SlingPositionEndZ.Value);
             _orderEndRot = new Vector3(PrimeMover.SlingRotationEndX.Value, PrimeMover.SlingRotationEndY.Value, PrimeMover.SlingRotationEndZ.Value);
@@ -273,8 +313,8 @@ namespace TarkovIRL
 
         static void ProcessQuickSlingToPistol()
         {
-            _animSpeedCurvePhase1 = new AnimationCurve(new Keyframe(0f, 1f), new Keyframe(1f, 1f));
-            _animSpeedCurvePhase2 = new AnimationCurve(new Keyframe(0f, 3f), new Keyframe(1f, 3f));
+            _animSpeedCurvePhase1 = new AnimationCurve(new Keyframe(0f, 1.25f), new Keyframe(1f, 0.75f));
+            _animSpeedCurvePhase2 = new AnimationCurve(new Keyframe(0f, 1.2f), new Keyframe(1f, 2f));
 
             _orderEndPos = new Vector3(PrimeMover.SlingPositionEndX.Value, PrimeMover.SlingPositionEndY.Value, PrimeMover.SlingPositionEndZ.Value);
             _orderEndRot = new Vector3(PrimeMover.SlingRotationEndX.Value, PrimeMover.SlingRotationEndY.Value, PrimeMover.SlingRotationEndZ.Value);
@@ -286,7 +326,7 @@ namespace TarkovIRL
         static void ProcessShoulderToPistol()
         {
             _animSpeedCurvePhase1 = PrimeMover.Instance.OrderShoulderCurve;
-            _animSpeedCurvePhase2 = _Flatcurve;
+            _animSpeedCurvePhase2 = new AnimationCurve(new Keyframe(0f, 0.3f), new Keyframe(1f, 0.3f));
 
             _orderEndPos = new Vector3(PrimeMover.ShoulderPositionEndX.Value, PrimeMover.ShoulderPositionEndY.Value, PrimeMover.ShoulderPositionEndZ.Value);
             _orderEndRot = new Vector3(PrimeMover.ShoulderRotationEndX.Value, PrimeMover.ShoulderRotationEndY.Value, PrimeMover.ShoulderRotationEndZ.Value);
@@ -296,7 +336,7 @@ namespace TarkovIRL
         }
         static void ProcessPistolToShoulder()
         {
-            _animSpeedCurvePhase1 = _Flatcurve;
+            _animSpeedCurvePhase1 = new AnimationCurve(new Keyframe(0f, 0.25f), new Keyframe(1f, 0.25f));
             _animSpeedCurvePhase2 = PrimeMover.Instance.PresentShoulderCurve;
 
             _orderEndPos = new Vector3(PrimeMover.HolsterPositionEndX.Value, PrimeMover.HolsterPositionEndY.Value, PrimeMover.HolsterPositionEndZ.Value);
@@ -305,10 +345,10 @@ namespace TarkovIRL
             _presentStartPos = new Vector3(PrimeMover.ShoulderPositionStartX.Value, PrimeMover.ShoulderPositionStartY.Value, PrimeMover.ShoulderPositionStartZ.Value);
             _presentStartRot = new Vector3(PrimeMover.ShoulderRotationStartX.Value, PrimeMover.ShoulderRotationStartY.Value, PrimeMover.ShoulderRotationStartZ.Value);
 
-        }
+        }   
         static void ProcessPistolToSling()
         {
-            _animSpeedCurvePhase1 = new AnimationCurve(new Keyframe(0f, 1.75f), new Keyframe(1f, 1.75f));
+            _animSpeedCurvePhase1 = new AnimationCurve(new Keyframe(0f, 0.35f), new Keyframe(1f, 0.25f));
             _animSpeedCurvePhase2 = new AnimationCurve(new Keyframe(0f, 1.75f), new Keyframe(1f, 1.75f));
 
             _orderEndPos = new Vector3(PrimeMover.HolsterPositionEndX.Value, PrimeMover.HolsterPositionEndY.Value, PrimeMover.HolsterPositionEndZ.Value);

@@ -1,3 +1,13 @@
+-- Version 0.7.4 -- (0.7.3 was just a hotfix)
+
+Small polish pass, the final update of 3.9.x. Some things I wanted to solidify before moving to 3.10 development. As I have repeatedly said, the mod has reached a very evolved state and I am unlikely to add (m)any more new features. From now on I will concentrate on updates, polish, documentation and cleanup up the config; working toward 1.0.
+
+- Added Realism's balance stat to my Emulated Gravity mechanic: Front-heavy weapons will drop faster and take longer to raise, essentially they are harder to handle in the vertical plane.
+- Some more polish on quickdraw speeds/effects, looks smoother.
+- Camera tracking speed for Deadzone increased 50% when in high ready; high ready feels more 'ready' this way, ready to break out into the ADS (especially since you go into the ADS with an efficiency buff).
+- Lowered default mis-alignment value (after adding Realism's balance state to that calculation, it is generally higher now).
+- Lowered default directional sway value.
+
 -- Version 0.7.2 --
 
 Important polish pass on previous features. At this point I estimate the WHM's feature set is complete, and my goal now is refining and maintenance.

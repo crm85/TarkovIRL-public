@@ -20,6 +20,7 @@ namespace TarkovIRL
         public static readonly int _LeftShoulderStance = 0;
         public static readonly int _SideStepLeft = 731208140;
         public static readonly int _SideStepRight = 1696653403;
+        public static readonly int _Running = -244792566;
 
         //
         // weapon states
@@ -50,14 +51,17 @@ namespace TarkovIRL
         public static readonly int _CheckChamber = -131286203;
 
         static int _currentBodyStateHash = 0;
+        static int _currentWeaponStateHash = 0;
 
         public static void SetCurrentBodyAnimState(int state)
         {
             _currentBodyStateHash = state;
+            //UtilsTIRL.Log($"current body anim hash {state}");
         }
         public static void SetCurrentWeaponAnimState(int state)
         {
             //UtilsTIRL.Log($"current weapon anim hash {state}");
+            _currentWeaponStateHash = state;
 
             if (state == _HandOnMag)
             {
@@ -132,6 +136,12 @@ namespace TarkovIRL
             get { return _currentBodyStateHash == _SideStepLeft || _currentBodyStateHash == _SideStepRight; }
         }
 
+        public static bool IsRunning
+        { 
+            get { return _currentBodyStateHash == -244792566; }
+        }
+
         public static EWeaponState WeaponState => _weaponState;
+        public static int WeaponStateHash => _currentWeaponStateHash;
     }
 }

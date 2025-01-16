@@ -44,5 +44,19 @@ namespace TarkovIRL
                 }
             } 
         }
+
+        public static float WeaponBalanceMulti
+        {
+            get
+            {
+                float weaponBalanceMulti = 1f + (Mathf.Pow(WeaponStats.Balance, 2f) * 0.001f);
+                return weaponBalanceMulti;
+            }
+        }
+
+        public static bool IsTacSprint
+        {
+            get { return StanceController.IsDoingTacSprint; }
+        }
     }
 }

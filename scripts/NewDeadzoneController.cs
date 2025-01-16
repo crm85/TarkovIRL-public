@@ -44,8 +44,9 @@ namespace TarkovIRL
                 deadzoneMulti *= PrimeMover.DeadzoneInVanilla.Value;
             }
             float efficiencyWeight = PrimeMover.DeadzoneWeightForEfficiency.Value ? EfficiencyController.EfficiencyModifierInverse : 1f;
+            float highReadyMulti = StanceController.CurrentStance == EStance.HighReady ? 0.5f : 1f;
             //UtilsTIRL.Log($"efficiencyWeight on deadzone {efficiencyWeight}");
-            _rotDeltaSmoothedInDeltaTime = Mathf.Lerp(_rotDeltaSmoothedInDeltaTime, _rotDeltaSmoothed * deadzoneMulti, PrimeMover.Instance.DeltaTime * PrimeMover.DeadzoneHeadFollowSpeedMulti.Value * efficiencyWeight);
+            _rotDeltaSmoothedInDeltaTime = Mathf.Lerp(_rotDeltaSmoothedInDeltaTime, _rotDeltaSmoothed * deadzoneMulti, PrimeMover.Instance.DeltaTime * PrimeMover.DeadzoneHeadFollowSpeedMulti.Value * efficiencyWeight * highReadyMulti);
 
             Vector3 headRotFinal = headRotInitial;
             headRotFinal.y += _rotDeltaSmoothedInDeltaTime;

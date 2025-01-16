@@ -73,9 +73,7 @@ namespace TarkovIRL
             rotationalMotionThisFrame *= dt;
             _playerRotationLastFrame = player.Rotation;
 
-            float weaponBalanceMulti = 1f + (Mathf.Pow(WeaponStats.Balance, 2f) * 0.001f);
-
-            float sizeMultiFinal = _ParallaxSetSizeFixed * PrimeMover.ParallaxSetSizeMulti.Value * weaponBalanceMulti;
+            float sizeMultiFinal = _ParallaxSetSizeFixed * PrimeMover.ParallaxSetSizeMulti.Value * RealismWrapper.WeaponBalanceMulti;
 
             _rotAvgXSet += rotationalMotionThisFrame.x;
             _rotAvgYSet += rotationalMotionThisFrame.y;

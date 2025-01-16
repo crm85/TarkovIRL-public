@@ -66,7 +66,8 @@ namespace TarkovIRL
             float value5 = (PlayerMotionController.IsAiming ? 0f : (verticalRotationDelta * num16 * PrimeMover.HyperVerticalMulti.Value * WeaponController.GetWeaponMulti(getInverse: false) * EfficiencyController.EfficiencyModifier));
             float value6 = PrimeMover.HyperVerticalClamp.Value;
             value5 = Mathf.Clamp(value5, 0f - value6, value6);
-            _hyperVerticalLerp = Mathf.Lerp(_hyperVerticalLerp, value5, deltaTime * PrimeMover.HyperVerticalDT.Value);
+            float hyperVertDt = PrimeMover.HyperVerticalDT.Value * RealismWrapper.WeaponBalanceMulti;
+            _hyperVerticalLerp = Mathf.Lerp(_hyperVerticalLerp, value5, deltaTime * hyperVertDt);
 
         }
 
