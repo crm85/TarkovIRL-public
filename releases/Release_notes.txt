@@ -1,3 +1,7 @@
+-- Version 0.7.4.1 --
+
+- Attempted fix to problems with my reload system not engaging sometimes. In my limited testing it's fixed. I was not intending to update again for the 3.9.x branch but ... well my personal playthrough is on 3.9 :p
+
 -- Version 0.7.4 -- (0.7.3 was just a hotfix)
 
 Small polish pass, the final update of 3.9.x. Some things I wanted to solidify before moving to 3.10 development. As I have repeatedly said, the mod has reached a very evolved state and I am unlikely to add (m)any more new features. From now on I will concentrate on updates, polish, documentation and cleanup up the config; working toward 1.0.

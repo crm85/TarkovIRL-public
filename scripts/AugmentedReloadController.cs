@@ -73,7 +73,7 @@ namespace TarkovIRL
             else if (_refreshAnimatorTimer > 1f)
             {
                 _refreshAnimatorTimer = 0;
-                _animator = animator;
+                //_animator = animator;
             }
 
             UpdateSpeed();

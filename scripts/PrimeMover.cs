@@ -13,7 +13,7 @@ namespace TarkovIRL
     {
         const string modGUID = "TarkovIRL";
         const string modName = "TarkovIRL - WHM";
-        const string modVersion = "0.7.4";
+        const string modVersion = "0.7.4.1";
 
         public static PrimeMover Instance;
 
