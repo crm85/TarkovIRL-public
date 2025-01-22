@@ -50,7 +50,7 @@ namespace TarkovIRL
 
             ParallaxAdsController.UpdateLerps();
 
-            if (WeaponController.IsStocked)
+            if (WeaponController.HasShoulderContact())
             {
                 bool isNewAds = !_aimingLastFrame && isAiming;
                 bool isFinishAds = _aimingLastFrame && !isAiming;

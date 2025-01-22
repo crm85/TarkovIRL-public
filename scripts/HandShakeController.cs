@@ -41,7 +41,7 @@ namespace TarkovIRL
             }
 
             float pistolFactor = WeaponController.IsPistol ? 2f : 1f;
-            float unstockedFactor = !WeaponController.IsPistol && !WeaponController.IsStocked ? 1.8f : 1f;
+            float unstockedFactor = !WeaponController.IsPistol && !WeaponController.HasShoulderContact() ? 1.8f : 1f;
             float augmentedBreathMulti = PlayerMotionController.IsAugmentedBreath ? 0.5f : 1f;
             float finalMulti = EfficiencyController.EfficiencyModifier * PrimeMover.ArmShakeMulti.Value * _HandShakeMultiGeneral * pistolFactor * unstockedFactor * WeaponController.CurrentWeaponWeight * augmentedBreathMulti;
 

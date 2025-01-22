@@ -1,3 +1,8 @@
+-- Version 0.7.4.2 --
+
+- Fixed reload bugs for real this time.
+- Fixed bug where folded stock was not detecting correctly.
+
 -- Version 0.7.4.1 --
 
 - Attempted fix to problems with my reload system not engaging sometimes. In my limited testing it's fixed. I was not intending to update again for the 3.9.x branch but ... well my personal playthrough is on 3.9 :p

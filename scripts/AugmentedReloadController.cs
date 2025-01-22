@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using EFT;
+using System;
+using UnityEngine;
 using static TarkovIRL.AnimStateController;
 
 namespace TarkovIRL
@@ -15,8 +17,10 @@ namespace TarkovIRL
 
         static bool _AugmentedModeOn = false;
         static EWeaponState _state;
-        static FirearmsAnimator _animator = null;
+        static ObjectInHandsAnimator _animator = null;
         static float _refreshAnimatorTimer = 0;
+
+        static int _animatorLayer = 1;
 
         public static Vector3 GetAugmentedReloadHeadOffset()
         {
@@ -62,18 +66,16 @@ namespace TarkovIRL
             }
         }
 
-        public static void Update(FirearmsAnimator animator)
+        public static void RefreshAnimator(ObjectInHandsAnimator animator)
         {
-            _refreshAnimatorTimer += PrimeMover.Instance.DeltaTime;
+            _animator = animator;
+        }
 
+        public static void Update()
+        {
             if (_animator == null)
             {
-                _animator = animator;
-            }
-            else if (_refreshAnimatorTimer > 1f)
-            {
-                _refreshAnimatorTimer = 0;
-                //_animator = animator;
+                return;
             }
 
             UpdateSpeed();
@@ -97,7 +99,14 @@ namespace TarkovIRL
             {
                 return;
             }
-            _animator.SetAnimationSpeed(speed);
+            try
+            {
+                _animator.SetAnimationSpeed(speed);
+            }
+            catch (Exception e)
+            {
+                UtilsTIRL.Log($"set anim speed failed, {e}");
+            }
         }
 
         static float GetReloadSpeedFromContext()
@@ -105,10 +114,18 @@ namespace TarkovIRL
             float sprintingMulti = PlayerMotionController.IsSprinting ? PrimeMover.AugmentedReloadSprintingDebuff.Value : 1f;
             float augmentedMulti = _AugmentedModeOn ? PrimeMover.AugmentedReloadSpeed.Value : 1f;
             float slowerReloadMulti;
-            if (_animator != null)
+            if (_animator != null && _state == EWeaponState.MID_RELOAD)
             {
-                float animTime = _animator.Animator.GetCurrentAnimatorStateInfo(1).normalizedTime;
-                slowerReloadMulti = animTime < 1f && _state == EWeaponState.MID_RELOAD ? PrimeMover.Instance.SlowReloadCurve.Evaluate(animTime) : 1f;
+                try
+                {
+                    float animTime = _animator.Animator.GetCurrentAnimatorStateInfo(_animatorLayer).normalizedTime;
+                    slowerReloadMulti = animTime < 1f ? PrimeMover.Instance.SlowReloadCurve.Evaluate(animTime) : 1f;
+                }
+                catch (NullReferenceException e)
+                {
+                    UtilsTIRL.Log($"anim layer {_animatorLayer} returned null -- {e}");
+                    slowerReloadMulti = 1f;
+                }
             }
             else
             {

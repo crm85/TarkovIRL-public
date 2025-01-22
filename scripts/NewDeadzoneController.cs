@@ -27,7 +27,7 @@ namespace TarkovIRL
         public static Vector3 GetHeadRotWithDeadzone(Vector3 headRotInitial) 
         {
             float deadzoneMulti = PrimeMover.WeaponDeadzoneMulti.Value * WeaponController.GetWeaponMulti(false);
-            if (WeaponController.IsStocked && PlayerMotionController.IsAiming)
+            if (WeaponController.HasShoulderContact() && PlayerMotionController.IsAiming)
             {
                 deadzoneMulti *= PrimeMover.DeadzoneInADS.Value;
             }

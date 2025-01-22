@@ -42,7 +42,7 @@ namespace TarkovIRL
             {
                 float rotDelta = Mathf.Abs(PlayerMotionController.HorizontalRotationDelta * 100f);
                 rotDelta = Mathf.Clamp01( rotDelta );
-                float pullInValue = WeaponController.IsStocked ? _RotPullInValue * 0.75f : _RotPullInValue;
+                float pullInValue = WeaponController.HasShoulderContact() ? _RotPullInValue * 0.75f : _RotPullInValue;
                 pullInValue *= rotDelta;
                 _rotPullInTarget = pullInValue;
             }
@@ -59,7 +59,7 @@ namespace TarkovIRL
             {
                 _stockedMovementAddedPosTarget = _StockMovementAddedPosValue * 0.2f * WeaponController.GetWeaponMulti(false);
             }
-            else if (!WeaponController.IsStocked && !WeaponController.IsPistol && PlayerMotionController.IsPlayerMovement)  
+            else if (!WeaponController.HasShoulderContact() && !WeaponController.IsPistol && PlayerMotionController.IsPlayerMovement)  
             {
                 _stockedMovementAddedPosTarget = _StockMovementAddedPosValue * WeaponController.GetWeaponMulti(false);
             }

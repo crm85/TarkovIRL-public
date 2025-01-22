@@ -16,16 +16,14 @@ public class Patch_LateUpdate_UpdateWpnStats : ModulePatch
 	private static void PatchPostfix(Player __instance)
     {
         Player.FirearmController fc = __instance.HandsController as Player.FirearmController;
-        if (fc == null) return;
-        if (fc.FirearmsAnimator != null)
-        {
-            AugmentedReloadController.Update(fc.FirearmsAnimator);
-        }
 
+        if (fc == null) return;
+        
         if (!__instance.IsYourPlayer)
         {
             return;
         }
+
         AnimStateController.SetCurrentWeaponAnimState(__instance.HandsAnimator.Animator.GetCurrentAnimatorStateInfo(1).nameHash);
         int weaponHash = fc.Weapon.Name.GetHashCode();
         if (weaponHash != _weaponHashLastFrame)

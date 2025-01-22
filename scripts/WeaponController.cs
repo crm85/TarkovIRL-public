@@ -11,6 +11,7 @@ namespace TarkovIRL
         public static float CurrentWeaponWeight = 0;
 
         public static bool IsStocked = false;
+        public static bool IsStockFolded = false;
         public static bool IsPistol = false;
         public static bool SwayThisFrame = false;
         
@@ -32,6 +33,11 @@ namespace TarkovIRL
             }
         }
 
+        public static void ToggleFolded()
+        {
+            IsStockFolded = !IsStockFolded;
+        }
+
         static bool CheckForStock(EFT.InventoryLogic.Weapon weapon)
         {
             bool isPistol = weapon.WeapClass == "pistol";
@@ -40,20 +46,17 @@ namespace TarkovIRL
             {
                 return false;
             }
+
             else if (_currentWeaponHash == _MP5KHash)
             {
                 return false;
             }
-            else
+
+            if (weapon.GetFoldable() != null)
             {
-                if (weapon.GetFoldable() != null)
-                {
-                    if (weapon.Folded)
-                    {
-                        return false;
-                    }
-                }
+                IsStockFolded = weapon.Folded;
             }
+
             return true;
         }
 
@@ -73,6 +76,14 @@ namespace TarkovIRL
         public static int WeaponHash
         {
             get { return _currentWeaponHash; }
+        }
+
+        public static bool HasShoulderContact()
+        {
+            bool result;
+            result = IsStocked;
+            result &= IsStockFolded;
+            return result;
         }
     }
 }

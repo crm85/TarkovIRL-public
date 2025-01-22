@@ -51,6 +51,10 @@ namespace TarkovIRL
             {
                 PlayerMotionController.IsHoldingBreath = false;
             }
+            if (command == ECommand.FoldStock)
+            {
+                WeaponController.ToggleFolded();
+            }
 
             bool selectionFromSlot = command == ECommand.PressSlot0;
             selectionFromSlot &= command == ECommand.PressSlot4;

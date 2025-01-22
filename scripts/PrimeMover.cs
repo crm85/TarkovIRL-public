@@ -5,6 +5,7 @@ using BepInEx.Configuration;
 using UnityEngine;
 using EFT.UI;
 using HarmonyLib;
+using RealismMod;
 
 namespace TarkovIRL
 {
@@ -417,7 +418,10 @@ namespace TarkovIRL
             TryLoadPatch(new Patch_ThrowGrenade());
             TryLoadPatch(new Patch_TranslateCommand());
             TryLoadPatch(new StaminaRegenRatePatch());
-            
+
+            TryLoadPatch(new Patch_ReloadMag());
+            TryLoadPatch(new Patch_QuickReloadMag());
+
             //TryLoadPatch(new Patch_SetSprint());
 
             //TryLoadPatch(new Patch_ProcessRotation());
@@ -677,6 +681,7 @@ namespace TarkovIRL
             ThrowController.UpdateLerp(DeltaTime);
             HeadRotController.UpdateLerp(DeltaTime);
             DirectionalSwayController.UpdateDirectionalSwayLerp(DeltaTime);
+            AugmentedReloadController.Update();
             //RunningFadeController.UpdateRunningFadeOffsets(DeltaTime);
         }
 
