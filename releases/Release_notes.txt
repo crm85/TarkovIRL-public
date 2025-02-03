@@ -1,3 +1,16 @@
+-- Version 0.7.5 --
+
+- Updated for SPT 3.10.x + Realism 1.5
+- Added smoothing layer to Misalignment effect to reduce volatility when injured
+- Fixed bug of reloads not being slower when sprinting
+- Removed throwing animation feature temporarily for 3.10 compat
+- Fixed some cases where weapon sway profile changed between stocked / stock retracted incorrectly
+- Fixed toxication not being detected by Efficiency system
+- Fixed bug where weapon stats were not being tracked correctly (thanks Berial for bug report)
+- Removed Directional Sway from non-shouldered weapons
+- Added different Deadzone profiles for all the different Realism stances
+- Various tweaks to sway, misalignment, deadzone in general
+
 -- Version 0.7.4.2 --
 
 - Fixed reload bugs for real this time.
