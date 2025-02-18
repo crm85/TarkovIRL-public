@@ -37,7 +37,7 @@ namespace TarkovIRL
             AnimStateController.SetCurrentBodyAnimState(player.MovementContext.CurrentState.AnimatorStateHash);
 
             //
-            PlayerMotionController.UpdateMovement(player);
+            PlayerMotionController.UpdateMovementInformation(player);
             if (!player.IsInventoryOpened)
             {
                 __instance.UpdateSwayFactors();

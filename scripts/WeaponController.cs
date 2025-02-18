@@ -14,6 +14,7 @@ namespace TarkovIRL
         public static bool IsStockFolded = false;
         public static bool IsPistol = false;
         public static bool SwayThisFrame = false;
+        public static bool IsFoldable = false;
         
         static int _currentWeaponHash = 0;
         static readonly int _MP5KHash = 25347301;
@@ -22,7 +23,7 @@ namespace TarkovIRL
         {
             if (fc != null)
             {
-                CurrentWeaponWeight = PrimeMover.Instance.WeightAttenuationCurve.Evaluate(fc.Weapon.GetSingleItemTotalWeight());
+                CurrentWeaponWeight = PrimeMover.Instance.WeightAttenuationCurve.Evaluate(fc.Weapon.TotalWeight);
                 CurrentWeaponErgoNorm = PrimeMover.Instance.ErgoAttenuationCurve.Evaluate(fc.TotalErgonomics / 100f);
                 IsStocked = CheckForStock(fc.Weapon);
             }
@@ -35,6 +36,15 @@ namespace TarkovIRL
 
         public static void ToggleFolded()
         {
+            if (!IsFoldable)
+            {
+                return;
+            }
+            if (AnimStateController.WeaponState != AnimStateController.EWeaponState.IDLE)
+            {
+                return;
+            }
+
             IsStockFolded = !IsStockFolded;
         }
 
@@ -54,6 +64,7 @@ namespace TarkovIRL
 
             if (weapon.GetFoldable() != null)
             {
+                IsFoldable = true;
                 IsStockFolded = weapon.Folded;
             }
 
@@ -81,8 +92,9 @@ namespace TarkovIRL
         public static bool HasShoulderContact()
         {
             bool result;
-            result = IsStocked;
-            result &= IsStockFolded;
+            //result = IsStocked;
+            //result &= !IsStockFolded;
+            result = RealismWrapper.IsShoulderContact();
             return result;
         }
     }

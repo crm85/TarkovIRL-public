@@ -30,7 +30,7 @@ namespace TarkovIRL
             //Player player = (Player)movementContextField.GetValue(MContext);
             // if not your player return true
 
-            UtilsTIRL.Log($"turn called, HandsToBodyAngle {movementContext.HandsToBodyAngle}, TrunkRotationLimit {movementContext.TrunkRotationLimit}");
+            TIRLUtils.LogError($"turn called, HandsToBodyAngle {movementContext.HandsToBodyAngle}, TrunkRotationLimit {movementContext.TrunkRotationLimit}");
             if (Mathf.Abs(movementContext.HandsToBodyAngle) > movementContext.TrunkRotationLimit * 0.2f)
             {
                 __instance.ProcessUpperbodyRotation(deltaTime);

@@ -31,6 +31,7 @@ namespace TarkovIRL
         static float _verticalAvg = 0;
         static float _playerSpeed = 0;
         static float _leanNormalized = 0;
+        static float _armStam = 0;
 
         static public bool IsAiming = false;
         static public bool IsSprinting = false;
@@ -43,21 +44,25 @@ namespace TarkovIRL
 
         public static void UpdateMovementMeasurementsInFDT(float fdt)
         {
-            UpdateMoving(_lastPositionRecorded);
-            UpdateRotation(_lastRotationRecorded, fdt);
+            
+
+            UpdateIsMovingBool(_lastPositionRecorded);
+            UpdateRotationEngine(_lastRotationRecorded, fdt);
         }
 
-        public static void UpdateMovement(Player player)
+        public static void UpdateMovementInformation(Player player)
         {
             _lastPositionRecorded = player.Position;
             _lastRotationRecorded = player.Rotation;
             IsAiming = player.ProceduralWeaponAnimation.IsAiming;
             IsProne = player.IsInPronePose;
+            IsSprinting = player.IsSprintEnabled;
             _playerSpeed = player.Speed;
             _leanNormalized = player.MovementContext.Tilt / 5f;
+            _armStam = player.Physical.HandsStamina.NormalValue;
             UpdateMovementDirection(player.InputDirection);
         }
-        static void UpdateMoving(Vector3 position)
+        static void UpdateIsMovingBool(Vector3 position)
         {
             float dist = Vector3.Distance(position, _playerPosLastFrame);
             if (dist > PrimeMover.MotionTrackingThreshold.Value)
@@ -71,8 +76,12 @@ namespace TarkovIRL
             _playerPosLastFrame = position;
         }
 
-        static void UpdateRotation(Vector2 newRot, float dt)
+        static void UpdateRotationEngine(Vector2 newRot, float dt)
         {
+            //
+            // One could say this function is the heart of the mod, if there is one
+            //
+
             // vertical 
             _verticalAvg = newRot.y > _playerRotLastFrame.y ? 1f : -1f;
 
@@ -171,6 +180,11 @@ namespace TarkovIRL
         public static EPlayerDir Direction
         {
             get { return _dir; }
+        }
+
+        public static float ArmStamNorm
+        {
+            get { return _armStam; }
         }
     }
 }

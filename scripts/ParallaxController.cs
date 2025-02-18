@@ -33,45 +33,18 @@ namespace TarkovIRL
         private static float _parallaxWeightADS = 1f;
 
         static bool _aimingLastFrame = false;
+        static Player _player = null;
 
-        public static void GetModifiedHandPosRotParallax(Player player, ref Vector3 position, ref Quaternion rotation)
+        public static void Update(float dt)
         {
-            if (AnimStateController.IsBlindfire)
+            if (_player == null)
             {
-                position = Vector3.zero;
-                rotation = Quaternion.identity;
                 return;
             }
 
-            float inverseWeaponMulti = WeaponController.GetWeaponMulti(true);
-            float inverseEfficiencyMulti = EfficiencyController.EfficiencyModifierInverse;
-            float parallaxEfficiencyMulti = inverseWeaponMulti * inverseEfficiencyMulti;
-            bool isAiming = player.ProceduralWeaponAnimation.IsAiming;
-
-            ParallaxAdsController.UpdateLerps();
-
-            if (WeaponController.HasShoulderContact())
-            {
-                bool isNewAds = !_aimingLastFrame && isAiming;
-                bool isFinishAds = _aimingLastFrame && !isAiming;
-                _aimingLastFrame = isAiming;
-
-                if (isNewAds)
-                {
-                    ParallaxAdsController.StartNewAds(true, parallaxEfficiencyMulti);
-                }
-                else if (isFinishAds)
-                {
-                    ParallaxAdsController.StartNewAds(false, parallaxEfficiencyMulti);
-                }
-            }
-
-            //float dt = player.DeltaTime;
-            float dt = PrimeMover.Instance.DeltaTime;
-
-            Vector2 rotationalMotionThisFrame = _playerRotationLastFrame - player.Rotation;
+            Vector2 rotationalMotionThisFrame = _playerRotationLastFrame - _player.Rotation;
             rotationalMotionThisFrame *= dt;
-            _playerRotationLastFrame = player.Rotation;
+            _playerRotationLastFrame = _player.Rotation;
 
             float sizeMultiFinal = _ParallaxSetSizeFixed * PrimeMover.ParallaxSetSizeMulti.Value * RealismWrapper.WeaponBalanceMulti;
 
@@ -99,12 +72,13 @@ namespace TarkovIRL
             // down
 
             // calc the position lerps
-            _posLerpXTarget = Mathf.Lerp(_posLerpXTarget, _rotAvgX * parallaxMulti, dt * PrimeMover.ParallaxDTMulti.Value);
-            _posLerpYTarget = Mathf.Lerp(_posLerpYTarget, _rotAvgY * parallaxMulti, dt * PrimeMover.ParallaxDTMulti.Value);
+            float lerpDt = dt * PrimeMover.ParallaxDTMulti.Value * EfficiencyController.EfficiencyModifierInverse;
+            _posLerpXTarget = Mathf.Lerp(_posLerpXTarget, _rotAvgX * parallaxMulti, lerpDt);
+            _posLerpYTarget = Mathf.Lerp(_posLerpYTarget, _rotAvgY * parallaxMulti, lerpDt);
 
             // calc the rotation lerps
-            _rotLerpXTarget = Mathf.Lerp(_rotLerpXTarget, _rotAvgX * parallaxMulti, dt * PrimeMover.ParallaxDTMulti.Value);
-            _rotLerpYTarget = Mathf.Lerp(_rotLerpYTarget, _rotAvgY * parallaxMulti, dt * PrimeMover.ParallaxDTMulti.Value);
+            _rotLerpXTarget = Mathf.Lerp(_rotLerpXTarget, _rotAvgX * parallaxMulti, lerpDt);
+            _rotLerpYTarget = Mathf.Lerp(_rotLerpYTarget, _rotAvgY * parallaxMulti, lerpDt);
 
             float clampValueRot = WeaponController.IsPistol ? PrimeMover.ParallaxHardClampPistols.Value : PrimeMover.ParallaxHardClamp.Value;
             float clampValuePos = WeaponController.IsPistol ? PrimeMover.ParallaxHardClampPistols.Value * 0.5f : PrimeMover.ParallaxHardClamp.Value * 0.5f;
@@ -119,9 +93,45 @@ namespace TarkovIRL
             _rotLerpY = Mathf.Lerp(_rotLerpY, _rotLerpYTarget, dt * PrimeMover.ParallaxRotationSmoothingMulti.Value);
             _posLerpX = Mathf.Lerp(_posLerpX, _posLerpXTarget, dt * PrimeMover.ParallaxRotationSmoothingMulti.Value);
             _posLerpY = Mathf.Lerp(_posLerpY, _posLerpYTarget, dt * PrimeMover.ParallaxRotationSmoothingMulti.Value);
+        }
+        public static void GetModifiedHandPosRotParallax(Player player, ref Vector3 position, ref Quaternion rotation)
+        {
+            if (_player == null)
+            {
+                _player = player;
+            }
+            if (_player == null)
+            {
+                return;
+            }
 
-            //UtilsTIRL.Log($"_rotLerpX {_rotLerpX}, _rotLerpY {_rotLerpY}, _posLerpX {_posLerpX}, _posLerpY {_posLerpY}");
+            if (AnimStateController.IsBlindfire)
+            {
+                position = Vector3.zero;
+                rotation = Quaternion.identity;
+                return;
+            }
 
+            float inverseWeaponMulti = WeaponController.GetWeaponMulti(true);
+            float inverseEfficiencyMulti = EfficiencyController.EfficiencyModifierInverse;
+            float parallaxEfficiencyMulti = inverseWeaponMulti * inverseEfficiencyMulti;
+            bool isAiming = player.ProceduralWeaponAnimation.IsAiming;
+
+            if (WeaponController.HasShoulderContact())
+            {
+                bool isNewAds = !_aimingLastFrame && isAiming;
+                bool isFinishAds = _aimingLastFrame && !isAiming;
+                _aimingLastFrame = isAiming;
+
+                if (isNewAds)
+                {
+                    ParallaxAdsController.StartNewAds(true, parallaxEfficiencyMulti);
+                }
+                else if (isFinishAds)
+                {
+                    ParallaxAdsController.StartNewAds(false, parallaxEfficiencyMulti);
+                }
+            }
 
             // fill the references
             rotation = Quaternion.Euler(0, -_rotLerpY * 100f * _parallaxWeightADS, -_rotLerpX * 100f * _parallaxWeightADS);

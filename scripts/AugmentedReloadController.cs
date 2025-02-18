@@ -18,7 +18,6 @@ namespace TarkovIRL
         static bool _AugmentedModeOn = false;
         static EWeaponState _state;
         static ObjectInHandsAnimator _animator = null;
-        static float _refreshAnimatorTimer = 0;
 
         static int _animatorLayer = 1;
 
@@ -105,7 +104,8 @@ namespace TarkovIRL
             }
             catch (Exception e)
             {
-                UtilsTIRL.Log($"set anim speed failed, {e}");
+                TIRLUtils.LogError($"set anim speed failed, {e}");
+                _animator = null;
             }
         }
 
@@ -123,7 +123,7 @@ namespace TarkovIRL
                 }
                 catch (NullReferenceException e)
                 {
-                    UtilsTIRL.Log($"anim layer {_animatorLayer} returned null -- {e}");
+                    TIRLUtils.LogError($"anim layer {_animatorLayer} returned null -- {e}");
                     slowerReloadMulti = 1f;
                 }
             }

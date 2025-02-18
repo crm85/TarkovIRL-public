@@ -10,7 +10,7 @@ namespace TarkovIRL
 
         public static float GetRealismReloadSpeed()
         {
-            float reloadSpeed = Mathf.Clamp(WeaponStats.CurrentMagReloadSpeed * PlayerState.ReloadInjuryMulti * PlayerState.ReloadSkillMulti * PlayerState.GearReloadMulti * StanceController.HighReadyManipBuff * StanceController.ActiveAimManipBuff * Plugin.RealHealthController.AdrenalineReloadBonus * Mathf.Max(PlayerState.RemainingArmStamFactor, 0.8f), 0.65f, 1.35f);
+            float reloadSpeed = Mathf.Clamp(WeaponStats.CurrentMagReloadSpeed * PlayerValues.ReloadInjuryMulti * PlayerValues.ReloadSkillMulti * PlayerValues.GearReloadMulti * StanceController.HighReadyManipBuff * StanceController.ActiveAimManipBuff * Plugin.RealHealthController.AdrenalineReloadBonus * Mathf.Max(PlayerValues.RemainingArmStamFactor, 0.8f), 0.65f, 1.35f);
             return reloadSpeed;
         }
 
@@ -21,8 +21,13 @@ namespace TarkovIRL
             {
                 value = PluginConfig.GlobalCheckAmmoPistolSpeedMulti.Value;
             }
-            float animationSpeed = Mathf.Clamp(WeaponStats.CurrentMagReloadSpeed * PlayerState.ReloadSkillMulti * PlayerState.ReloadInjuryMulti * StanceController.HighReadyManipBuff * PlayerState.RemainingArmStamReloadFactor * Plugin.RealHealthController.AdrenalineReloadBonus * value, 0.7f, 1.35f);
+            float animationSpeed = Mathf.Clamp(WeaponStats.CurrentMagReloadSpeed * PlayerValues.ReloadSkillMulti * PlayerValues.ReloadInjuryMulti * StanceController.HighReadyManipBuff * PlayerValues.RemainingArmStamReloadFactor * Plugin.RealHealthController.AdrenalineReloadBonus * value, 0.7f, 1.35f);
             return animationSpeed;
+        }
+
+        public static bool IsShoulderContact()
+        {
+            return WeaponStats.HasShoulderContact;
         }
 
         public static bool IsAdrenaline
@@ -35,7 +40,7 @@ namespace TarkovIRL
                 }
                 if (_realHealth != null)
                 {
-                    return _realHealth.HasAdrenalineEffect;
+                    return _realHealth.HasPositiveAdrenalineEffect || _realHealth.HasNegativeAdrenalineEffect;
                 }
                 else
                 {
@@ -54,9 +59,14 @@ namespace TarkovIRL
             }
         }
 
-        public static bool IsTacSprint
+        public static bool IsTacSprint 
         {
             get { return StanceController.IsDoingTacSprint; }
+        }
+
+        public static bool IsOverdose
+        {
+            get { return false; }
         }
     }
 }

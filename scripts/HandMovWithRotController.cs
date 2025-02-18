@@ -24,6 +24,7 @@ namespace TarkovIRL
 
         static float _stockedMovementAddedPosTarget = 0;
         static float _stockedMovementAddedPosLerp = 0;
+        static float _stockedMovementAddedPosSmoothed = 0;
 
         public static Vector3 GetModifiedHandPosZMovement(Player player)
         {
@@ -68,7 +69,8 @@ namespace TarkovIRL
                 _stockedMovementAddedPosTarget = 0;
             }
             _stockedMovementAddedPosLerp = Mathf.Lerp(_stockedMovementAddedPosLerp, _stockedMovementAddedPosTarget, dt * _LerpRate);
-            return new Vector3(0, -_stockedMovementAddedPosLerp, 0);
+            _stockedMovementAddedPosSmoothed = Mathf.Lerp(_stockedMovementAddedPosSmoothed, _stockedMovementAddedPosLerp, dt);
+            return new Vector3(0, -_stockedMovementAddedPosSmoothed, 0);
         }
     }
 }

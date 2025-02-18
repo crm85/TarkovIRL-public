@@ -27,7 +27,7 @@ namespace TarkovIRL
                 _isThrowing = false;
                 _throwLerp = 1f;
             }
-            if (UtilsTIRL.IsPriority(2)) UtilsTIRL.Log($"throwlerp is {_throwLerp}");
+            if (TIRLUtils.IsPriority(2)) TIRLUtils.LogError($"throwlerp is {_throwLerp}");
         }
 
         public static void NewThrow(bool isUnderhand)
@@ -46,7 +46,7 @@ namespace TarkovIRL
                 float xOffsetThisFrame = xCurve.Evaluate(_throwLerp) * PrimeMover.ThrowStrengthMulti.Value;
                 float reverseY = _isUnderhand ? -1f : 1f;
                 float yOffsetThisFrame = yCurve.Evaluate(_throwLerp) * _OverhandYExtraMulti * PrimeMover.ThrowStrengthMulti.Value * reverseY;
-                if (UtilsTIRL.IsPriority(2)) UtilsTIRL.Log($"throw | xOffsetThisFrame {xOffsetThisFrame} | yOffsetThisFrame {yOffsetThisFrame}");
+                if (TIRLUtils.IsPriority(2)) TIRLUtils.LogError($"throw | xOffsetThisFrame {xOffsetThisFrame} | yOffsetThisFrame {yOffsetThisFrame}");
                 return new Vector3(-xOffsetThisFrame, -yOffsetThisFrame, 0);
             }
         }

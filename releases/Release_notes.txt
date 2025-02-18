@@ -1,3 +1,19 @@
+-- Version 0.8 --
+
+Even though this version has few new features, it's an important update. I've fixed a couple of big bugs that were plaguing the mod, and integrated a major performance upgrade (previously when the game stuttered or lagged, as she is wont to do in spt 3.10, the player's weapon movements became extremely erratic).
+
+New:
+- Updated for Realism 1.5.1 release.
+- Did an overhaul on the to- and from-crouch animations and logic. Adds a sense of real weight to (un-)crouching and integrates weapon weight/ergo and efficiency into the action.
+- Removed a lot of junk from the config.
+- Small tweaks to misalignment and sway values.
+
+Fixes:
+- MAJOR performance improvement: Integrated a protective check for lag spikes over most of the mod's core logic.
+- Fixed some cases where selecting/changing equiped weapons caused player to bug out. (PSA - just in case someone manages to find this bug again, the hands-are-not-busy mod fixes it too).
+- Fixed folding stock not detecting reliably (thanks Fontaine's API).
+
+
 -- Version 0.7.5 --
 
 - Updated for SPT 3.10.x + Realism 1.5

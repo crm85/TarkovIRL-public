@@ -21,7 +21,7 @@ namespace TarkovIRL
         {
             if ((UnityEngine.Object)(object)__instance != (UnityEngine.Object)null && __instance.IsYourPlayer)
             {
-                if (UtilsTIRL.IsPriority(3)) UtilsTIRL.Log($"grenade thrown, is overhand {!lowThrow}");
+                if (TIRLUtils.IsPriority(3)) TIRLUtils.LogError($"grenade thrown, is overhand {!lowThrow}");
                 ThrowController.NewThrow(lowThrow);
             }
         }

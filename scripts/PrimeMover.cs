@@ -6,6 +6,7 @@ using UnityEngine;
 using EFT.UI;
 using HarmonyLib;
 using RealismMod;
+using EFT;
 
 namespace TarkovIRL
 {
@@ -14,15 +15,19 @@ namespace TarkovIRL
     {
         const string modGUID = "TarkovIRL";
         const string modName = "TarkovIRL - WHM";
-        const string modVersion = "0.7.4.1";
+        const string modVersion = "0.8";
 
         public static PrimeMover Instance;
+
+        public readonly float FTDThresh = 0.0167f;
 
         //
         // Curves
         //
         public AnimationCurve BreathCurve;
         public AnimationCurve PoseChangeCurve;
+        public AnimationCurve PoseChangeDownRadialCurve;
+        public AnimationCurve PoseChangeCurveUp;
         public AnimationCurve HandsShakeCurve;
         public AnimationCurve SmoothEdgesCurve;
         public AnimationCurve FootStepCurve;
@@ -55,19 +60,18 @@ namespace TarkovIRL
         // misc fine tuning sliders
 
 
-        const string BASE_FEATURES_SECTION = "1 - Toggle base features";
-        const string GENERAL_SLIDERS = "2 - Adjust main feature values";
-        const string NEW_SWAY_SLIDERS = "3 - Sway multipliers";
-        const string PARALLAX_SLIDERS = "4 - Parallax multipliers";
-        const string EFFICIENCY_SLIDERS = "5 - Efficiency multipliers";
-        const string ROTATION_ENGINE_SLIDERS = "6 - Rotation engine multipliers";
-        const string MISC_SLIDERS = "7 - Misc multipliers";
-        const string DIRECTIONAL_SWAY = "8 - Directional Sway Values";
-        const string AUGMENTED_RELOAD = "9 - Augmented Reload Values";
-        const string DEADZONE = "99 - Deadzone Values";
-        const string WEAPON_TRANSITIONS = "999 - Weapon Transition Values";
+        const string BASE_FEATURES_SECTION = "a - Toggle base features";
+        const string GENERAL_SLIDERS = "b - Adjust main feature values";
+        const string NEW_SWAY_SLIDERS = "c - Sway multipliers";
+        const string PARALLAX_SLIDERS = "d - Parallax multipliers";
+        const string EFFICIENCY_SLIDERS = "e - Efficiency multipliers";
+        const string ROTATION_ENGINE_SLIDERS = "f - Rotation engine multipliers";
+        const string MISC_SLIDERS = "g - Misc multipliers";
+        const string DIRECTIONAL_SWAY = "h - Directional Sway Values";
+        const string AUGMENTED_RELOAD = "i - Augmented Reload Values";
+        const string DEADZONE = "j - Deadzone Values";
 
-        const string DEV_SECTION = "9999 - Only for dev/testing";
+        const string DEV_SECTION = "0 - Only for dev/testing";
 
 
         //
@@ -140,6 +144,8 @@ namespace TarkovIRL
         public static ConfigEntry<float> DeadzoneInVanilla;
         public static ConfigEntry<float> DeadzoneInActiveAim;
         public static ConfigEntry<float> DeadzoneInADS;
+        public static ConfigEntry<float> DeadzoneInHighReady;
+        public static ConfigEntry<float> DeadzoneInLowReady;
         public static ConfigEntry<float> DeadzoneHeadFollowSpeedMulti;
         public static ConfigEntry<float> TransitionSpeedMulti;
         public static ConfigEntry<float> RunFadeDTMulti;
@@ -162,98 +168,6 @@ namespace TarkovIRL
         public static ConfigEntry<float> AugmentedReloadSpeed;
         public static ConfigEntry<float> AugmentedReloadSprintingDebuff;
 
-        // weapon transitions
-        public static ConfigEntry<float> TransitionSpeedPhase1;
-        public static ConfigEntry<float> TransitionSpeedPhase2;
-
-        // sling vals
-        public static ConfigEntry<float> SlingPositionStartX;
-        public static ConfigEntry<float> SlingPositionStartY;
-        public static ConfigEntry<float> SlingPositionStartZ;
-
-        public static ConfigEntry<float> SlingRotationStartX;
-        public static ConfigEntry<float> SlingRotationStartY;
-        public static ConfigEntry<float> SlingRotationStartZ;
-
-        public static ConfigEntry<float> SlingPositionEndX;
-        public static ConfigEntry<float> SlingPositionEndY;
-        public static ConfigEntry<float> SlingPositionEndZ;
-
-        public static ConfigEntry<float> SlingRotationEndX;
-        public static ConfigEntry<float> SlingRotationEndY;
-        public static ConfigEntry<float> SlingRotationEndZ;
-
-        // shoulder vals
-        public static ConfigEntry<float> ShoulderPositionStartX;
-        public static ConfigEntry<float> ShoulderPositionStartY;
-        public static ConfigEntry<float> ShoulderPositionStartZ;
-
-        public static ConfigEntry<float> ShoulderRotationStartX;
-        public static ConfigEntry<float> ShoulderRotationStartY;
-        public static ConfigEntry<float> ShoulderRotationStartZ;
-
-        public static ConfigEntry<float> ShoulderPositionEndX;
-        public static ConfigEntry<float> ShoulderPositionEndY;
-        public static ConfigEntry<float> ShoulderPositionEndZ;
-
-        public static ConfigEntry<float> ShoulderRotationEndX;
-        public static ConfigEntry<float> ShoulderRotationEndY;
-        public static ConfigEntry<float> ShoulderRotationEndZ;
-
-        // holster vals
-        public static ConfigEntry<float> HolsterPositionStartX;
-        public static ConfigEntry<float> HolsterPositionStartY;
-        public static ConfigEntry<float> HolsterPositionStartZ;
-
-        public static ConfigEntry<float> HolsterRotationStartX;
-        public static ConfigEntry<float> HolsterRotationStartY;
-        public static ConfigEntry<float> HolsterRotationStartZ;
-
-        public static ConfigEntry<float> HolsterPositionEndX;
-        public static ConfigEntry<float> HolsterPositionEndY;
-        public static ConfigEntry<float> HolsterPositionEndZ;
-
-        public static ConfigEntry<float> HolsterRotationEndX;
-        public static ConfigEntry<float> HolsterRotationEndY;
-        public static ConfigEntry<float> HolsterRotationEndZ;
-
-        // transition curves
-        public static ConfigEntry<float> Sling2ShoulderSpeed1;
-        public static ConfigEntry<float> Sling2ShoulderSpeed2;
-
-        public static ConfigEntry<float> Sling2ShoulderCurve1_1;
-        public static ConfigEntry<float> Sling2ShoulderCurve2_1;
-        public static ConfigEntry<float> Sling2ShoulderCurve3_1;
-        public static ConfigEntry<float> Sling2ShoulderCurve4_1;
-        public static ConfigEntry<float> Sling2ShoulderCurve5_1;
-        public static ConfigEntry<float> Sling2ShoulderCurve6_1;
-
-        public static ConfigEntry<float> Sling2ShoulderCurve1_2;
-        public static ConfigEntry<float> Sling2ShoulderCurve2_2;
-        public static ConfigEntry<float> Sling2ShoulderCurve3_2;
-        public static ConfigEntry<float> Sling2ShoulderCurve4_2;
-        public static ConfigEntry<float> Sling2ShoulderCurve5_2;
-        public static ConfigEntry<float> Sling2ShoulderCurve6_2;
-
-        public static ConfigEntry<float> Shoulder2SlingSpeed1;
-        public static ConfigEntry<float> Shoulder2SlingSpeed2;
-
-        public static ConfigEntry<float> Shoulder2SlingCurve1_1;
-        public static ConfigEntry<float> Shoulder2SlingCurve2_1;
-        public static ConfigEntry<float> Shoulder2SlingCurve3_1;
-        public static ConfigEntry<float> Shoulder2SlingCurve4_1;
-        public static ConfigEntry<float> Shoulder2SlingCurve5_1;
-        public static ConfigEntry<float> Shoulder2SlingCurve6_1;
-        public static ConfigEntry<float> Shoulder2SlingCurve1_2;
-        public static ConfigEntry<float> Shoulder2SlingCurve2_2;
-        public static ConfigEntry<float> Shoulder2SlingCurve3_2;
-        public static ConfigEntry<float> Shoulder2SlingCurve4_2;
-        public static ConfigEntry<float> Shoulder2SlingCurve5_2;
-        public static ConfigEntry<float> Shoulder2SlingCurve6_2;
-
-        public static ConfigEntry<float> TransformSmoothingDTMulti;
-
-
         // debug 
         public static ConfigEntry<float> DebugHeadRotX;
         public static ConfigEntry<float> DebugHeadRotY;
@@ -271,6 +185,8 @@ namespace TarkovIRL
         public static ConfigEntry<float> DebugHandsPosY;
         public static ConfigEntry<float> DebugHandsPosZ;
 
+        public static ConfigEntry<float> ArtificalInjury;
+        public static ConfigEntry<float> DebugFloat0;
         public static ConfigEntry<float> DebugFloat1;
         public static ConfigEntry<float> DebugFloat2;
 
@@ -290,7 +206,6 @@ namespace TarkovIRL
         public static ConfigEntry<float> AnimCurveTime1p2;
 
         // config defaults
-        readonly float AdsParallaxTimeMultiDefault = 30f;
         readonly float ArmShakeMultiDefault = 1f;
         readonly float ArmShakeRateMultiDefault = 1f;
         readonly float BreathingEffectMultiDefault = 1f;
@@ -299,7 +214,6 @@ namespace TarkovIRL
         readonly float ParallaxInAdsDefault = 0.3f;
         readonly float ShotParallaxWeaponWeightMultiDefault = 5f;
         readonly float ShotParallaxResetTimeMultiDefault = 10f;
-        readonly float WeaponDeadzoneMultiDefault = 0.3f;
         readonly float ThrowStrengthMultiDefault = 14;
         readonly float ThrowSpeedMultiDefault = 2.25f;
 
@@ -321,17 +235,27 @@ namespace TarkovIRL
 
         void Initialize()
         {
-            UtilsTIRL.Logger = this.Logger;
+            TIRLUtils.Logger = this.Logger;
 
             BreathCurve = new AnimationCurve
             (
                  new Keyframe(0f, 0.001708984f), new Keyframe(0.01f, 0.07340872f), new Keyframe(0.02f, 0.1447571f), new Keyframe(0.03f, 0.2159234f), new Keyframe(0.04f, 0.287077f), new Keyframe(0.05f, 0.3583873f), new Keyframe(0.05999999f, 0.4300235f), new Keyframe(0.06999999f, 0.5021549f), new Keyframe(0.07999999f, 0.5749511f), new Keyframe(0.08999999f, 0.6485812f), new Keyframe(0.09999999f, 0.7190837f), new Keyframe(0.11f, 0.7796323f), new Keyframe(0.12f, 0.8308698f), new Keyframe(0.13f, 0.8735839f), new Keyframe(0.14f, 0.9085627f), new Keyframe(0.15f, 0.9365937f), new Keyframe(0.16f, 0.958465f), new Keyframe(0.17f, 0.9749643f), new Keyframe(0.18f, 0.9868796f), new Keyframe(0.19f, 0.9949986f), new Keyframe(0.2f, 1.000109f), new Keyframe(0.21f, 1.003f), new Keyframe(0.22f, 1.004457f), new Keyframe(0.23f, 1.00527f), new Keyframe(0.24f, 1.006216f), new Keyframe(0.25f, 0.9934806f), new Keyframe(0.26f, 0.9566338f), new Keyframe(0.27f, 0.8993476f), new Keyframe(0.28f, 0.825294f), new Keyframe(0.29f, 0.7381451f), new Keyframe(0.3f, 0.6415731f), new Keyframe(0.31f, 0.5392498f), new Keyframe(0.32f, 0.4348473f), new Keyframe(0.33f, 0.3327447f), new Keyframe(0.3399999f, 0.2382682f), new Keyframe(0.3499999f, 0.1512108f), new Keyframe(0.3599999f, 0.07075208f), new Keyframe(0.3699999f, -0.003928483f), new Keyframe(0.3799999f, -0.07365131f), new Keyframe(0.3899999f, -0.1392368f), new Keyframe(0.3999999f, -0.2015056f), new Keyframe(0.4099999f, -0.2613338f), new Keyframe(0.4199999f, -0.3202845f), new Keyframe(0.4299999f, -0.378557f), new Keyframe(0.4399998f, -0.4358587f), new Keyframe(0.4499998f, -0.4918973f), new Keyframe(0.4599998f, -0.5463802f), new Keyframe(0.4699998f, -0.5990149f), new Keyframe(0.4799998f, -0.6495088f), new Keyframe(0.4899998f, -0.6975697f), new Keyframe(0.4999998f, -0.7429048f), new Keyframe(0.5099998f, -0.7852218f), new Keyframe(0.5199998f, -0.824228f), new Keyframe(0.5299998f, -0.8596311f), new Keyframe(0.5399998f, -0.8911383f), new Keyframe(0.5499998f, -0.9184575f), new Keyframe(0.5599998f, -0.941296f), new Keyframe(0.5699998f, -0.9593612f), new Keyframe(0.5799997f, -0.9723607f), new Keyframe(0.5899997f, -0.9800022f), new Keyframe(0.5999997f, -0.9830432f), new Keyframe(0.6099997f, -0.9852618f), new Keyframe(0.6199997f, -0.9870723f), new Keyframe(0.6299997f, -0.988526f), new Keyframe(0.6399997f, -0.9896744f), new Keyframe(0.6499997f, -0.9905687f), new Keyframe(0.6599997f, -0.9912603f), new Keyframe(0.6699997f, -0.9918006f), new Keyframe(0.6799996f, -0.992241f), new Keyframe(0.6899996f, -0.9926327f), new Keyframe(0.6999996f, -0.9930272f), new Keyframe(0.7099996f, -0.9934759f), new Keyframe(0.7199996f, -0.9940174f), new Keyframe(0.7299996f, -0.9938536f), new Keyframe(0.7399996f, -0.9923377f), new Keyframe(0.7499996f, -0.9892635f), new Keyframe(0.7599996f, -0.9844247f), new Keyframe(0.7699996f, -0.9776151f), new Keyframe(0.7799996f, -0.9686285f), new Keyframe(0.7899995f, -0.9572586f), new Keyframe(0.7999995f, -0.9433164f), new Keyframe(0.8099995f, -0.9273839f), new Keyframe(0.8199995f, -0.909653f), new Keyframe(0.8299995f, -0.8898755f), new Keyframe(0.8399995f, -0.8678032f), new Keyframe(0.8499995f, -0.8431879f), new Keyframe(0.8599995f, -0.8157812f), new Keyframe(0.8699995f, -0.7853352f), new Keyframe(0.8799995f, -0.7516014f), new Keyframe(0.8899994f, -0.7143317f), new Keyframe(0.8999994f, -0.673278f), new Keyframe(0.9099994f, -0.6281918f), new Keyframe(0.9199994f, -0.5788252f), new Keyframe(0.9299994f, -0.5249298f), new Keyframe(0.9399994f, -0.4662574f), new Keyframe(0.9499994f, -0.4025598f), new Keyframe(0.9599994f, -0.3335888f), new Keyframe(0.9699994f, -0.2590962f), new Keyframe(0.9799994f, -0.1788337f), new Keyframe(0.9899994f, -0.09255308f), new Keyframe(0.9999993f, -6.377697E-06f)
             );
 
+            PoseChangeDownRadialCurve = new AnimationCurve
+            (
+                 new Keyframe(0f, 0f), new Keyframe(0.01f, 0.01179387f), new Keyframe(0.02f, 0.02439274f), new Keyframe(0.03f, 0.03768035f), new Keyframe(0.04f, 0.05154046f), new Keyframe(0.05f, 0.06585679f), new Keyframe(0.05999999f, 0.0805131f), new Keyframe(0.06999999f, 0.09539313f), new Keyframe(0.07999999f, 0.1103806f), new Keyframe(0.08999999f, 0.1253593f), new Keyframe(0.09999999f, 0.1402129f), new Keyframe(0.11f, 0.1548253f), new Keyframe(0.12f, 0.16908f), new Keyframe(0.13f, 0.1828609f), new Keyframe(0.14f, 0.1960518f), new Keyframe(0.15f, 0.2085363f), new Keyframe(0.16f, 0.2201982f), new Keyframe(0.17f, 0.2309213f), new Keyframe(0.18f, 0.2405892f), new Keyframe(0.19f, 0.2490857f), new Keyframe(0.2f, 0.2562947f), new Keyframe(0.21f, 0.2620997f), new Keyframe(0.22f, 0.2663846f), new Keyframe(0.23f, 0.2690331f), new Keyframe(0.24f, 0.2699768f), new Keyframe(0.25f, 0.2703833f), new Keyframe(0.26f, 0.2707959f), new Keyframe(0.27f, 0.2712142f), new Keyframe(0.28f, 0.2716383f), new Keyframe(0.29f, 0.2720678f), new Keyframe(0.3f, 0.2725026f), new Keyframe(0.31f, 0.2729425f), new Keyframe(0.32f, 0.2733874f), new Keyframe(0.33f, 0.2738371f), new Keyframe(0.3399999f, 0.2742913f), new Keyframe(0.3499999f, 0.2747499f), new Keyframe(0.3599999f, 0.2752127f), new Keyframe(0.3699999f, 0.2756796f), new Keyframe(0.3799999f, 0.2761504f), new Keyframe(0.3899999f, 0.2766249f), new Keyframe(0.3999999f, 0.2771028f), new Keyframe(0.4099999f, 0.2775841f), new Keyframe(0.4199999f, 0.2780686f), new Keyframe(0.4299999f, 0.278556f), new Keyframe(0.4399998f, 0.2790462f), new Keyframe(0.4499998f, 0.2795391f), new Keyframe(0.4599998f, 0.2800344f), new Keyframe(0.4699998f, 0.2805319f), new Keyframe(0.4799998f, 0.2810315f), new Keyframe(0.4899998f, 0.2815331f), new Keyframe(0.4999998f, 0.2820363f), new Keyframe(0.5099998f, 0.2825411f), new Keyframe(0.5199998f, 0.2830472f), new Keyframe(0.5299998f, 0.2835546f), new Keyframe(0.5399998f, 0.2840629f), new Keyframe(0.5499998f, 0.2845721f), new Keyframe(0.5599998f, 0.2850819f), new Keyframe(0.5699998f, 0.2855922f), new Keyframe(0.5799997f, 0.2861028f), new Keyframe(0.5899997f, 0.2866135f), new Keyframe(0.5999997f, 0.2871242f), new Keyframe(0.6099997f, 0.2874586f), new Keyframe(0.6199997f, 0.2865656f), new Keyframe(0.6299997f, 0.2845469f), new Keyframe(0.6399997f, 0.2817358f), new Keyframe(0.6499997f, 0.2784657f), new Keyframe(0.6599997f, 0.2750697f), new Keyframe(0.6699997f, 0.2718812f), new Keyframe(0.6799996f, 0.2692335f), new Keyframe(0.6899996f, 0.2674598f), new Keyframe(0.6999996f, 0.2668935f), new Keyframe(0.7099996f, 0.266599f), new Keyframe(0.7199996f, 0.2647136f), new Keyframe(0.7299996f, 0.2613187f), new Keyframe(0.7399996f, 0.2565241f), new Keyframe(0.7499996f, 0.2504394f), new Keyframe(0.7599996f, 0.2431743f), new Keyframe(0.7699996f, 0.2348386f), new Keyframe(0.7799996f, 0.225542f), new Keyframe(0.7899995f, 0.2153943f), new Keyframe(0.7999995f, 0.2045051f), new Keyframe(0.8099995f, 0.1929843f), new Keyframe(0.8199995f, 0.1809414f), new Keyframe(0.8299995f, 0.1684863f), new Keyframe(0.8399995f, 0.1557287f), new Keyframe(0.8499995f, 0.1427782f), new Keyframe(0.8599995f, 0.1297447f), new Keyframe(0.8699995f, 0.1167379f), new Keyframe(0.8799995f, 0.1038674f), new Keyframe(0.8899994f, 0.09124304f), new Keyframe(0.8999994f, 0.07897452f), new Keyframe(0.9099994f, 0.06717156f), new Keyframe(0.9199994f, 0.05594389f), new Keyframe(0.9299994f, 0.04540122f), new Keyframe(0.9399994f, 0.03565329f), new Keyframe(0.9499994f, 0.02680984f), new Keyframe(0.9599994f, 0.01898059f), new Keyframe(0.9699994f, 0.01227525f), new Keyframe(0.9799994f, 0.006803602f), new Keyframe(0.9899994f, 0.002675295f), new Keyframe(0.9999993f, 8.940697E-08f)
+                 );
+
             PoseChangeCurve = new AnimationCurve
             (
-                 new Keyframe(0f, 0f), new Keyframe(0.01f, 0.04753859f), new Keyframe(0.02f, 0.06824711f), new Keyframe(0.03f, 0.07190572f), new Keyframe(0.04f, 0.06472864f), new Keyframe(0.05f, 0.03672462f), new Keyframe(0.05999999f, -0.01143076f), new Keyframe(0.06999999f, -0.07712235f), new Keyframe(0.07999999f, -0.157735f), new Keyframe(0.08999999f, -0.2506537f), new Keyframe(0.09999999f, -0.3532633f), new Keyframe(0.11f, -0.4620121f), new Keyframe(0.12f, -0.5536414f), new Keyframe(0.13f, -0.6220356f), new Keyframe(0.14f, -0.6711998f), new Keyframe(0.15f, -0.7051392f), new Keyframe(0.16f, -0.7278589f), new Keyframe(0.17f, -0.7433642f), new Keyframe(0.18f, -0.7578313f), new Keyframe(0.19f, -0.7805023f), new Keyframe(0.2f, -0.8117735f), new Keyframe(0.21f, -0.8513885f), new Keyframe(0.22f, -0.8990905f), new Keyframe(0.23f, -0.9521281f), new Keyframe(0.24f, -0.9863883f), new Keyframe(0.25f, -0.998183f), new Keyframe(0.26f, -0.9904182f), new Keyframe(0.27f, -0.9660002f), new Keyframe(0.28f, -0.9278349f), new Keyframe(0.29f, -0.8788286f), new Keyframe(0.3f, -0.8218873f), new Keyframe(0.31f, -0.759917f), new Keyframe(0.32f, -0.695824f), new Keyframe(0.33f, -0.6325832f), new Keyframe(0.3399999f, -0.5721059f), new Keyframe(0.3499999f, -0.5145938f), new Keyframe(0.3599999f, -0.4601647f), new Keyframe(0.3699999f, -0.4089365f), new Keyframe(0.3799999f, -0.361027f), new Keyframe(0.3899999f, -0.316554f), new Keyframe(0.3999999f, -0.2756355f), new Keyframe(0.4099999f, -0.2383893f), new Keyframe(0.4199999f, -0.2049332f), new Keyframe(0.4299999f, -0.1753851f), new Keyframe(0.4399998f, -0.1498628f), new Keyframe(0.4499998f, -0.1284841f), new Keyframe(0.4599998f, -0.1113669f), new Keyframe(0.4699998f, -0.09862924f), new Keyframe(0.4799998f, -0.08953421f), new Keyframe(0.4899998f, -0.07422893f), new Keyframe(0.4999998f, -0.05229831f), new Keyframe(0.5099998f, -0.02683907f), new Keyframe(0.5199998f, -0.0009481311f), new Keyframe(0.5299998f, 0.02227778f), new Keyframe(0.5399998f, 0.03974189f), new Keyframe(0.5499998f, 0.04943786f), new Keyframe(0.5599998f, 0.05533161f), new Keyframe(0.5699998f, 0.05844303f), new Keyframe(0.5799997f, 0.05908555f), new Keyframe(0.5899997f, 0.05757258f), new Keyframe(0.5999997f, 0.05421757f), new Keyframe(0.6099997f, 0.04933393f), new Keyframe(0.6199997f, 0.0432351f), new Keyframe(0.6299997f, 0.03623449f), new Keyframe(0.6399997f, 0.02864554f), new Keyframe(0.6499997f, 0.02078166f), new Keyframe(0.6599997f, 0.01295629f), new Keyframe(0.6699997f, 0.00548286f), new Keyframe(0.6799996f, -0.001325212f), new Keyframe(0.6899996f, -0.007154491f), new Keyframe(0.6999996f, -0.01169154f), new Keyframe(0.7099996f, -0.01462297f), new Keyframe(0.7199996f, -0.01570082f), new Keyframe(0.7299996f, -0.01604912f), new Keyframe(0.7399996f, -0.01618946f), new Keyframe(0.7499996f, -0.01613806f), new Keyframe(0.7599996f, -0.01591115f), new Keyframe(0.7699996f, -0.01552495f), new Keyframe(0.7799996f, -0.01499569f), new Keyframe(0.7899995f, -0.01433959f), new Keyframe(0.7999995f, -0.01357289f), new Keyframe(0.8099995f, -0.01271181f), new Keyframe(0.8199995f, -0.01177257f), new Keyframe(0.8299995f, -0.01077141f), new Keyframe(0.8399995f, -0.009724541f), new Keyframe(0.8499995f, -0.008648196f), new Keyframe(0.8599995f, -0.007558605f), new Keyframe(0.8699995f, -0.006471992f), new Keyframe(0.8799995f, -0.005404581f), new Keyframe(0.8899994f, -0.0043726f), new Keyframe(0.8999994f, -0.003392277f), new Keyframe(0.9099994f, -0.002479835f), new Keyframe(0.9199994f, -0.001651503f), new Keyframe(0.9299994f, -0.0009235078f), new Keyframe(0.9399994f, -0.0003120769f), new Keyframe(0.9499994f, 0.0001665689f), new Keyframe(0.9599994f, 0.0004961994f), new Keyframe(0.9699994f, 0.0006605871f), new Keyframe(0.9799994f, 0.0006435066f), new Keyframe(0.9899994f, 0.0004287343f), new Keyframe(0.9999993f, 3.539026E-08f)
-            );
+                 new Keyframe(0f, 0f), new Keyframe(0.01f, -0.01209296f), new Keyframe(0.02f, -0.04091275f), new Keyframe(0.03f, -0.07506845f), new Keyframe(0.04f, -0.1031692f), new Keyframe(0.05f, -0.1147827f), new Keyframe(0.05999999f, -0.1310504f), new Keyframe(0.06999999f, -0.161741f), new Keyframe(0.07999999f, -0.2025854f), new Keyframe(0.08999999f, -0.2493144f), new Keyframe(0.09999999f, -0.2976588f), new Keyframe(0.11f, -0.3433494f), new Keyframe(0.12f, -0.3821172f), new Keyframe(0.13f, -0.4131273f), new Keyframe(0.14f, -0.4612363f), new Keyframe(0.15f, -0.5268652f), new Keyframe(0.16f, -0.60335f), new Keyframe(0.17f, -0.6840268f), new Keyframe(0.18f, -0.7622316f), new Keyframe(0.19f, -0.8313004f), new Keyframe(0.2f, -0.8845691f), new Keyframe(0.21f, -0.9153738f), new Keyframe(0.22f, -0.9359059f), new Keyframe(0.23f, -0.9665821f), new Keyframe(0.24f, -1.004414f), new Keyframe(0.25f, -1.046302f), new Keyframe(0.26f, -1.089144f), new Keyframe(0.27f, -1.129842f), new Keyframe(0.28f, -1.165294f), new Keyframe(0.29f, -1.1924f), new Keyframe(0.3f, -1.208059f), new Keyframe(0.31f, -1.20965f), new Keyframe(0.32f, -1.20589f), new Keyframe(0.33f, -1.201136f), new Keyframe(0.3399999f, -1.195443f), new Keyframe(0.3499999f, -1.188867f), new Keyframe(0.3599999f, -1.181464f), new Keyframe(0.3699999f, -1.173291f), new Keyframe(0.3799999f, -1.164404f), new Keyframe(0.3899999f, -1.154859f), new Keyframe(0.3999999f, -1.144711f), new Keyframe(0.4099999f, -1.134018f), new Keyframe(0.4199999f, -1.122835f), new Keyframe(0.4299999f, -1.111218f), new Keyframe(0.4399998f, -1.099223f), new Keyframe(0.4499998f, -1.086907f), new Keyframe(0.4599998f, -1.074326f), new Keyframe(0.4699998f, -1.061535f), new Keyframe(0.4799998f, -1.048592f), new Keyframe(0.4899998f, -1.035551f), new Keyframe(0.4999998f, -1.02247f), new Keyframe(0.5099998f, -1.009404f), new Keyframe(0.5199998f, -0.9964092f), new Keyframe(0.5299998f, -0.9835421f), new Keyframe(0.5399998f, -0.9708588f), new Keyframe(0.5499998f, -0.9584152f), new Keyframe(0.5599998f, -0.9462675f), new Keyframe(0.5699998f, -0.934472f), new Keyframe(0.5799997f, -0.9230845f), new Keyframe(0.5899997f, -0.9099234f), new Keyframe(0.5999997f, -0.8928729f), new Keyframe(0.6099997f, -0.8722702f), new Keyframe(0.6199997f, -0.8484529f), new Keyframe(0.6299997f, -0.8217583f), new Keyframe(0.6399997f, -0.7925242f), new Keyframe(0.6499997f, -0.761088f), new Keyframe(0.6599997f, -0.7277873f), new Keyframe(0.6699997f, -0.6929597f), new Keyframe(0.6799996f, -0.6569427f), new Keyframe(0.6899996f, -0.6200738f), new Keyframe(0.6999996f, -0.5826907f), new Keyframe(0.7099996f, -0.5451308f), new Keyframe(0.7199996f, -0.5077317f), new Keyframe(0.7299996f, -0.470831f), new Keyframe(0.7399996f, -0.4347661f), new Keyframe(0.7499996f, -0.3998748f), new Keyframe(0.7599996f, -0.3664945f), new Keyframe(0.7699996f, -0.3349627f), new Keyframe(0.7799996f, -0.305617f), new Keyframe(0.7899995f, -0.278795f), new Keyframe(0.7999995f, -0.2548342f), new Keyframe(0.8099995f, -0.2340721f), new Keyframe(0.8199995f, -0.2154588f), new Keyframe(0.8299995f, -0.1973309f), new Keyframe(0.8399995f, -0.1797198f), new Keyframe(0.8499995f, -0.1626643f), new Keyframe(0.8599995f, -0.1462035f), new Keyframe(0.8699995f, -0.1303764f), new Keyframe(0.8799995f, -0.1152217f), new Keyframe(0.8899994f, -0.1007785f), new Keyframe(0.8999994f, -0.0870858f), new Keyframe(0.9099994f, -0.07418244f), new Keyframe(0.9199994f, -0.06210738f), new Keyframe(0.9299994f, -0.0508996f), new Keyframe(0.9399994f, -0.04059805f), new Keyframe(0.9499994f, -0.03124167f), new Keyframe(0.9599994f, -0.02286936f), new Keyframe(0.9699994f, -0.01552014f), new Keyframe(0.9799994f, -0.009232908f), new Keyframe(0.9899994f, -0.004046619f), new Keyframe(0.9999993f, -2.384186E-07f)
+                 );
+
+            PoseChangeCurveUp = new AnimationCurve
+            (
+                 new Keyframe(0f, 0f), new Keyframe(0.01f, -0.01209296f), new Keyframe(0.02f, -0.04091275f), new Keyframe(0.03f, -0.07506845f), new Keyframe(0.04f, -0.1031692f), new Keyframe(0.05f, -0.1147827f), new Keyframe(0.05999999f, -0.1310504f), new Keyframe(0.06999999f, -0.161741f), new Keyframe(0.07999999f, -0.2025854f), new Keyframe(0.08999999f, -0.2493144f), new Keyframe(0.09999999f, -0.2976588f), new Keyframe(0.11f, -0.3433494f), new Keyframe(0.12f, -0.3821172f), new Keyframe(0.13f, -0.4131273f), new Keyframe(0.14f, -0.4612363f), new Keyframe(0.15f, -0.5268652f), new Keyframe(0.16f, -0.60335f), new Keyframe(0.17f, -0.6840268f), new Keyframe(0.18f, -0.7622316f), new Keyframe(0.19f, -0.8313004f), new Keyframe(0.2f, -0.8845691f), new Keyframe(0.21f, -0.9153738f), new Keyframe(0.22f, -0.9359059f), new Keyframe(0.23f, -0.9665821f), new Keyframe(0.24f, -1.004414f), new Keyframe(0.25f, -1.046302f), new Keyframe(0.26f, -1.089144f), new Keyframe(0.27f, -1.129842f), new Keyframe(0.28f, -1.165294f), new Keyframe(0.29f, -1.1924f), new Keyframe(0.3f, -1.208059f), new Keyframe(0.31f, -1.20965f), new Keyframe(0.32f, -1.20589f), new Keyframe(0.33f, -1.201136f), new Keyframe(0.3399999f, -1.195443f), new Keyframe(0.3499999f, -1.188867f), new Keyframe(0.3599999f, -1.181464f), new Keyframe(0.3699999f, -1.173291f), new Keyframe(0.3799999f, -1.164404f), new Keyframe(0.3899999f, -1.154859f), new Keyframe(0.3999999f, -1.144711f), new Keyframe(0.4099999f, -1.134018f), new Keyframe(0.4199999f, -1.122835f), new Keyframe(0.4299999f, -1.111218f), new Keyframe(0.4399998f, -1.099223f), new Keyframe(0.4499998f, -1.086907f), new Keyframe(0.4599998f, -1.074326f), new Keyframe(0.4699998f, -1.061535f), new Keyframe(0.4799998f, -1.048592f), new Keyframe(0.4899998f, -1.035551f), new Keyframe(0.4999998f, -1.02247f), new Keyframe(0.5099998f, -1.009404f), new Keyframe(0.5199998f, -0.9964092f), new Keyframe(0.5299998f, -0.9835421f), new Keyframe(0.5399998f, -0.9708588f), new Keyframe(0.5499998f, -0.9584152f), new Keyframe(0.5599998f, -0.9462675f), new Keyframe(0.5699998f, -0.934472f), new Keyframe(0.5799997f, -0.9230845f), new Keyframe(0.5899997f, -0.9099234f), new Keyframe(0.5999997f, -0.8928729f), new Keyframe(0.6099997f, -0.8722702f), new Keyframe(0.6199997f, -0.8484529f), new Keyframe(0.6299997f, -0.8217583f), new Keyframe(0.6399997f, -0.7925242f), new Keyframe(0.6499997f, -0.761088f), new Keyframe(0.6599997f, -0.7277873f), new Keyframe(0.6699997f, -0.6929597f), new Keyframe(0.6799996f, -0.6569427f), new Keyframe(0.6899996f, -0.6200738f), new Keyframe(0.6999996f, -0.5826907f), new Keyframe(0.7099996f, -0.5451308f), new Keyframe(0.7199996f, -0.5077317f), new Keyframe(0.7299996f, -0.470831f), new Keyframe(0.7399996f, -0.4347661f), new Keyframe(0.7499996f, -0.3998748f), new Keyframe(0.7599996f, -0.3664945f), new Keyframe(0.7699996f, -0.3349627f), new Keyframe(0.7799996f, -0.305617f), new Keyframe(0.7899995f, -0.278795f), new Keyframe(0.7999995f, -0.2548342f), new Keyframe(0.8099995f, -0.2340721f), new Keyframe(0.8199995f, -0.2154588f), new Keyframe(0.8299995f, -0.1973309f), new Keyframe(0.8399995f, -0.1797198f), new Keyframe(0.8499995f, -0.1626643f), new Keyframe(0.8599995f, -0.1462035f), new Keyframe(0.8699995f, -0.1303764f), new Keyframe(0.8799995f, -0.1152217f), new Keyframe(0.8899994f, -0.1007785f), new Keyframe(0.8999994f, -0.0870858f), new Keyframe(0.9099994f, -0.07418244f), new Keyframe(0.9199994f, -0.06210738f), new Keyframe(0.9299994f, -0.0508996f), new Keyframe(0.9399994f, -0.04059805f), new Keyframe(0.9499994f, -0.03124167f), new Keyframe(0.9599994f, -0.02286936f), new Keyframe(0.9699994f, -0.01552014f), new Keyframe(0.9799994f, -0.009232908f), new Keyframe(0.9899994f, -0.004046619f), new Keyframe(0.9999993f, -2.384186E-07f)
+                 );
 
             HandsShakeCurve = new AnimationCurve
             (
@@ -415,19 +339,12 @@ namespace TarkovIRL
             TryLoadPatch(new Patch_OnShot());
             TryLoadPatch(new Patch_CalculateCameraPosition_HandLayers());
             TryLoadPatch(new Patch_PlayStepSound());
-            TryLoadPatch(new Patch_ThrowGrenade());
+            //TryLoadPatch(new Patch_ThrowGrenade());
             TryLoadPatch(new Patch_TranslateCommand());
             TryLoadPatch(new StaminaRegenRatePatch());
-
             TryLoadPatch(new Patch_ReloadMag());
             TryLoadPatch(new Patch_QuickReloadMag());
-
-            //TryLoadPatch(new Patch_SetSprint());
-
-            //TryLoadPatch(new Patch_ProcessRotation());
-            //TryLoadPatch(new Patch_ProcessUpperbodyRotation());
-            //TryLoadPatch(new Patch_ProcessRotation());
-
+            TryLoadPatch(new Patch_CheckAmmo());
             TryLoadPatch(new Patch_SetHeadRotation());
             TryLoadPatch(new Patch_Look());
         }
@@ -447,17 +364,17 @@ namespace TarkovIRL
             IsHeadTiltADS = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable ADS head tilt", "Additional slight head tilt on ADS when using a stocked weapon stock.");
 
             // general sliders
-            WeaponDeadzoneMulti = ConstructFloatConfig(WeaponDeadzoneMultiDefault, GENERAL_SLIDERS, "Deadzone multiplier", "Change overall deadzone effect strength.", 0, 5f);
+            WeaponDeadzoneMulti = ConstructFloatConfig(0.4f, GENERAL_SLIDERS, "Deadzone multiplier", "Change overall deadzone effect strength.", 0, 5f);
             WeaponSwayMulti = ConstructFloatConfig(0.3f, GENERAL_SLIDERS, "Sway multiplier", "Change overall sway effect strength.", 0, 2f);
-            ParallaxMulti = ConstructFloatConfig(13f, GENERAL_SLIDERS, "Parallax multiplier", "Change overall parallax effect strength.", 1f, 100f);
+            ParallaxMulti = ConstructFloatConfig(14f, GENERAL_SLIDERS, "Parallax multiplier", "Change overall parallax effect strength.", 1f, 100f);
             DirectionalSwayMulti = ConstructFloatConfig(0.15f, GENERAL_SLIDERS, "Directional Sway Final Modifier", "", 0, 5f);
             EfficiencyInjuryDebuffMulti = ConstructFloatConfig(0.5f, GENERAL_SLIDERS, "Efficiency injury effect multi", "Controls how much injuries affect your Efficiency stat. This is to prevent noodle-arms as soon as you get hit. Bone breaks, bleeds, tremors, pain, and fresh wounds only are affected by this slider - not your overall HP.", 0f, 2f);
             TransitionSpeedMulti = ConstructFloatConfig(1.3f, GENERAL_SLIDERS, "Weapon transition speed multiplier", "Global multiplier for how fast all weapon transitions occur", 0.1f, 5f);
             
             // new sway sliders
-            NewSwayPositionMulti = ConstructFloatConfig(0.5f, NEW_SWAY_SLIDERS, "Sway position multiplier", "", 0, 10f);
-            NewSwayRotationMulti = ConstructFloatConfig(3f, NEW_SWAY_SLIDERS, "Sway rotation multiplier", "", 0, 10f);
-            NewSwayPositionDTMulti = ConstructFloatConfig(40f, NEW_SWAY_SLIDERS, "Sway position change speed", "", 0, 80f);
+            NewSwayPositionMulti = ConstructFloatConfig(0.75f, NEW_SWAY_SLIDERS, "Sway position multiplier", "", 0, 10f);
+            NewSwayRotationMulti = ConstructFloatConfig(2f, NEW_SWAY_SLIDERS, "Sway rotation multiplier", "", 0, 10f);
+            NewSwayPositionDTMulti = ConstructFloatConfig(40F, NEW_SWAY_SLIDERS, "Sway position change speed", "", 0, 80f);
             NewSwayRotationDTMulti = ConstructFloatConfig(4f, NEW_SWAY_SLIDERS, "Sway rotation change speed", "", 0, 10f);
             NewSwayWpnUnstockedDropValue = ConstructFloatConfig(0.3f, NEW_SWAY_SLIDERS, "Weapon drop for unstocked value", "Unstocked weapons will drop a little when rotating.", 0, 10f);
             NewSwayWpnUnstockedDropSpeed = ConstructFloatConfig(3f, NEW_SWAY_SLIDERS, "Weapon drop for unstocked speed", "", 0, 10f);
@@ -474,13 +391,13 @@ namespace TarkovIRL
             // parallax sliders
             ParallaxSetSizeMulti = ConstructFloatConfig(0.5f, PARALLAX_SLIDERS, "Parallax set size", "Amount of parallax that is possible per player rotation.", 0, 20f);
             ParallaxInAds = ConstructFloatConfig(ParallaxInAdsDefault, PARALLAX_SLIDERS, "Parallax effect in ADS", "The % of parallax effect that you see in ADS (with a stocked weapon)", 0, 1f);
-            PistolSpecificParallax = ConstructFloatConfig(7f, PARALLAX_SLIDERS, "Parallax effect value specifically for pistols", "", 0, 10f); 
+            PistolSpecificParallax = ConstructFloatConfig(6f, PARALLAX_SLIDERS, "Parallax effect value specifically for pistols", "", 0, 10f); 
             ShotParallaxResetTimeMulti = ConstructFloatConfig(ShotParallaxResetTimeMultiDefault, PARALLAX_SLIDERS, "Shot-parallax cooldown multiplier", "Rate of return to reduced parallax in the ADS, after a shot.", 0, 20f);
             AdsParallaxTimeMulti = ConstructFloatConfig(2f, PARALLAX_SLIDERS, "Ads-parallax cooldown multiplier", "", 0, 160f);
             ShotParallaxWeaponWeightMulti = ConstructFloatConfig(ShotParallaxWeaponWeightMultiDefault, PARALLAX_SLIDERS, "Shot parallax weapon weight factor multiplier", "After a shot in ADS, the parallax effect is momentarilly returned to full strength.", 0, 10f);
             ParallaxDTMulti = ConstructFloatConfig(10f, PARALLAX_SLIDERS, "Parallax main lerp multiplier", "How fast the main parallax routine processes (so, responsiveness we can say).", 0.05f, 1000f);
             ParallaxRotationSmoothingMulti = ConstructFloatConfig(10f, PARALLAX_SLIDERS, "ParallaxRotationSmoothingMulti", "The strength with which the parallax effect is bled-off when not rotating.", 0.05f, 1000f);
-            ParallaxHardClamp = ConstructFloatConfig(0.1f, PARALLAX_SLIDERS, "Parallax Hard Stop", "Absolute maximum value of the parallax effect -- if you want to prevent noodle-arms, this is a good place to start.", 0, 1f);
+            ParallaxHardClamp = ConstructFloatConfig(0.08f, PARALLAX_SLIDERS, "Parallax Hard Stop", "Absolute maximum value of the parallax effect -- if you want to prevent noodle-arms, this is a good place to start.", 0, 1f);
             ParallaxHardClampPistols = ConstructFloatConfig(0.03f, PARALLAX_SLIDERS, "Parallax Hard Stop Pistols", "Absolute maximum value of the parallax effect -- if you want to prevent noodle-arms, this is a good place to start.", 0, 1f);
 
             // efficiency sliders
@@ -518,109 +435,18 @@ namespace TarkovIRL
             AugmentedReloadSpeed = ConstructFloatConfig(1.3f, AUGMENTED_RELOAD, "Augmented reload speed modifier", "", 1f, 5f);
             AugmentedReloadSprintingDebuff = ConstructFloatConfig(0.5f, AUGMENTED_RELOAD, "Reloading while sprinting debuff %", "", 0.1f, 1f);
 
+            
             // deadzone
-            DeadzoneInShortStock = ConstructFloatConfig(0.35f, DEADZONE, "Deadzone % in Short Stock Pose", "", 0, 5f);
-            DeadzoneInActiveAim = ConstructFloatConfig(0.5f, DEADZONE, "Deadzone % in Active Aim Pose", "", 0, 5f);
-            DeadzoneInVanilla = ConstructFloatConfig(0.7f, DEADZONE, "Deadzone % in BSG Pose", "", 0, 5f);
-            DeadzoneInADS = ConstructFloatConfig(0.2f, DEADZONE, "Deadzone % in ADS", "", 0, 5f);
-            DeadzoneHeadFollowSpeedMulti = ConstructFloatConfig(3f, DEADZONE, "Headfollow Speed Multi", "", 0, 5f);
+            DeadzoneInShortStock = ConstructFloatConfig(0.35f, DEADZONE, "Deadzone % in Short Stock Pose", "", -5f, 5f);
+            DeadzoneInActiveAim = ConstructFloatConfig(0.5f, DEADZONE, "Deadzone % in Active Aim Pose", "", -5f, 5f);
+            DeadzoneInVanilla = ConstructFloatConfig(0.65f, DEADZONE, "Deadzone % in BSG Pose", "", -5f, 5f);
+            DeadzoneInADS = ConstructFloatConfig(0.2f, DEADZONE, "Deadzone % in ADS", "", -5f, 5f);
+            DeadzoneInHighReady = ConstructFloatConfig(0.35f, DEADZONE, "Deadzone % in High Ready", "", -5f, 5f);
+            DeadzoneInLowReady = ConstructFloatConfig(0.75f, DEADZONE, "Deadzone % in Low Ready", "", -5f, 5f);
+            DeadzoneHeadFollowSpeedMulti = ConstructFloatConfig(10f, DEADZONE, "Headfollow Speed Multi", "", 0, 20f);
             DeadzoneWeightForEfficiency = ConstructBoolConfig(true, DEADZONE, "Deadzone weighted for Efficiency", "Ties Efficiency stat (see documentation) to your camera deadzone; less efficiency will cause more lag in the camera to recenter");
 
-            // weapon transitions
-            TransitionSpeedPhase1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "TransitionSpeedPhase1", "", 0.1f, 5f);
-            TransitionSpeedPhase2 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "TransitionSpeedPhase2", "", 0.1f, 5f);
-
-            // sling transforms
-            SlingPositionStartX = ConstructFloatConfig(0.06f, WEAPON_TRANSITIONS, "SlingPositionStartX", "", -1f, 1f);
-            SlingPositionStartY = ConstructFloatConfig(-0.16f, WEAPON_TRANSITIONS, "SlingPositionStartY", "", -1f, 1f);
-            SlingPositionStartZ = ConstructFloatConfig(-0.1f, WEAPON_TRANSITIONS, "SlingPositionStartZ", "", -1f, 1f);
-
-            SlingRotationStartX = ConstructFloatConfig(0, WEAPON_TRANSITIONS, "SlingRotationStartX", "", -1f, 1f);
-            SlingRotationStartY = ConstructFloatConfig(-0.75f, WEAPON_TRANSITIONS, "SlingRotationStartY", "", -1f, 1f);
-            SlingRotationStartZ = ConstructFloatConfig(-0.24f, WEAPON_TRANSITIONS, "SlingRotationStartZ", "", -1f, 1f);
-
-            SlingPositionEndX = ConstructFloatConfig(0.37f, WEAPON_TRANSITIONS, "SlingPositionEndX", "", -1f, 1f);
-            SlingPositionEndY = ConstructFloatConfig(-0.16f, WEAPON_TRANSITIONS, "SlingPositionEndY", "", -1f, 1f);
-            SlingPositionEndZ = ConstructFloatConfig(-0.46f, WEAPON_TRANSITIONS, "SlingPositionEndZ", "", -1f, 1f);
-
-            SlingRotationEndX = ConstructFloatConfig(0, WEAPON_TRANSITIONS, "SlingRotationEndX", "", -1f, 1f);
-            SlingRotationEndY = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "SlingRotationEndY", "", -1f, 1f);
-            SlingRotationEndZ = ConstructFloatConfig(-0.24f, WEAPON_TRANSITIONS, "SlingRotationEndZ", "", -1f, 1f);
-
-            // shoulder transforms
-            ShoulderPositionStartX = ConstructFloatConfig(0.27f, WEAPON_TRANSITIONS, "ShoulderPositionStartX", "", -1f, 1f);
-            ShoulderPositionStartY = ConstructFloatConfig(-0.5f, WEAPON_TRANSITIONS, "ShoulderPositionStartY", "", -1f, 1f);
-            ShoulderPositionStartZ = ConstructFloatConfig(-0.12f, WEAPON_TRANSITIONS, "ShoulderPositionStartZ", "", -1f, 1f);
-
-            ShoulderRotationStartX = ConstructFloatConfig(-0.4f, WEAPON_TRANSITIONS, "ShoulderRotationStartX", "", -1f, 1f);
-            ShoulderRotationStartY = ConstructFloatConfig(-0.56f, WEAPON_TRANSITIONS, "ShoulderRotationStartY", "", -1f, 1f);
-            ShoulderRotationStartZ = ConstructFloatConfig(0, WEAPON_TRANSITIONS, "ShoulderRotationStartZ", "", -1f, 1f);
-
-            ShoulderPositionEndX = ConstructFloatConfig(0.25f, WEAPON_TRANSITIONS, "ShoulderPositionEndX", "", -1f, 1f);
-            ShoulderPositionEndY = ConstructFloatConfig(-0.50f, WEAPON_TRANSITIONS, "ShoulderPositionEndY", "", -1f, 1f);
-            ShoulderPositionEndZ = ConstructFloatConfig(-0.19f, WEAPON_TRANSITIONS, "ShoulderPositionEndZ", "", -1f, 1f);
-
-            ShoulderRotationEndX = ConstructFloatConfig(-0.4f, WEAPON_TRANSITIONS, "ShoulderRotationEndX", "", -1f, 1f);
-            ShoulderRotationEndY = ConstructFloatConfig(-0.57f, WEAPON_TRANSITIONS, "ShoulderRotationEndY", "", -1f, 1f);
-            ShoulderRotationEndZ = ConstructFloatConfig(0f, WEAPON_TRANSITIONS, "ShoulderRotationEndZ", "", -1f, 1f);
-
-            // holster transforms
-            HolsterPositionStartX = ConstructFloatConfig(0.05f, WEAPON_TRANSITIONS, "HolsterPositionStartX", "", -1f, 1f);
-            HolsterPositionStartY = ConstructFloatConfig(0.1f, WEAPON_TRANSITIONS, "HolsterPositionStartY", "", -1f, 1f);
-            HolsterPositionStartZ = ConstructFloatConfig(-0.2f, WEAPON_TRANSITIONS, "HolsterPositionStartZ", "", -1f, 1f);
-
-            HolsterRotationStartX = ConstructFloatConfig(0.1f, WEAPON_TRANSITIONS, "HolsterRotationStartX", "", -1f, 1f);
-            HolsterRotationStartY = ConstructFloatConfig(-0.2f, WEAPON_TRANSITIONS, "HolsterRotationStartY", "", -1f, 1f);
-            HolsterRotationStartZ = ConstructFloatConfig(0.05f, WEAPON_TRANSITIONS, "HolsterRotationStartZ", "", -1f, 1f);
-
-            HolsterPositionEndX = ConstructFloatConfig(0, WEAPON_TRANSITIONS, "HolsterPositionEndX", "", -1f, 1f);
-            HolsterPositionEndY = ConstructFloatConfig(0, WEAPON_TRANSITIONS, "HolsterPositionEndY", "", -1f, 1f);
-            HolsterPositionEndZ = ConstructFloatConfig(0, WEAPON_TRANSITIONS, "HolsterPositionEndZ", "", -1f, 1f);
-
-            HolsterRotationEndX = ConstructFloatConfig(0, WEAPON_TRANSITIONS, "HolsterRotationEndX", "", -1f, 1f);
-            HolsterRotationEndY = ConstructFloatConfig(0, WEAPON_TRANSITIONS, "HolsterRotationEndY", "", -1f, 1f);
-            HolsterRotationEndZ = ConstructFloatConfig(0, WEAPON_TRANSITIONS, "HolsterRotationEndZ", "", -1f, 1f);
-
-            // sling-to-shoulder curve
-            Sling2ShoulderSpeed1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "Sling2ShoulderSpeed1", "", -10f, 10f);
-            Sling2ShoulderSpeed2 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "Sling2ShoulderSpeed2", "", -10f, 10f);
-
-            Sling2ShoulderCurve1_1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "1 - Sling2ShoulderCurve1_1", "", 0.1f, 3f);
-            Sling2ShoulderCurve2_1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "2 - Sling2ShoulderCurve2_1", "", 0.1f, 3f);
-            Sling2ShoulderCurve3_1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "3 - Sling2ShoulderCurve3_1", "", 0.1f, 3f);
-            Sling2ShoulderCurve4_1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "4 - Sling2ShoulderCurve4_1", "", 0.1f, 3f);
-            Sling2ShoulderCurve5_1 = ConstructFloatConfig(0.75f, WEAPON_TRANSITIONS, "5 - Sling2ShoulderCurve5_1", "", 0.1f, 3f);
-            Sling2ShoulderCurve6_1 = ConstructFloatConfig(0.2f, WEAPON_TRANSITIONS, "6 - Sling2ShoulderCurve6_1", "", 0.1f, 3f);
-
-            Sling2ShoulderCurve1_2 = ConstructFloatConfig(0.3f, WEAPON_TRANSITIONS, "7 - Sling2ShoulderCurve1_2", "", 0.1f, 3f);
-            Sling2ShoulderCurve2_2 = ConstructFloatConfig(1.5f, WEAPON_TRANSITIONS, "8 - Sling2ShoulderCurve2_2", "", 0.1f, 3f);
-            Sling2ShoulderCurve3_2 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "9 - Sling2ShoulderCurve3_2", "", 0.1f, 3f);
-            Sling2ShoulderCurve4_2 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "99 - Sling2ShoulderCurve4_2", "", 0.1f, 3f);
-            Sling2ShoulderCurve5_2 = ConstructFloatConfig(2f, WEAPON_TRANSITIONS, "999 - Sling2ShoulderCurve5_2", "", 0.1f, 3f);
-            Sling2ShoulderCurve6_2 = ConstructFloatConfig(3f, WEAPON_TRANSITIONS, "9999 - Sling2ShoulderCurve6_2", "", 0.1f, 3f);
-
-            // shoulder-to-sling curve
-            Shoulder2SlingSpeed1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "Shoulder2SlingSpeed1", "", -10f, 10f);
-            Shoulder2SlingSpeed2 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "Shoulder2SlingSpeed2", "", -10f, 10f);
-
-            Shoulder2SlingCurve1_1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "1 - Shoulder2SlingCurve1_1", "", 0.1f, 3f);
-            Shoulder2SlingCurve2_1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "2 - Shoulder2SlingCurve2_1", "", 0.1f, 3f);
-            Shoulder2SlingCurve3_1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "3 - Shoulder2SlingCurve3_1", "", 0.1f, 3f);
-            Shoulder2SlingCurve4_1 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "4 - Shoulder2SlingCurve4_1", "", 0.1f, 3f);
-            Shoulder2SlingCurve5_1 = ConstructFloatConfig(0.75f, WEAPON_TRANSITIONS, "5 - Shoulder2SlingCurve5_1", "", 0.1f, 3f);
-            Shoulder2SlingCurve6_1 = ConstructFloatConfig(0.2f, WEAPON_TRANSITIONS, "6 - Shoulder2SlingCurve6_1", "", 0.1f, 3f);
-
-            Shoulder2SlingCurve1_2 = ConstructFloatConfig(0.3f, WEAPON_TRANSITIONS, "7 - Shoulder2SlingCurve1_2", "", 0.1f, 3f);
-            Shoulder2SlingCurve2_2 = ConstructFloatConfig(1.5f, WEAPON_TRANSITIONS, "8 - Shoulder2SlingCurve2_2", "", 0.1f, 3f);
-            Shoulder2SlingCurve3_2 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "9 - Shoulder2SlingCurve3_2", "", 0.1f, 3f);
-            Shoulder2SlingCurve4_2 = ConstructFloatConfig(1f, WEAPON_TRANSITIONS, "99 - Shoulder2SlingCurve4_2", "", 0.1f, 3f);
-            Shoulder2SlingCurve5_2 = ConstructFloatConfig(2f, WEAPON_TRANSITIONS, "999 - Shoulder2SlingCurve5_2", "", 0.1f, 3f);
-            Shoulder2SlingCurve6_2 = ConstructFloatConfig(3f, WEAPON_TRANSITIONS, "9999 - Shoulder2SlingCurve6_2", "", 0.1f, 3f);
-
-            TransformSmoothingDTMulti = ConstructFloatConfig(12f, WEAPON_TRANSITIONS, "99999 - TransformSmoothingDTMulti", "", 0.1f, 100f);
-
-
-            // dev
+            /*
             DebugHeadRotX = ConstructFloatConfig(0, DEV_SECTION, "DebugHeadRotX", "", -20f, 20f);
             DebugHeadRotY = ConstructFloatConfig(0, DEV_SECTION, "DebugHeadRotY", "", -20f, 20f);
             DebugHeadRotZ = ConstructFloatConfig(0, DEV_SECTION, "DebugHeadRotZ", "", -20f, 20f);
@@ -638,28 +464,12 @@ namespace TarkovIRL
             DebugEfficiency = ConstructBoolConfig(false, DEV_SECTION, "Show efficiency value (inverse version)", "");
 
             AnimatorLayerInt = ConstructFloatConfig(0, DEV_SECTION, "AnimatorLayerInt", "", 0f, 10f);
-
-            // anim curve
-
-            DebugFloat1 = ConstructFloatConfig(0, ANIM_CURVE, "DebugFloat1", "", -10f, 10f);
-            DebugFloat2 = ConstructFloatConfig(0, ANIM_CURVE, "DebugFloat2", "", -10f, 10f);
-
-            AnimCurveTime0 = ConstructFloatConfig(1f, ANIM_CURVE, "1 - AnimCurveTime0", "", 0.1f, 3f);
-            AnimCurveTime0_2 = ConstructFloatConfig(1f, ANIM_CURVE, "2 - AnimCurveTime0_2", "", 0.1f, 3f);
-            AnimCurveTime0_4 = ConstructFloatConfig(1f, ANIM_CURVE, "3 - AnimCurveTime0_4", "", 0.1f, 3f);
-            AnimCurveTime0_6 = ConstructFloatConfig(1f, ANIM_CURVE, "4 - AnimCurveTime0_6", "", 0.1f, 3f);
-            AnimCurveTime0_8 = ConstructFloatConfig(1f, ANIM_CURVE, "5 - AnimCurveTime0_8", "", 0.1f, 3f);
-            AnimCurveTime1 = ConstructFloatConfig(1f, ANIM_CURVE, "6 - AnimCurveTime1", "", 0.1f, 3f);
-
-            AnimCurveTime0p2 = ConstructFloatConfig(1f, ANIM_CURVE, "7 - AnimCurveTime0p2", "", 0.1f, 10f);
-            AnimCurveTime0_2p2 = ConstructFloatConfig(1f, ANIM_CURVE, "8 - AnimCurveTime0_2p2", "", 0.1f, 10f);
-            AnimCurveTime0_4p2 = ConstructFloatConfig(1f, ANIM_CURVE, "9 - AnimCurveTime0_4p2", "", 0.1f, 10f);
-            AnimCurveTime0_6p2 = ConstructFloatConfig(1f, ANIM_CURVE, "10 - AnimCurveTime0_6p2", "", 0.1f, 10f);
-            AnimCurveTime0_8p2 = ConstructFloatConfig(1f, ANIM_CURVE, "11 - AnimCurveTime0_8p2", "", 0.1f, 10f);
-            AnimCurveTime1p2 = ConstructFloatConfig(1f, ANIM_CURVE, "12 - AnimCurveTime1p2", "", 0.1f, 10f);
+            ArtificalInjury = ConstructFloatConfig(1f, DEV_SECTION, "Artifical Injury Multi", "", 1f, 5f);
+            DebugFloat0 = ConstructFloatConfig(0, DEV_SECTION, "DebugFloat0", "", -5f, 5f);
+            DebugFloat1 = ConstructFloatConfig(0, DEV_SECTION, "DebugFloat1", "", -5f, 50f);
+            DebugFloat2 = ConstructFloatConfig(0, DEV_SECTION, "DebugFloat2", "", -5f, 5f);
+            */
         }
-
-        static readonly string ANIM_CURVE = "999 - Anim curve builder";
 
         void Update()
         {
@@ -674,25 +484,35 @@ namespace TarkovIRL
         //
         void DriveLerps()
         {
-            UtilsTIRL.Update(DeltaTime);
+            TIRLUtils.Update(DeltaTime);
             EfficiencyController.UpdateEfficiencyLerp(DeltaTime);
-            FootstepController.UpdateStep(DeltaTime);
-            SwayController.UpdateLerp(DeltaTime);
-            ThrowController.UpdateLerp(DeltaTime);
-            HeadRotController.UpdateLerp(DeltaTime);
-            DirectionalSwayController.UpdateDirectionalSwayLerp(DeltaTime);
+            //ThrowController.UpdateLerp(DeltaTime);
             AugmentedReloadController.Update();
             //RunningFadeController.UpdateRunningFadeOffsets(DeltaTime);
         }
 
         void FixedUpdate()
         {
+            
             FixedDeltaTime += (UnityEngine.Time.unscaledDeltaTime - FixedDeltaTime);
-
+            if (FixedDeltaTime > FTDThresh)
+            {
+                if (IsLogging.Value)
+                {
+                    TIRLUtils.LogError($"fixed deltaTime exceeds limits : {FixedDeltaTime} / 0.01666 -- movement updates skipped this frame");
+                }
+                return;
+            }
             PlayerMotionController.UpdateMovementMeasurementsInFDT(FixedDeltaTime);
             WeaponSelectionController.UpdateAnimationPump(FixedDeltaTime);
             NewDeadzoneController.Update(FixedDeltaTime);
             NewSwayController.UpdateLerp(FixedDeltaTime);
+            HeadRotController.UpdateLerp(FixedDeltaTime);
+            DirectionalSwayController.UpdateDirectionalSwayLerp(FixedDeltaTime);
+            FootstepController.UpdateStep(FixedDeltaTime);
+            SwayController.UpdateLerp(FixedDeltaTime);
+            ParallaxAdsController.UpdateLerps(FixedDeltaTime);
+            ParallaxController.Update(FixedDeltaTime);
         }
 
         void LateUpdate()
@@ -710,7 +530,7 @@ namespace TarkovIRL
             catch (Exception e)
             {
                 string patchName = patch.ToString();
-                if (UtilsTIRL.IsPriority(1)) UtilsTIRL.Log("could not load " + patchName + " -- " + e);
+                if (TIRLUtils.IsPriority(1)) TIRLUtils.LogError("could not load " + patchName + " -- " + e);
                 throw;
             }
         }

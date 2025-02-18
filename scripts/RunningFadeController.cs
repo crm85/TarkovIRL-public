@@ -101,7 +101,7 @@ namespace TarkovIRL
             Vector3 offsetRot = _offsetRot;
 
             pos = Vector3.Lerp(Vector3.zero, offsetPos, runAlpha);
-            rot = UtilsTIRL.GetQuatFromV3(Vector3.Lerp(Vector3.zero, offsetRot, runAlpha));
+            rot = TIRLUtils.GetQuatFromV3(Vector3.Lerp(Vector3.zero, offsetRot, runAlpha));
         }
     }
 }

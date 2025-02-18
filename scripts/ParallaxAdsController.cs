@@ -20,10 +20,10 @@ namespace TarkovIRL
         static readonly float _HeadTiltValY = 2f;
         static readonly float _HeadTiltValZ = 6f;
 
-        public static void UpdateLerps()
+        public static void UpdateLerps(float dt)
         {
-            LerpAds();
-            LerpShot();
+            LerpAds(dt);
+            LerpShot(dt);
             DefineParallaxWeight();
         }
 
@@ -33,29 +33,29 @@ namespace TarkovIRL
             _adsSpeedMod = wpnMulti;
         }
 
-        static void LerpAds()
+        static void LerpAds(float dt)
         {
             float targetWeight = _intoAds ? PrimeMover.ParallaxInAds.Value : 1f;
-            _adsLerpWeight = Mathf.Lerp(_adsLerpWeight, targetWeight, PrimeMover.Instance.DeltaTime * _adsSpeedMod * PrimeMover.AdsParallaxTimeMulti.Value);
+            _adsLerpWeight = Mathf.Lerp(_adsLerpWeight, targetWeight, dt * _adsSpeedMod * PrimeMover.AdsParallaxTimeMulti.Value);
         }
 
-        static void LerpShot()
+        static void LerpShot(float dt)
         {
             if (_intoShot)
             {
-                _shotLerp = Mathf.Lerp(_shotLerp, _shotWeight * 1.05f, PrimeMover.Instance.DeltaTime * _shotWeight * PrimeMover.ShotParallaxResetTimeMulti.Value * 3f);
+                _shotLerp = Mathf.Lerp(_shotLerp, _shotWeight * 1.05f, dt * _shotWeight * PrimeMover.ShotParallaxResetTimeMulti.Value * 3f);
                 if (_shotLerp >= _shotWeight * 0.95f) _intoShot = false;
             }
             else
             {
-                _shotLerp = Mathf.Lerp(_shotLerp, _adsLerpWeight * 0.95f, PrimeMover.Instance.DeltaTime * (1f / _shotWeight) * PrimeMover.ShotParallaxResetTimeMulti.Value);
+                _shotLerp = Mathf.Lerp(_shotLerp, _adsLerpWeight * 0.95f, dt * (1f / _shotWeight) * PrimeMover.ShotParallaxResetTimeMulti.Value);
                 if (_shotLerp <= _adsLerpWeight) _shotSwitch = false;
             }
         }
 
         static public void StartNewShot(Weapon weapon)
         {
-            float weaponWeight = weapon.GetSingleItemTotalWeight() * PrimeMover.ShotParallaxWeaponWeightMulti.Value;
+            float weaponWeight = weapon.TotalWeight * PrimeMover.ShotParallaxWeaponWeightMulti.Value;
             float cartridgeWeight = weapon.CurrentAmmoTemplate.BulletMassGram;
             float newShotWeight = cartridgeWeight / weaponWeight;
             _shotWeight = newShotWeight;

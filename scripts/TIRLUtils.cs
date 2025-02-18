@@ -8,16 +8,32 @@ using UnityEngine;
 
 namespace TarkovIRL
 {
-    public static class UtilsTIRL
+    public static class TIRLUtils
     {
         public enum E_DEBUG_PRIORITY { LOG, SPAM_LOG, ALWAYS_LOG };
 
         public static ManualLogSource Logger;
         static float _dt = 0;
+        static float _spamTimer = 0;
 
-        public static void Log(string toPrint)
+        public static void LogError(string toPrint)
         {
             Logger.LogError((object)toPrint);
+        }
+
+        public static void Log(string toPrint, bool spam)
+        {
+            if (spam)
+                Logger.LogInfo((object)toPrint);
+            else
+            {
+                _spamTimer += _dt;
+                if (_spamTimer > 0.2f)
+                {
+                    _spamTimer = 0;
+                    Logger.LogInfo((object)toPrint);
+                }
+            }
         }
 
         public static void LogPriority(E_DEBUG_PRIORITY priority, string toPrint)
@@ -44,7 +60,7 @@ namespace TarkovIRL
 
         public static void Update(float dt)
         {
-            _dt += dt;
+            _dt = dt;
         }
 
         public static bool IsPriority(int priority)

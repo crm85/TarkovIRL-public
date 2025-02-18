@@ -22,10 +22,7 @@ namespace TarkovIRL
             _rotDeltaHistory += rotDelta;
             _rotDeltaHistory -= _rotDeltaSmoothed;
             _rotDeltaSmoothed = _rotDeltaHistory * fdt * 9f;
-        }
 
-        public static Vector3 GetHeadRotWithDeadzone(Vector3 headRotInitial) 
-        {
             float deadzoneMulti = PrimeMover.WeaponDeadzoneMulti.Value * WeaponController.GetWeaponMulti(false);
             if (WeaponController.HasShoulderContact() && PlayerMotionController.IsAiming)
             {
@@ -43,10 +40,21 @@ namespace TarkovIRL
             {
                 deadzoneMulti *= PrimeMover.DeadzoneInVanilla.Value;
             }
+            else if (StanceController.CurrentStance == EStance.HighReady)
+            {
+                deadzoneMulti *= PrimeMover.DeadzoneInHighReady.Value;
+            }
+            else if (StanceController.CurrentStance == EStance.LowReady)
+            {
+                deadzoneMulti *= PrimeMover.DeadzoneInLowReady.Value;
+            }
+
             float efficiencyWeight = PrimeMover.DeadzoneWeightForEfficiency.Value ? EfficiencyController.EfficiencyModifierInverse : 1f;
-            float highReadyMulti = StanceController.CurrentStance == EStance.HighReady ? 0.5f : 1f;
-            //UtilsTIRL.Log($"efficiencyWeight on deadzone {efficiencyWeight}");
-            _rotDeltaSmoothedInDeltaTime = Mathf.Lerp(_rotDeltaSmoothedInDeltaTime, _rotDeltaSmoothed * deadzoneMulti, PrimeMover.Instance.DeltaTime * PrimeMover.DeadzoneHeadFollowSpeedMulti.Value * efficiencyWeight * highReadyMulti);
+            _rotDeltaSmoothedInDeltaTime = Mathf.Lerp(_rotDeltaSmoothedInDeltaTime, _rotDeltaSmoothed * deadzoneMulti, fdt * PrimeMover.DeadzoneHeadFollowSpeedMulti.Value * efficiencyWeight);
+        }
+
+        public static Vector3 GetHeadRotWithDeadzone(Vector3 headRotInitial) 
+        {
 
             Vector3 headRotFinal = headRotInitial;
             headRotFinal.y += _rotDeltaSmoothedInDeltaTime;

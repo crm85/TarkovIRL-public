@@ -18,12 +18,12 @@ namespace TarkovIRL
         static FieldInfo _playerField;
         protected override MethodBase GetTargetMethod()
         {
-            _playerField = AccessTools.Field(typeof(Class1475), "player_0");
-            return typeof(Class1475).GetMethod("TranslateCommand", BindingFlags.Instance | BindingFlags.Public);
+            _playerField = AccessTools.Field(typeof(Class1579), "player_0");
+            return typeof(Class1579).GetMethod("TranslateCommand", BindingFlags.Instance | BindingFlags.Public);
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(Class1475 __instance, ECommand command)
+        private static void PatchPostfix(Class1579 __instance, ECommand command)
         {
             Player player = (Player)_playerField.GetValue(__instance);
             if (player == null)

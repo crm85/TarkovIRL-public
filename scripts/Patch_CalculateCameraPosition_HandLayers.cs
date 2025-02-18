@@ -49,6 +49,7 @@ namespace TarkovIRL
                 Vector3 breathOffset = HandBreathController.GetModifiedHandPosForBreath(player);
                 Vector3 armStamOffset = HandShakeController.GetHandsShakePosition(player);
                 Vector3 poseOffset = HandPoseController.GetModifiedHandPosWithPose(player);
+                Quaternion poseOffsetRot = HandPoseController.GetModifiedHandRotWithPoseChange();
                 Vector3 changePoseOffset = HandPoseController.GetModifiedHandPosWithPoseChange(player);
                 Vector3 movementZOffsets = HandMovWithRotController.GetModifiedHandPosZMovement(player);
                 Vector3 unstockedOffset = HandMovWithRotController.GetModifiedHandPosForLoweredWeapon(player);
@@ -71,8 +72,15 @@ namespace TarkovIRL
                 bool isNewSway = PrimeMover.IsWeaponSway.Value;
 
                 if (isBreathPos) __instance.HandsContainer.WeaponRoot.localPosition += breathOffset;
-                if (isPosePos) __instance.HandsContainer.WeaponRoot.localPosition += poseOffset;
-                if (isPoseChangePos) __instance.HandsContainer.WeaponRoot.localPosition += changePoseOffset;
+                if (isPosePos)
+                {
+                    __instance.HandsContainer.WeaponRoot.localPosition += poseOffset;
+                }
+                if (isPoseChangePos)
+                {
+                    __instance.HandsContainer.WeaponRoot.localPosition += changePoseOffset;
+                    __instance.HandsContainer.WeaponRoot.localRotation *= poseOffsetRot;
+                }
                 if (isArmShake) __instance.HandsContainer.WeaponRoot.localPosition += armStamOffset;
                 if (isSmallEffects)
                 {
@@ -118,8 +126,8 @@ namespace TarkovIRL
                 debugRot.y = PrimeMover.DebugHandsRotY.Value;
                 debugRot.z = PrimeMover.DebugHandsRotZ.Value;
 
-                //__instance.HandsContainer.WeaponRoot.localPosition += debugPos;
-                //__instance.HandsContainer.WeaponRoot.localRotation *= debugRot;
+                __instance.HandsContainer.WeaponRoot.localPosition += debugPos;
+                __instance.HandsContainer.WeaponRoot.localRotation *= debugRot;
             }
         }
     }

@@ -28,6 +28,23 @@ namespace TarkovIRL
         static Vector3 _posLerpSmoothed = Vector3.zero;
         static Vector3 _rotLerpSmoothed = Vector3.zero;
 
+        static readonly Vector3 Pistol_Start_Pos = new Vector3(0.05f, 0.1f, -0.2f);
+        static readonly Vector3 Pistol_Start_Rot = new Vector3(0.1f, -0.2f, 0.05f);
+        static readonly Vector3 Pistol_End_Pos = Vector3.zero;
+        static readonly Vector3 Pistol_End_Rot = Vector3.zero;
+
+        static readonly Vector3 Shoulder_Start_Pos = new Vector3(0.27f, -0.5f, -0.12f);
+        static readonly Vector3 Shoulder_Start_Rot = new Vector3(-0.4f, -0.56f, 0f);
+        static readonly Vector3 Shoulder_End_Pos = new Vector3(0.25f, -0.5f, -0.19f);
+        static readonly Vector3 Shoulder_End_Rot = new Vector3(-0.4f, -0.56f, 0f);
+
+        static readonly Vector3 Sling_Start_Pos = new Vector3(0.06f, -0.16f, -0.1f);
+        static readonly Vector3 Sling_Start_Rot = new Vector3(0, -0.75f, -0.24f);
+        static readonly Vector3 Sling_End_Pos = new Vector3(0.37f, -0.16f, -0.46f);
+        static readonly Vector3 Sling_End_Rot = new Vector3(0, 1f, -0.24f);
+
+        static readonly float TransformSmoothingDTMulti = 12f;
+
         static Player _player = null;
 
         static AnimationCurve _animSpeedCurvePhase1 = new AnimationCurve();
@@ -59,13 +76,13 @@ namespace TarkovIRL
             _rotLerpHistory.y -= _rotLerpSmoothed.y;
             _rotLerpHistory.z -= _rotLerpSmoothed.z;
 
-            _posLerpSmoothed.x = _posLerpHistory.x * dt * PrimeMover.TransformSmoothingDTMulti.Value;
-            _posLerpSmoothed.y = _posLerpHistory.y * dt * PrimeMover.TransformSmoothingDTMulti.Value;
-            _posLerpSmoothed.z = _posLerpHistory.z * dt * PrimeMover.TransformSmoothingDTMulti.Value;
+            _posLerpSmoothed.x = _posLerpHistory.x * dt * TransformSmoothingDTMulti;
+            _posLerpSmoothed.y = _posLerpHistory.y * dt * TransformSmoothingDTMulti;
+            _posLerpSmoothed.z = _posLerpHistory.z * dt * TransformSmoothingDTMulti;
 
-            _rotLerpSmoothed.x = _rotLerpHistory.x * dt * PrimeMover.TransformSmoothingDTMulti.Value;
-            _rotLerpSmoothed.y = _rotLerpHistory.y * dt * PrimeMover.TransformSmoothingDTMulti.Value;
-            _rotLerpSmoothed.z = _rotLerpHistory.z * dt * PrimeMover.TransformSmoothingDTMulti.Value;
+            _rotLerpSmoothed.x = _rotLerpHistory.x * dt * TransformSmoothingDTMulti;
+            _rotLerpSmoothed.y = _rotLerpHistory.y * dt * TransformSmoothingDTMulti;
+            _rotLerpSmoothed.z = _rotLerpHistory.z * dt * TransformSmoothingDTMulti;
 
 
             if (_transitionFirstFrame)
@@ -119,7 +136,7 @@ namespace TarkovIRL
         public static void GetWeaponSelectionTransforms(out Vector3 pos, out Quaternion rot)
         {
             pos = _posLerpSmoothed;
-            rot = UtilsTIRL.GetQuatFromV3(_rotLerpSmoothed);
+            rot = TIRLUtils.GetQuatFromV3(_rotLerpSmoothed);
         }
 
         public static void Process(ECommand command, Player player)
@@ -141,43 +158,61 @@ namespace TarkovIRL
             Item shoulderWeapon = player.Inventory.Equipment.GetSlot(EquipmentSlot.SecondPrimaryWeapon).ContainedItem;
             Item holsterWeapon = player.Inventory.Equipment.GetSlot(EquipmentSlot.Holster).ContainedItem;
 
+            if (newLastWeapon == null)
+            {
+                player.TrySetLastEquippedWeapon(true);
+                if (newLastWeapon == null)
+                { 
+                    return; 
+                }
+            }
+
             // TODO : no case for coming from nothing -- if you have no weapon at all and pick one up,
             // null ref and you can't proceed without doing something else with your hands
 
-            if (newLastWeapon.Equals(slingWeapon))
+            if(slingWeapon != null)
             {
-                if (command == ECommand.SelectFirstPrimaryWeapon)
+                if (newLastWeapon.Equals(slingWeapon))
                 {
-                    return;
-                }
-                _lastSelectedWeapon = EWeaponSelection.SLING;
-            }
-            if (newLastWeapon.Equals(shoulderWeapon))
-            {
-                if (command == ECommand.SelectSecondPrimaryWeapon)
-                {
-                    return;
-                }
-                _lastSelectedWeapon = EWeaponSelection.SHOULDER;
-            }
-            if (newLastWeapon.Equals(holsterWeapon))
-            {
-                if (command == ECommand.SelectSecondaryWeapon)
-                {
-                    return;
-                }
-                _lastSelectedWeapon = EWeaponSelection.PISTOL;
-            }
-            if (newLastWeapon.Equals(holsterWeapon))
-            {
-                if (command == ECommand.QuickSelectSecondaryWeapon)
-                {
-                    if (slingWeapon == null)
+                    if (command == ECommand.SelectFirstPrimaryWeapon)
                     {
                         return;
                     }
+                    _lastSelectedWeapon = EWeaponSelection.SLING;
                 }
-                _lastSelectedWeapon = EWeaponSelection.PISTOL;
+            }
+            if (shoulderWeapon != null)
+            {
+                if (newLastWeapon.Equals(shoulderWeapon))
+                {
+                    if (command == ECommand.SelectSecondPrimaryWeapon)
+                    {
+                        return;
+                    }
+                    _lastSelectedWeapon = EWeaponSelection.SHOULDER;
+                }
+            }
+            if (holsterWeapon != null)
+            {
+                if (newLastWeapon.Equals(holsterWeapon))
+                {
+                    if (command == ECommand.SelectSecondaryWeapon)
+                    {
+                        return;
+                    }
+                    _lastSelectedWeapon = EWeaponSelection.PISTOL;
+                }
+                if (newLastWeapon.Equals(holsterWeapon))
+                {
+                    if (command == ECommand.QuickSelectSecondaryWeapon)
+                    {
+                        if (slingWeapon == null)
+                        {
+                            return;
+                        }
+                    }
+                    _lastSelectedWeapon = EWeaponSelection.PISTOL;
+                }
             }
 
             // TODO: find cases and information for selecting from vest
@@ -259,31 +294,18 @@ namespace TarkovIRL
             {
                 ProcessShoulderToSlot();
             }
-
-            //UtilsTIRL.Log($"command selected : {command}");
         }
-
-        /*
-        _animSpeedCurvePhase1 = 
-        _animSpeedCurvePhase2 = 
-
-        _orderEndPos = new Vector3();
-        _orderEndRot = new Vector3();
-
-        _presentStartPos = new Vector3();
-        _presentStartRot = new Vector3();
-        */
 
         static void ProcessShoulderToSling()
         {
             _animSpeedCurvePhase1 = PrimeMover.Instance.OrderShoulderCurve;
             _animSpeedCurvePhase2 = _Flatcurve;
 
-            _orderEndPos = new Vector3(PrimeMover.ShoulderPositionEndX.Value, PrimeMover.ShoulderPositionEndY.Value, PrimeMover.ShoulderPositionEndZ.Value);
-            _orderEndRot = new Vector3(PrimeMover.ShoulderRotationEndX.Value, PrimeMover.ShoulderRotationEndY.Value, PrimeMover.ShoulderRotationEndZ.Value);
+            _orderEndPos = Shoulder_End_Pos;
+            _orderEndRot = Shoulder_End_Rot;
 
-            _presentStartPos = new Vector3(PrimeMover.SlingPositionStartX.Value, PrimeMover.SlingPositionStartY.Value, PrimeMover.SlingPositionStartZ.Value);
-            _presentStartRot = new Vector3(PrimeMover.SlingRotationStartX.Value, PrimeMover.SlingRotationStartY.Value, PrimeMover.SlingRotationStartZ.Value);
+            _presentStartPos = Sling_Start_Pos;
+            _presentStartRot = Sling_Start_Rot;
         }
 
         static void ProcessSlingToShoulder()
@@ -291,11 +313,11 @@ namespace TarkovIRL
             _animSpeedCurvePhase1 = _Flatcurve;
             _animSpeedCurvePhase2 = PrimeMover.Instance.PresentShoulderCurve;
 
-            _orderEndPos = new Vector3(PrimeMover.SlingPositionEndX.Value, PrimeMover.SlingPositionEndY.Value, PrimeMover.SlingPositionEndZ.Value);
-            _orderEndRot = new Vector3(PrimeMover.SlingRotationEndX.Value, PrimeMover.SlingRotationEndY.Value, PrimeMover.SlingRotationEndZ.Value);
+            _orderEndPos = Sling_End_Pos;
+            _orderEndRot = Sling_End_Rot;
 
-            _presentStartPos = new Vector3(PrimeMover.ShoulderPositionStartX.Value, PrimeMover.ShoulderPositionStartY.Value, PrimeMover.ShoulderPositionStartZ.Value);
-            _presentStartRot = new Vector3(PrimeMover.ShoulderRotationStartX.Value, PrimeMover.ShoulderRotationStartY.Value, PrimeMover.ShoulderRotationStartZ.Value);
+            _presentStartPos = Shoulder_Start_Pos;
+            _presentStartRot = Shoulder_Start_Rot;
         }
 
         // pistol
@@ -304,11 +326,11 @@ namespace TarkovIRL
             _animSpeedCurvePhase1 = new AnimationCurve(new Keyframe(0f, 1f), new Keyframe(1f, 1f));
             _animSpeedCurvePhase2 = new AnimationCurve(new Keyframe(0f, 0.3f), new Keyframe(1f, 0.3f));
 
-            _orderEndPos = new Vector3(PrimeMover.SlingPositionEndX.Value, PrimeMover.SlingPositionEndY.Value, PrimeMover.SlingPositionEndZ.Value);
-            _orderEndRot = new Vector3(PrimeMover.SlingRotationEndX.Value, PrimeMover.SlingRotationEndY.Value, PrimeMover.SlingRotationEndZ.Value);
+            _orderEndPos = Sling_End_Pos;
+            _orderEndRot = Sling_End_Rot;
 
-            _presentStartPos = new Vector3(PrimeMover.HolsterPositionStartX.Value, PrimeMover.HolsterPositionStartY.Value, PrimeMover.HolsterPositionStartZ.Value);
-            _presentStartRot = new Vector3(PrimeMover.HolsterRotationStartX.Value, PrimeMover.HolsterRotationStartY.Value, PrimeMover.HolsterRotationStartZ.Value);
+            _presentStartPos = Pistol_Start_Pos;
+            _presentStartRot = Pistol_Start_Rot;
         }
 
         static void ProcessQuickSlingToPistol()
@@ -316,11 +338,11 @@ namespace TarkovIRL
             _animSpeedCurvePhase1 = new AnimationCurve(new Keyframe(0f, 1.25f), new Keyframe(1f, 0.75f));
             _animSpeedCurvePhase2 = new AnimationCurve(new Keyframe(0f, 1.2f), new Keyframe(1f, 2f));
 
-            _orderEndPos = new Vector3(PrimeMover.SlingPositionEndX.Value, PrimeMover.SlingPositionEndY.Value, PrimeMover.SlingPositionEndZ.Value);
-            _orderEndRot = new Vector3(PrimeMover.SlingRotationEndX.Value, PrimeMover.SlingRotationEndY.Value, PrimeMover.SlingRotationEndZ.Value);
+            _orderEndPos = Sling_End_Pos;
+            _orderEndRot = Sling_End_Rot;
 
-            _presentStartPos = new Vector3(PrimeMover.HolsterPositionStartX.Value, PrimeMover.HolsterPositionStartY.Value, PrimeMover.HolsterPositionStartZ.Value);
-            _presentStartRot = new Vector3(PrimeMover.HolsterRotationStartX.Value, PrimeMover.HolsterRotationStartY.Value, PrimeMover.HolsterRotationStartZ.Value);
+            _presentStartPos = Pistol_Start_Pos;
+            _presentStartRot = Pistol_Start_Rot;
         }
 
         static void ProcessShoulderToPistol()
@@ -328,22 +350,22 @@ namespace TarkovIRL
             _animSpeedCurvePhase1 = PrimeMover.Instance.OrderShoulderCurve;
             _animSpeedCurvePhase2 = new AnimationCurve(new Keyframe(0f, 0.3f), new Keyframe(1f, 0.3f));
 
-            _orderEndPos = new Vector3(PrimeMover.ShoulderPositionEndX.Value, PrimeMover.ShoulderPositionEndY.Value, PrimeMover.ShoulderPositionEndZ.Value);
-            _orderEndRot = new Vector3(PrimeMover.ShoulderRotationEndX.Value, PrimeMover.ShoulderRotationEndY.Value, PrimeMover.ShoulderRotationEndZ.Value);
+            _orderEndPos = Shoulder_End_Pos;
+            _orderEndRot = Shoulder_End_Rot;
 
-            _presentStartPos = new Vector3(PrimeMover.HolsterPositionStartX.Value, PrimeMover.HolsterPositionStartY.Value, PrimeMover.HolsterPositionStartZ.Value);
-            _presentStartRot = new Vector3(PrimeMover.HolsterRotationStartX.Value, PrimeMover.HolsterRotationStartY.Value, PrimeMover.HolsterRotationStartZ.Value);
+            _presentStartPos = Pistol_Start_Pos;
+            _presentStartRot = Pistol_Start_Rot;
         }
         static void ProcessPistolToShoulder()
         {
             _animSpeedCurvePhase1 = new AnimationCurve(new Keyframe(0f, 0.25f), new Keyframe(1f, 0.25f));
             _animSpeedCurvePhase2 = PrimeMover.Instance.PresentShoulderCurve;
 
-            _orderEndPos = new Vector3(PrimeMover.HolsterPositionEndX.Value, PrimeMover.HolsterPositionEndY.Value, PrimeMover.HolsterPositionEndZ.Value);
-            _orderEndRot = new Vector3(PrimeMover.HolsterRotationEndX.Value, PrimeMover.HolsterRotationEndY.Value, PrimeMover.HolsterRotationEndZ.Value);
+            _orderEndPos = Pistol_End_Pos;
+            _orderEndRot = Pistol_End_Pos;
 
-            _presentStartPos = new Vector3(PrimeMover.ShoulderPositionStartX.Value, PrimeMover.ShoulderPositionStartY.Value, PrimeMover.ShoulderPositionStartZ.Value);
-            _presentStartRot = new Vector3(PrimeMover.ShoulderRotationStartX.Value, PrimeMover.ShoulderRotationStartY.Value, PrimeMover.ShoulderRotationStartZ.Value);
+            _presentStartPos = Shoulder_Start_Pos;
+            _presentStartRot = Shoulder_Start_Rot;
 
         }   
         static void ProcessPistolToSling()
@@ -351,11 +373,11 @@ namespace TarkovIRL
             _animSpeedCurvePhase1 = new AnimationCurve(new Keyframe(0f, 0.35f), new Keyframe(1f, 0.25f));
             _animSpeedCurvePhase2 = new AnimationCurve(new Keyframe(0f, 1.75f), new Keyframe(1f, 1.75f));
 
-            _orderEndPos = new Vector3(PrimeMover.HolsterPositionEndX.Value, PrimeMover.HolsterPositionEndY.Value, PrimeMover.HolsterPositionEndZ.Value);
-            _orderEndRot = new Vector3(PrimeMover.HolsterRotationEndX.Value, PrimeMover.HolsterRotationEndY.Value, PrimeMover.HolsterRotationEndZ.Value);
+            _orderEndPos = Pistol_End_Pos;
+            _orderEndRot = Pistol_End_Pos;
 
-            _presentStartPos = new Vector3(PrimeMover.SlingPositionStartX.Value, PrimeMover.SlingPositionStartY.Value, PrimeMover.SlingPositionStartZ.Value);
-            _presentStartRot = new Vector3(PrimeMover.SlingRotationStartX.Value, PrimeMover.SlingRotationStartY.Value, PrimeMover.SlingRotationStartZ.Value);
+            _presentStartPos = Sling_Start_Pos;
+            _presentStartRot = Sling_Start_Rot;
         }
         static void ProcessShoulderToSlot()
         {
@@ -363,8 +385,8 @@ namespace TarkovIRL
             _animSpeedCurvePhase1 = PrimeMover.Instance.OrderShoulderCurve;
             _animSpeedCurvePhase2 = _Flatcurve;
 
-            _orderEndPos = new Vector3(PrimeMover.ShoulderPositionEndX.Value, PrimeMover.ShoulderPositionEndY.Value, PrimeMover.ShoulderPositionEndZ.Value);
-            _orderEndRot = new Vector3(PrimeMover.ShoulderRotationEndX.Value, PrimeMover.ShoulderRotationEndY.Value, PrimeMover.ShoulderRotationEndZ.Value);
+            _orderEndPos = Shoulder_End_Pos;
+            _orderEndRot = Shoulder_End_Rot;
 
             _presentStartPos = Vector3.zero;
             _presentStartRot = Vector3.zero;

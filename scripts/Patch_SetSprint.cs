@@ -21,7 +21,7 @@ namespace TarkovIRL
         [PatchPrefix]
         private static bool Prefix(FirearmsAnimator __instance, bool sprint)
         {
-            UtilsTIRL.Log("set to sprint interrupted");
+            TIRLUtils.LogError("set to sprint interrupted");
             return false;
         }
     }

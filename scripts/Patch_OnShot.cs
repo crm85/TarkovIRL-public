@@ -19,8 +19,7 @@ namespace TarkovIRL
             if ((UnityEngine.Object)(object)__instance != (UnityEngine.Object)null && __instance.IsYourPlayer)
             {
                 FirearmController fc = __instance.HandsController as FirearmController;
-                WeaponController.CurrentWeaponWeight = fc.Weapon.GetSingleItemTotalWeight();
-                float shotWeight = WeaponController.CurrentWeaponWeight * (1f - WeaponController.CurrentWeaponErgoNorm);
+                WeaponController.UpdateWpnStats(fc);
                 if (WeaponController.HasShoulderContact() && fc.IsAiming) ParallaxAdsController.StartNewShot(fc.Weapon);
             }
             else
