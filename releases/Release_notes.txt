@@ -1,3 +1,15 @@
+-- Version 0.8.1 --
+
+- Updated for Realism 1.5.3.
+- Added toggles for Augmented Reload and Custom Weapon Transitions features.
+- Added toggle to Augmented Reload behavior active by default (you don't have to press the reload key again).
+- Added additional layer of lagging sway to existing model; delay time depends on weapon weight (max 10kg).
+- Reworked reload speeds to rely less on Realism's native speeds, which aren't set to consider WHM's own reload system. Essentially reloads generally run faster except for the slower portion I add in the middle of the cycle. Tied to player efficiency.
+- Some rework of sway and misalignment values.
+- Reduced default deadzone value.
+- Fixed a bug where weapon transitions fail to go at intended speeds.
+
+
 -- Version 0.8 --
 
 Even though this version has few new features, it's an important update. I've fixed a couple of big bugs that were plaguing the mod, and integrated a major performance upgrade (previously when the game stuttered or lagged, as she is wont to do in spt 3.10, the player's weapon movements became extremely erratic).
