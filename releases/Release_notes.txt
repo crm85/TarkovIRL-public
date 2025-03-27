@@ -1,3 +1,10 @@
+-- Version 0.8.2 --
+
+- Polish pass on weapon sway, tried to reduce wobblyness a little and tighten up the effect in general.
+- Refined reloads speeds, made them generally a bit slower and added min/max final values.
+- Increased arm shake with broken hand(s), +100% shake for each break.
+- Increased animation length when changing vertical pose with broken hand(s). -25% speed for each break.
+
 -- Version 0.8.1 --
 
 - Updated for Realism 1.5.3.
