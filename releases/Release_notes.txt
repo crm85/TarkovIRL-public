@@ -1,3 +1,7 @@
+-- Version 0.8.3 --
+
+- Backported latest to version 3.9.8! Lol.
+
 -- Version 0.8.2 --
 
 - Polish pass on weapon sway, tried to reduce wobblyness a little and tighten up the effect in general.
