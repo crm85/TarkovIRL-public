@@ -1,3 +1,7 @@
+-- Version 0.8.4 --
+
+- Added Realism's adrenaline effect from 1.5 for 3.9.8 version (with permission).
+
 -- Version 0.8.3 --
 
 - Backported latest to version 3.9.8! Lol.
