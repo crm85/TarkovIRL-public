@@ -45,9 +45,9 @@ namespace TarkovIRL
             Vector2 rotationalMotionThisFrame = _playerRotationLastFrame - _player.Rotation;
             rotationalMotionThisFrame *= dt;
             _playerRotationLastFrame = _player.Rotation;
-
-            float sizeMultiFinal = _ParallaxSetSizeFixed * PrimeMover.ParallaxSetSizeMulti.Value * RealismWrapper.WeaponBalanceMulti;
-
+            float shortstockMulti = StanceController.CurrentStance == EStance.ShortStock ? 2f : 1f;
+            float sizeMultiFinal = _ParallaxSetSizeFixed * PrimeMover.ParallaxSetSizeMulti.Value * RealismWrapper.WeaponBalanceMulti * shortstockMulti;
+            
             _rotAvgXSet += rotationalMotionThisFrame.x;
             _rotAvgYSet += rotationalMotionThisFrame.y;
             _rotAvgXSet -= _rotAvgX;
@@ -63,9 +63,11 @@ namespace TarkovIRL
             float extraPistolParallax = WeaponController.IsPistol ? PrimeMover.PistolSpecificParallax.Value : 1f;
 
             float newValue = Mathf.Pow(1f - Mathf.Clamp01(PlayerMotionController.RotationDelta / 0.1f), 2f);
+            float lowReadyMulti = StanceController.CurrentStance == EStance.LowReady ? 0f : 1f;
+            float highReadyMulti = StanceController.CurrentStance == EStance.HighReady ? 0.25f : 1f;
+            float activeMulti = StanceController.CurrentStance == EStance.ActiveAiming ? 0.75f : 1f;
 
-
-            float parallaxMulti = PrimeMover.ParallaxMulti.Value * WeaponController.GetWeaponMulti(false) * EfficiencyController.EfficiencyModifier * extraPistolParallax * newValue;
+            float parallaxMulti = PrimeMover.ParallaxMulti.Value * WeaponController.GetWeaponMulti(false) * EfficiencyController.EfficiencyModifier * extraPistolParallax * newValue * lowReadyMulti * highReadyMulti * activeMulti;
             parallaxMulti = Mathf.Pow(parallaxMulti, 2f) / 100f;
             //UtilsTIRL.Log($"newValue {newValue}, parallaxMulti {parallaxMulti}");
 

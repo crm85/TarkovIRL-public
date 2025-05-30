@@ -63,28 +63,6 @@ namespace TarkovIRL
             _dt = dt;
         }
 
-        public static bool IsPriority(int priority)
-        {
-            if (priority == 1)
-            {
-                return true;
-            }
-            else if (priority == 2)
-            {
-                if (PrimeMover.IsLogging.Value && PrimeMover.DebugSpam.Value)
-                {
-                    return true;
-                }
-            }
-            else if (priority == 3)
-            {
-                if (PrimeMover.IsLogging.Value)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
 
         public static float FulfilledLerp(float value, float target, float step)
         {

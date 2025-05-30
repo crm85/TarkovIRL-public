@@ -1,3 +1,7 @@
+Version 0.8.9 --
+- I've done a moderate pass on the sway model: hopefully the sway feels more weighty and authentic, and less 'floaty' than it was before. I'm very happy with it now and considering it done.
+- When trasitioning between sling and shoulder, if the transitioning weapon has a retracted stock, that weapon's transition speed is buffed 100%.
+
 -- Version 0.8.4 --
 
 - Added Realism's adrenaline effect from 1.5 for 3.9.8 version (with permission).

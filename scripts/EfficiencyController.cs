@@ -37,15 +37,10 @@ namespace TarkovIRL
             float efficiencyLerpMulti = _efficiencyLerpTarget < _efficiencyLastFrame ? 1f / _efficiencyLerpTarget : _efficiencyLerpTarget;
             _efficiencyLerp = Mathf.Lerp(_efficiencyLerp, _efficiencyLerpTarget, dt * _LerpSpeed * PrimeMover.EfficiencyLerpMulti.Value * efficiencyLerpMulti);
             _efficiencyLastFrame = _efficiencyLerpTarget;
-            if (TIRLUtils.IsPriority(2)) TIRLUtils.LogError($"_efficiencyLerp {_efficiencyLerp}, _efficiencyLerpTarget {_efficiencyLerpTarget}, efficiencyLerpMulti {efficiencyLerpMulti}");
 
             debugTimer += dt;
             if (debugTimer > 0.2f)
             {
-                if (PrimeMover.DebugEfficiency.Value)
-                {
-                    TIRLUtils.LogError($"Efficiency value normal (lower is better) {EfficiencyModifier} || Efficiency value inverse (higher is better) : {EfficiencyModifierInverse}");
-                }
                 debugTimer = 0;
             }
         }
@@ -58,9 +53,6 @@ namespace TarkovIRL
             float hydrationNorm = player.HealthController.Hydration.Normalized;
             float nutritionNorm = player.HealthController.Energy.Normalized;
             float overWeightVal = 1f - Mathf.Clamp01(player.Physical.Overweight);
-            if (TIRLUtils.IsPriority(2)) TIRLUtils.LogError($"overWeightVal {overWeightVal}");
-            float ergoPenalty = player.ErgonomicsPenalty;
-            if (TIRLUtils.IsPriority(2)) TIRLUtils.LogError($"ergoPenalty {ergoPenalty}");
             //
             int heavyBleedCount = 0;
             int lightBleedCount = 0;
@@ -77,7 +69,7 @@ namespace TarkovIRL
             {
                 if (!IsEffectKnown(effect, _NominalEffectStates) && !IsEffectKnown(effect, _KnownEffectStates))
                 {
-                    if (PrimeMover.DebugSpam.Value) TIRLUtils.LogError($"effect type {effect.Type.FullName}({effect.Type.FullName.GetHashCode()}) on bodypart {effect.BodyPart}");
+                    //if (PrimeMover.DebugSpam.Value) TIRLUtils.LogError($"effect type {effect.Type.FullName}({effect.Type.FullName.GetHashCode()}) on bodypart {effect.BodyPart}");
                 }
                 if (effect.Type.FullName.GetHashCode() == _HeavyBleedHash) heavyBleedCount++;
                 if (effect.Type.FullName.GetHashCode() == _LightBleedHash) lightBleedCount++;
@@ -91,9 +83,6 @@ namespace TarkovIRL
                 if (effect.Type.FullName.GetHashCode() == _ToxicationHash) intoxCount++;
                 if (effect.Type.FullName.GetHashCode() == _OverdoseHash) overdoseCount++;
             }
-            //
-            if (PrimeMover.DebugSpam.Value) TIRLUtils.LogError($"numberOfHeavyBleeds {heavyBleedCount}, numberOfLightBleeds {lightBleedCount}" + 
-                $" ");
 
             float healthCommon = player.HealthController.GetBodyPartHealth(EBodyPart.Common).Normalized;
             float stamNormalized = player.Physical.Stamina.NormalValue;
@@ -128,7 +117,7 @@ namespace TarkovIRL
             // negative effects
             //
             float negativeEffects = hydroMulti * nutritionMulti * overWeightMulti * healthMulti * stamMulti * fatigueMulti * handStamMulti * injuryMulti * intoxMulti * overdoseMulti;
-            negativeEffects *= PrimeMover.ArtificalInjury.Value;
+            //negativeEffects *= PrimeMover.ArtificalInjury.Value;
 
             // positive effects (incl from Realism)
             float adrenalineBuff = RealismWrapper.IsAdrenaline ? 0.5f : 1f;
@@ -153,12 +142,6 @@ namespace TarkovIRL
 
             // final output
             _efficiencyLerpTarget = negativeEffects * positiveEffects;
-
-            // debug
-            if (TIRLUtils.IsPriority(2))
-            {
-                TIRLUtils.LogError($"hydroMulti {hydroMulti}, nutritionMulti {nutritionMulti}, overWeightMulti {overWeightMulti}, healthMulti {healthMulti}, stamMulti {stamMulti}, handStamMulti {handStamMulti}, injuryMulti {injuryMulti} || _efficiencyLerpTarget {_efficiencyLerpTarget}");
-            }
         }
 
         public static float EfficiencyModifier

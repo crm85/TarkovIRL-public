@@ -15,7 +15,7 @@ namespace TarkovIRL
     {
         const string modGUID = "TarkovIRL";
         const string modName = "TarkovIRL - WHM";
-        const string modVersion = "0.8";
+        const string modVersion = "0.8.9";
 
         public static PrimeMover Instance;
 
@@ -70,6 +70,7 @@ namespace TarkovIRL
         const string DIRECTIONAL_SWAY = "h - Directional Sway Values";
         const string AUGMENTED_RELOAD = "i - Augmented Reload Values";
         const string DEADZONE = "j - Deadzone Values";
+        const string DEBUG_OPTIONS = "k - Debug logs";
 
         const string DEV_SECTION = "0 - Only for dev/testing";
 
@@ -88,10 +89,14 @@ namespace TarkovIRL
         public static ConfigEntry<bool> IsParallaxEffect;
         public static ConfigEntry<bool> IsDirectionalSway;
         public static ConfigEntry<bool> IsHeadTiltADS;
-        
+        public static ConfigEntry<bool> IsAugmentedReloadDefault;
+        public static ConfigEntry<bool> IsAugmentedReload;
+        public static ConfigEntry<bool> IsWeaponTrans;
+
         public static ConfigEntry<bool> IsLogging;
         public static ConfigEntry<bool> DebugSpam;
 
+        public static ConfigEntry<float> NewSwayFinalLerpSpeed;
         public static ConfigEntry<float> WeaponDeadzoneMulti;
         public static ConfigEntry<float> WeaponSwayMulti;
         public static ConfigEntry<float> BreathingEffectMulti;
@@ -186,9 +191,9 @@ namespace TarkovIRL
         public static ConfigEntry<float> DebugHandsPosZ;
 
         public static ConfigEntry<float> ArtificalInjury;
-        public static ConfigEntry<float> DebugFloat0;
-        public static ConfigEntry<float> DebugFloat1;
+        public static ConfigEntry<float> SecondarySwayNorm;
         public static ConfigEntry<float> DebugFloat2;
+        public static ConfigEntry<float> DebugFloat0;
 
         // anim curve builder
         public static ConfigEntry<float> AnimCurveTime0;
@@ -347,6 +352,7 @@ namespace TarkovIRL
             TryLoadPatch(new Patch_CheckAmmo());
             TryLoadPatch(new Patch_SetHeadRotation());
             TryLoadPatch(new Patch_Look());
+
         }
         void LoadConfigValues()
         {
@@ -359,23 +365,31 @@ namespace TarkovIRL
             IsArmShakeEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable extra arm stam shake", "Adds additional arm shake as arm stam decreases.");
             IsSmallMovementsEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable small visual effects", "Toggles small details: pulling the weapon in on rotation, lowering with unstocked weapon, new grenade throwing effects, alternative peek head position.");
             IsFootstepEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable footstep effect", "Player's weapon will bounce a bit more when taking steps, effect intesnity depends on several factors.");
-            IsParallaxEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable parallax feature", "Extensive feature when causes the weapon to rotate in the player's hand and thus un-align the sights, when the player is rotating. The intensity of the effect depends on your efficiency and the weight and ergo of the weapon.");
+            IsParallaxEffect = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable aiming misalignment feature", "Extensive feature when causes the weapon to rotate in the player's hand and thus un-align the sights, when the player is rotating. The intensity of the effect depends on your efficiency and the weight and ergo of the weapon.");
             IsDirectionalSway = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable directional sway feature", "Additional layer of weapon sway that is caused by forward-back-left-right movements.");
             IsHeadTiltADS = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable ADS head tilt", "Additional slight head tilt on ADS when using a stocked weapon stock.");
+            IsAugmentedReload = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable Augmented Reload", "This feature slows standard reloads, and also allows the player to increase reload speed by looking at the reload operation.");
+            IsAugmentedReloadDefault = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Reloads use Augmented Reload by default", "Whenever reloading, your character will automatically enter augmented mode - can be cancelled during reload");
+            IsWeaponTrans = ConstructBoolConfig(true, BASE_FEATURES_SECTION, "Enable Enhanced Weapon Transitions", "Custom implementation of weapon transitions (sling-shoulder-holster)");
+            
+            IsLogging = ConstructBoolConfig(false, DEBUG_OPTIONS, "Enable debug logging", "");
+            DebugSpam = ConstructBoolConfig(false, DEBUG_OPTIONS, "Enable debug spam", "");
+            DebugEfficiency = ConstructBoolConfig(false, DEBUG_OPTIONS, "Show efficiency value (inverse version)", "");
 
             // general sliders
-            WeaponDeadzoneMulti = ConstructFloatConfig(0.4f, GENERAL_SLIDERS, "Deadzone multiplier", "Change overall deadzone effect strength.", 0, 5f);
-            WeaponSwayMulti = ConstructFloatConfig(0.3f, GENERAL_SLIDERS, "Sway multiplier", "Change overall sway effect strength.", 0, 2f);
-            ParallaxMulti = ConstructFloatConfig(14f, GENERAL_SLIDERS, "Parallax multiplier", "Change overall parallax effect strength.", 1f, 100f);
+            WeaponDeadzoneMulti = ConstructFloatConfig(0.3f, GENERAL_SLIDERS, "Deadzone multiplier", "Change overall deadzone effect strength.", 0, 5f);
+            WeaponSwayMulti = ConstructFloatConfig(0.5f, GENERAL_SLIDERS, "Sway multiplier", "Change overall sway effect strength.", 0, 2f);
+            ParallaxMulti = ConstructFloatConfig(14f, GENERAL_SLIDERS, "Aiming misalignment multiplier", "Change overall parallax effect strength.", 1f, 100f);
             DirectionalSwayMulti = ConstructFloatConfig(0.15f, GENERAL_SLIDERS, "Directional Sway Final Modifier", "", 0, 5f);
             EfficiencyInjuryDebuffMulti = ConstructFloatConfig(0.5f, GENERAL_SLIDERS, "Efficiency injury effect multi", "Controls how much injuries affect your Efficiency stat. This is to prevent noodle-arms as soon as you get hit. Bone breaks, bleeds, tremors, pain, and fresh wounds only are affected by this slider - not your overall HP.", 0f, 2f);
             TransitionSpeedMulti = ConstructFloatConfig(1.3f, GENERAL_SLIDERS, "Weapon transition speed multiplier", "Global multiplier for how fast all weapon transitions occur", 0.1f, 5f);
             
             // new sway sliders
+            NewSwayFinalLerpSpeed = ConstructFloatConfig(15f, NEW_SWAY_SLIDERS, "Sway return to centre speed", "The speed at which the sway functions corrects back to zero", -5f, 50f);
             NewSwayPositionMulti = ConstructFloatConfig(0.75f, NEW_SWAY_SLIDERS, "Sway position multiplier", "", 0, 10f);
             NewSwayRotationMulti = ConstructFloatConfig(2f, NEW_SWAY_SLIDERS, "Sway rotation multiplier", "", 0, 10f);
-            NewSwayPositionDTMulti = ConstructFloatConfig(40F, NEW_SWAY_SLIDERS, "Sway position change speed", "", 0, 80f);
-            NewSwayRotationDTMulti = ConstructFloatConfig(4f, NEW_SWAY_SLIDERS, "Sway rotation change speed", "", 0, 10f);
+            NewSwayPositionDTMulti = ConstructFloatConfig(55f, NEW_SWAY_SLIDERS, "Sway position change speed", "", 0, 150f);
+            NewSwayRotationDTMulti = ConstructFloatConfig(13, NEW_SWAY_SLIDERS, "Sway rotation change speed", "", 0, 15f);
             NewSwayWpnUnstockedDropValue = ConstructFloatConfig(0.3f, NEW_SWAY_SLIDERS, "Weapon drop for unstocked value", "Unstocked weapons will drop a little when rotating.", 0, 10f);
             NewSwayWpnUnstockedDropSpeed = ConstructFloatConfig(3f, NEW_SWAY_SLIDERS, "Weapon drop for unstocked speed", "", 0, 10f);
             WeaponCantValue = ConstructFloatConfig(0, NEW_SWAY_SLIDERS, "Weapon cant value", "", -1f, 1f);
@@ -385,13 +399,14 @@ namespace TarkovIRL
             HyperVerticalMulti = ConstructFloatConfig(2f, NEW_SWAY_SLIDERS, "Hyper-vertical effect value", "The 'hyper-vertical' effect emulates gravity, so to speak. Figure it out.", 0, 30f);
             HyperVerticalDT = ConstructFloatConfig(2.5f, NEW_SWAY_SLIDERS, "Hyper-vertical change speed", "The 'hyper-vertical' effect emulates gravity, so to speak. Figure it out.", -10f, 10f);
             NewSwayADSRotClamp = ConstructFloatConfig(0.9f, NEW_SWAY_SLIDERS, "Clamp sway effect specifically in ADS", "", 0, 1f);
-            NewSwayRotDeltaClamp = ConstructFloatConfig(0.01f, NEW_SWAY_SLIDERS, "Sway rotation input clamp", "Touch at your own risk kek", 0, 0.1f);
+            NewSwayRotDeltaClamp = ConstructFloatConfig(0.018f, NEW_SWAY_SLIDERS, "Sway rotation input clamp", "Touch at your own risk kek", 0, 0.1f);
             NewSwayRotFinalClamp = ConstructFloatConfig(0.06f, NEW_SWAY_SLIDERS, "Sway input smoothing clamp", "Touch at your own risk kek", 0, 0.1f);
+            SecondarySwayNorm = ConstructFloatConfig(0.25f, NEW_SWAY_SLIDERS, "Secondary Sway Ratio", "", 0f, 1f);
 
             // parallax sliders
             ParallaxSetSizeMulti = ConstructFloatConfig(0.5f, PARALLAX_SLIDERS, "Parallax set size", "Amount of parallax that is possible per player rotation.", 0, 20f);
             ParallaxInAds = ConstructFloatConfig(ParallaxInAdsDefault, PARALLAX_SLIDERS, "Parallax effect in ADS", "The % of parallax effect that you see in ADS (with a stocked weapon)", 0, 1f);
-            PistolSpecificParallax = ConstructFloatConfig(6f, PARALLAX_SLIDERS, "Parallax effect value specifically for pistols", "", 0, 10f); 
+            PistolSpecificParallax = ConstructFloatConfig(4f, PARALLAX_SLIDERS, "Parallax effect value specifically for pistols", "", 0, 10f); 
             ShotParallaxResetTimeMulti = ConstructFloatConfig(ShotParallaxResetTimeMultiDefault, PARALLAX_SLIDERS, "Shot-parallax cooldown multiplier", "Rate of return to reduced parallax in the ADS, after a shot.", 0, 20f);
             AdsParallaxTimeMulti = ConstructFloatConfig(2f, PARALLAX_SLIDERS, "Ads-parallax cooldown multiplier", "", 0, 160f);
             ShotParallaxWeaponWeightMulti = ConstructFloatConfig(ShotParallaxWeaponWeightMultiDefault, PARALLAX_SLIDERS, "Shot parallax weapon weight factor multiplier", "After a shot in ADS, the parallax effect is momentarilly returned to full strength.", 0, 10f);
@@ -459,16 +474,13 @@ namespace TarkovIRL
             DebugHandsPosY = ConstructFloatConfig(0, DEV_SECTION, "DebugHandsPosY", "", -0.5f, 0.5f);
             DebugHandsPosZ = ConstructFloatConfig(0, DEV_SECTION, "DebugHandsPosZ", "", -0.5f, 0.5f);
 
-            IsLogging = ConstructBoolConfig(false, DEV_SECTION, "Enable debug logging", "");
-            DebugSpam = ConstructBoolConfig(false, DEV_SECTION, "Enable debug spam", "");
-            DebugEfficiency = ConstructBoolConfig(false, DEV_SECTION, "Show efficiency value (inverse version)", "");
 
             AnimatorLayerInt = ConstructFloatConfig(0, DEV_SECTION, "AnimatorLayerInt", "", 0f, 10f);
             ArtificalInjury = ConstructFloatConfig(1f, DEV_SECTION, "Artifical Injury Multi", "", 1f, 5f);
-            DebugFloat0 = ConstructFloatConfig(0, DEV_SECTION, "DebugFloat0", "", -5f, 5f);
-            DebugFloat1 = ConstructFloatConfig(0, DEV_SECTION, "DebugFloat1", "", -5f, 50f);
-            DebugFloat2 = ConstructFloatConfig(0, DEV_SECTION, "DebugFloat2", "", -5f, 5f);
+            DebugFloat2 = ConstructFloatConfig(0, DEV_SECTION, "DebugFloat2", "", -5f, 50f);
             */
+            //DebugFloat0 = ConstructFloatConfig(1f, DEV_SECTION, "DebugFloat0", "", 1f, 29f);
+
         }
 
         void Update()
@@ -488,7 +500,6 @@ namespace TarkovIRL
             EfficiencyController.UpdateEfficiencyLerp(DeltaTime);
             //ThrowController.UpdateLerp(DeltaTime);
             AugmentedReloadController.Update();
-            //RunningFadeController.UpdateRunningFadeOffsets(DeltaTime);
         }
 
         void FixedUpdate()
@@ -530,7 +541,6 @@ namespace TarkovIRL
             catch (Exception e)
             {
                 string patchName = patch.ToString();
-                if (TIRLUtils.IsPriority(1)) TIRLUtils.LogError("could not load " + patchName + " -- " + e);
                 throw;
             }
         }

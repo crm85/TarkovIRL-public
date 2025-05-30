@@ -43,8 +43,14 @@ namespace TarkovIRL
             float pistolFactor = WeaponController.IsPistol ? 2f : 1f;
             float unstockedFactor = !WeaponController.IsPistol && !WeaponController.HasShoulderContact() ? 1.8f : 1f;
             float augmentedBreathMulti = PlayerMotionController.IsAugmentedBreath ? 0.5f : 1f;
-            float finalMulti = EfficiencyController.EfficiencyModifier * PrimeMover.ArmShakeMulti.Value * _HandShakeMultiGeneral * pistolFactor * unstockedFactor * WeaponController.CurrentWeaponWeight * augmentedBreathMulti;
 
+            bool leftBreak = player.HealthController.IsBodyPartBroken(EBodyPart.LeftArm);
+            bool rightBreak = player.HealthController.IsBodyPartBroken(EBodyPart.RightArm);
+            float handBreakMulti = 1f;
+            handBreakMulti *= leftBreak ? 2f : 1f;
+            handBreakMulti *= rightBreak ? 2f : 1f;
+
+            float finalMulti = EfficiencyController.EfficiencyModifier * PrimeMover.ArmShakeMulti.Value * _HandShakeMultiGeneral * pistolFactor * unstockedFactor * WeaponController.CurrentWeaponWeight * augmentedBreathMulti * handBreakMulti;
             _handShakeStrengthLerp = Mathf.Lerp(_handShakeStrengthLerp, finalMulti, player.DeltaTime * 7f);
 
             AnimationCurve shakeCurve = PrimeMover.Instance.HandsShakeCurve;

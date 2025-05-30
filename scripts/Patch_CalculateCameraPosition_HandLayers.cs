@@ -113,21 +113,6 @@ namespace TarkovIRL
                 WeaponSelectionController.GetWeaponSelectionTransforms(out Vector3 WeaponTransitionPos, out Quaternion WeaponTransitionRot);
                 __instance.HandsContainer.WeaponRoot.localPosition += WeaponTransitionPos;
                 __instance.HandsContainer.WeaponRoot.localRotation *= WeaponTransitionRot;
-
-                // run fade
-                //RunningFadeController.GetRunFadeOffsets(out Vector3 runFadePos, out Quaternion runFadeRot);
-                //__instance.HandsContainer.WeaponRoot.localPosition += runFadePos;
-                //__instance.HandsContainer.WeaponRoot.localRotation *= runFadeRot;
-
-                // add debug pos rot
-                Vector3 debugPos = new Vector3(PrimeMover.DebugHandsPosX.Value, PrimeMover.DebugHandsPosY.Value, PrimeMover.DebugHandsPosZ.Value);
-                Quaternion debugRot = Quaternion.identity;
-                debugRot.x = PrimeMover.DebugHandsRotX.Value;
-                debugRot.y = PrimeMover.DebugHandsRotY.Value;
-                debugRot.z = PrimeMover.DebugHandsRotZ.Value;
-
-                __instance.HandsContainer.WeaponRoot.localPosition += debugPos;
-                __instance.HandsContainer.WeaponRoot.localRotation *= debugRot;
             }
         }
     }

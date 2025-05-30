@@ -37,9 +37,11 @@ namespace TarkovIRL
                 _headRotLerpTarget.z += addedZ;
             }
 
+            /*
             _headRotLerpTarget.x += PrimeMover.DebugHeadRotX.Value;
             _headRotLerpTarget.y += PrimeMover.DebugHeadRotY.Value;
             _headRotLerpTarget.z += PrimeMover.DebugHeadRotZ.Value;
+            */
 
             newHeadRot += _headRotLerp;
             return newHeadRot;

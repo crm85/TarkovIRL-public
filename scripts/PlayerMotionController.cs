@@ -61,6 +61,7 @@ namespace TarkovIRL
             _leanNormalized = player.MovementContext.Tilt / 5f;
             _armStam = player.Physical.HandsStamina.NormalValue;
             UpdateMovementDirection(player.InputDirection);
+            //TIRLUtils.Log($"player input: {player.InputDirection}", true);
         }
         static void UpdateIsMovingBool(Vector3 position)
         {
@@ -165,6 +166,13 @@ namespace TarkovIRL
             bool backward = playerInput.y < 0;
             bool leftward = playerInput.x < 0;
             bool rightward = playerInput.x > 0;
+
+            if (!_playerMoving)
+            {
+                _dir = EPlayerDir.NONE;
+                //TIRLUtils.Log($"player not moving", false);
+                return;
+            }
 
             if (forward && !leftward && !rightward) _dir = EPlayerDir.FWD;
             else if (forward && leftward) _dir = EPlayerDir.FWDLEFT;

@@ -55,7 +55,7 @@ namespace TarkovIRL
 
         static public void StartNewShot(Weapon weapon)
         {
-            float weaponWeight = weapon.TotalWeight * PrimeMover.ShotParallaxWeaponWeightMulti.Value;
+            float weaponWeight = weapon.Weight * PrimeMover.ShotParallaxWeaponWeightMulti.Value;
             float cartridgeWeight = weapon.CurrentAmmoTemplate.BulletMassGram;
             float newShotWeight = cartridgeWeight / weaponWeight;
             _shotWeight = newShotWeight;

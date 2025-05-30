@@ -2,11 +2,7 @@
 using EFT.InventoryLogic;
 using EFT;
 using UnityEngine;
-using EFT.UI;
-using UnityEngine.Assertions.Must;
-using System;
 using static TarkovIRL.AnimStateController;
-using System.Reflection.Emit;
 
 namespace TarkovIRL
 {
@@ -57,6 +53,11 @@ namespace TarkovIRL
 
         public static void UpdateAnimationPump(float dt)
         {
+            if (!PrimeMover.IsWeaponTrans.Value)
+            {
+                return;
+            }
+
             if (_player == null) return;
             if (_player.HandsAnimator == null) return;
 
@@ -100,7 +101,8 @@ namespace TarkovIRL
             float animProgress = _player.HandsAnimator.Animator.GetCurrentAnimatorStateInfo(1).normalizedTime;
             float efficiencyMod = Mathf.Clamp(EfficiencyController.EfficiencyModifierInverse, 0.5f, 1.5f);
             float proneMod = PlayerMotionController.IsProne ? 0.33f : 1f;
-            float finalSpeedMulti = efficiencyMod * proneMod * WeaponController.GetWeaponMulti(true) * PrimeMover.TransitionSpeedMulti.Value;
+            float foldedStockMulti = WeaponController.IsStockFolded ? 2f : 1f;
+            float finalSpeedMulti = efficiencyMod * proneMod * WeaponController.GetWeaponMulti(true) * PrimeMover.TransitionSpeedMulti.Value * foldedStockMulti;
 
             if (state == EWeaponState.ORDER_ARM)
             {
@@ -141,6 +143,7 @@ namespace TarkovIRL
 
         public static void Process(ECommand command, Player player)
         {
+
             if (player == null)
             {
                 return;
@@ -152,6 +155,7 @@ namespace TarkovIRL
                 return;
             }
             //UtilsTIRL.Log($"weapon state {AnimStateController.WeaponState}");
+            //TIRLUtils.Log($"selection processing", true);
 
             Item newLastWeapon = player.LastEquippedWeaponOrKnifeItem;
             Item slingWeapon = player.Inventory.Equipment.GetSlot(EquipmentSlot.FirstPrimaryWeapon).ContainedItem;
@@ -399,7 +403,6 @@ namespace TarkovIRL
             {
                 return;
             }
-
             player.HandsAnimator.SetAnimationSpeed(speed);
         }
     }

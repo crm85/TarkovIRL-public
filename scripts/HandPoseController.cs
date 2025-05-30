@@ -24,7 +24,9 @@ namespace TarkovIRL
         static float _offsetTargetZLerp = 0;
 
         static Vector3 _poseShiftVectorVertical = Vector3.zero;
+        static Vector3 _poseShiftVectorVerticalLerped = Vector3.zero;
         static Quaternion _poseShiftVectorRotation = Quaternion.identity;
+        static Quaternion _poseShiftVectorRotationLerped = Quaternion.identity;
         static float _poseLevelLastFrame = 0;
         static float _poseDifference = 0;
         static float _changingPoseCycle = 0;
@@ -36,12 +38,18 @@ namespace TarkovIRL
             _offsetTargetYLerp = Mathf.Lerp(_offsetTargetYLerp, _offsetTargetY, dt * _currentLerpRate);
             _offsetTargetZLerp = Mathf.Lerp(_offsetTargetZLerp, _offsetTargetZ, dt * _currentLerpRate);
         }
-        static void ChangePoseUpdate(float dt)
+        static void ChangePoseUpdate(Player player)
         {
             if (_isChangingPose)
             {
+                float dt = PrimeMover.Instance.DeltaTime;
                 float vertDiffAbs = Mathf.Abs(_poseDifference);
-                float speedMod = 1f + (1f - vertDiffAbs);
+                bool leftBreak = player.HealthController.IsBodyPartBroken(EBodyPart.LeftArm);
+                bool rightBreak = player.HealthController.IsBodyPartBroken(EBodyPart.RightArm);
+                float handBreakMulti = 1f;
+                handBreakMulti *= leftBreak ? 0.5f : 1f;
+                handBreakMulti *= rightBreak ? 0.5f : 1f;
+                float speedMod = 1f + (1f - vertDiffAbs) * handBreakMulti;
                 bool goingDown = _poseDifference < 0;
                 float directionMulti = goingDown ? 1.5f : 2f;
                 float weaponSizeMulti = WeaponController.GetWeaponMulti(false);
@@ -49,7 +57,7 @@ namespace TarkovIRL
                 float directionSpeedMod = goingDown ? 2f : 1.1f;
                 float efficiencyMulti = EfficiencyController.EfficiencyModifier;
                 _changingPoseCycle += dt * speedMod * directionSpeedMod * weaponSizeSpeedMulti;
-                _changingPoseCycle2 += dt * speedMod * directionSpeedMod * weaponSizeSpeedMulti * 0.8f;
+                _changingPoseCycle2 += dt * speedMod * directionSpeedMod * weaponSizeSpeedMulti * 0.7f;
                 if (_changingPoseCycle >= 1f && _changingPoseCycle2 >= 1f)
                 {
                     _isChangingPose = false;
@@ -75,6 +83,8 @@ namespace TarkovIRL
                 _poseShiftVectorVertical = Vector3.zero;
                 _poseShiftVectorRotation = Quaternion.identity;
             }
+            _poseShiftVectorVerticalLerped = Vector3.Lerp(_poseShiftVectorVerticalLerped, _poseShiftVectorVertical, PrimeMover.Instance.DeltaTime * 8f);
+            _poseShiftVectorRotationLerped = Quaternion.Lerp(_poseShiftVectorRotationLerped, _poseShiftVectorRotation, PrimeMover.Instance.DeltaTime * 8f);
         }
 
         public static Vector3 GetModifiedHandPosWithPose(Player player)
@@ -100,9 +110,9 @@ namespace TarkovIRL
 
         public static Vector3 GetModifiedHandPosWithPoseChange(Player player)
         {
-            ChangePoseUpdate(player.DeltaTime);
+            ChangePoseUpdate(player);
 
-            Vector3 addedVert = _poseShiftVectorVertical;
+            Vector3 addedVert = _poseShiftVectorVerticalLerped;
             float poseLevelThisFrame = player.PoseLevel;
             if (poseLevelThisFrame != _poseLevelLastFrame)
             {
@@ -124,7 +134,7 @@ namespace TarkovIRL
 
         public static Quaternion GetModifiedHandRotWithPoseChange()
         {
-            return _poseShiftVectorRotation;
+            return _poseShiftVectorRotationLerped;
         }
     }
 }

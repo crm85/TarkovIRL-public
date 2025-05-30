@@ -15,14 +15,20 @@ namespace TarkovIRL
         static readonly float _OutReloadY = 2f;
         static readonly float _OutReloadZ = -3f;
 
-        static bool _AugmentedModeOn = false;
+        public static bool _AugmentedModeOn = false;
         static EWeaponState _state;
+        static EWeaponState _stateLastFrame;
         static ObjectInHandsAnimator _animator = null;
 
-        static int _animatorLayer = 1;
+        static readonly int _animatorLayer = 1;
 
         public static Vector3 GetAugmentedReloadHeadOffset()
         {
+            if (!PrimeMover.IsAugmentedReload.Value)
+            {
+                return Vector3.zero;
+            }
+
             _state = AnimStateController.WeaponState;
 
             if (!_AugmentedModeOn)
@@ -72,12 +78,26 @@ namespace TarkovIRL
 
         public static void Update()
         {
+            if (!PrimeMover.IsAugmentedReload.Value)
+            {
+                return;
+            }
+
             if (_animator == null)
             {
                 return;
             }
 
             UpdateSpeed();
+
+            if (_stateLastFrame != EWeaponState.INTO_RELOAD && _state == EWeaponState.INTO_RELOAD)
+            {
+                if (PrimeMover.IsAugmentedReloadDefault.Value)
+                {
+                    _AugmentedModeOn = true;
+                }
+            }
+            _stateLastFrame = _state;
         }
 
         static void UpdateSpeed()
@@ -85,6 +105,7 @@ namespace TarkovIRL
             if (!AugmentedSwitchOpen())
             {
                 _AugmentedModeOn = false;
+                //SetAnimSpeed(1f);
             }
             else
             {
@@ -104,7 +125,7 @@ namespace TarkovIRL
             }
             catch (Exception e)
             {
-                TIRLUtils.LogError($"set anim speed failed, {e}");
+                //TIRLUtils.LogError($"set anim speed failed, {e}");
                 _animator = null;
             }
         }
@@ -132,9 +153,6 @@ namespace TarkovIRL
                 slowerReloadMulti = 1f;
             }
             float realismSpeed = _state == EWeaponState.CHECK_MAG ? RealismWrapper.GetRealismCheckMagSpeed() : RealismWrapper.GetRealismReloadSpeed();
-
-            //UtilsTIRL.Log($"reload state : {_state} at {_animator.Animator.GetCurrentAnimatorStateInfo(1).normalizedTime}");
-
             return sprintingMulti * augmentedMulti * realismSpeed * slowerReloadMulti;
         }
 

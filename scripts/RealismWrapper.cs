@@ -7,10 +7,11 @@ namespace TarkovIRL
     internal class RealismWrapper
     {
         static RealismHealthController _realHealth = null;
-
+        static float _blurEffectStrength = 0;
+        static float _chromaEffectStrength = 0;
         public static float GetRealismReloadSpeed()
         {
-            float reloadSpeed = Mathf.Clamp(WeaponStats.CurrentMagReloadSpeed * PlayerValues.ReloadInjuryMulti * PlayerValues.ReloadSkillMulti * PlayerValues.GearReloadMulti * StanceController.HighReadyManipBuff * StanceController.ActiveAimManipBuff * Plugin.RealHealthController.AdrenalineReloadBonus * Mathf.Max(PlayerValues.RemainingArmStamFactor, 0.8f), 0.65f, 1.35f);
+            float reloadSpeed = Mathf.Clamp(EfficiencyController.EfficiencyModifierInverse * WeaponStats.CurrentMagReloadSpeed * PlayerValues.ReloadSkillMulti * PlayerValues.GearErgoPenalty * StanceController.ActiveAimManipBuff, 0.65f, 1.35f);
             return reloadSpeed;
         }
 
@@ -21,7 +22,7 @@ namespace TarkovIRL
             {
                 value = PluginConfig.GlobalCheckAmmoPistolSpeedMulti.Value;
             }
-            float animationSpeed = Mathf.Clamp(WeaponStats.CurrentMagReloadSpeed * PlayerValues.ReloadSkillMulti * PlayerValues.ReloadInjuryMulti * StanceController.HighReadyManipBuff * PlayerValues.RemainingArmStamReloadFactor * Plugin.RealHealthController.AdrenalineReloadBonus * value, 0.7f, 1.35f);
+            float animationSpeed = Mathf.Clamp(EfficiencyController.EfficiencyModifierInverse * WeaponStats.CurrentMagReloadSpeed * PlayerValues.ReloadSkillMulti * value, 0.7f, 1.35f);
             return animationSpeed;
         }
 
@@ -40,7 +41,8 @@ namespace TarkovIRL
                 }
                 if (_realHealth != null)
                 {
-                    return _realHealth.HasPositiveAdrenalineEffect || _realHealth.HasNegativeAdrenalineEffect;
+                    bool isAdrenal = _realHealth.HasNegativeAdrenalineEffect || _realHealth.HasPositiveAdrenalineEffect;
+                    return isAdrenal;
                 }
                 else
                 {

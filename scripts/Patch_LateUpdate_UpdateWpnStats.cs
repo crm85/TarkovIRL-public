@@ -24,6 +24,7 @@ public class Patch_LateUpdate_UpdateWpnStats : ModulePatch
             return;
         }
 
+        PlayerMotionController.UpdateMovementInformation(__instance);
         AnimStateController.SetCurrentWeaponAnimState(__instance.HandsAnimator.Animator.GetCurrentAnimatorStateInfo(1).nameHash);
         int weaponHash = fc.Weapon.Name.GetHashCode();
         if (weaponHash != _weaponHashLastFrame)
