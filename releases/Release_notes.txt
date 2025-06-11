@@ -1,3 +1,11 @@
+v0.9 -- Small polishes. I had been waiting for the 3.11 Realism update to hit the round version number, but whatever. 
+
+- Increased base hold-breath speed from 25% to 40% of normal breathing speed;
+- Increased default arm shake effect value;
+- Slightly increased default mis-alignment value; BUT; if player is under adrenaline effect (either from combat or from stims), old-breath speed is reduced to 20% of base;
+- Reduced weapon transition buff for folded stocks to +50% (down from +100%);
+- Reduced weapon transition penalty when prone from 33% to 50% base speed modifier;
+
 Version 0.8.9 --
 - I've done a moderate pass on the sway model: hopefully the sway feels more weighty and authentic, and less 'floaty' than it was before. I'm very happy with it now and considering it done.
 - When trasitioning between sling and shoulder, if the transitioning weapon has a retracted stock, that weapon's transition speed is buffed 100%.
