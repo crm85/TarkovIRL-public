@@ -1,3 +1,12 @@
+v0.9.6
+- Changes:
+	- Reworked injury effects on Efficiency system:
+		- While you have Realism's Adrenaline buff, you will not suffer negative debuffs from heavy and light bleeds, and bone breaks.
+		- Heavy and light bleeds, and bone breaks no longer have immediate effects on the player's Efficiency: the effects now increase over time until a maximum level is reached.
+- Fixes:
+	- Added smoothing layer to footstep visual effect. Hopefully this helps people running sub-50 fps to not experience the weird stuttering.
+
+
 v0.9.1
 - Made lagging sway a function of efficiency, increased prominence of the effect in general.
 - Decreased efficiency of Active Aim stance, but also decreased misalignment.
