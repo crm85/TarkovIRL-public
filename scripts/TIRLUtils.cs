@@ -15,6 +15,7 @@ namespace TarkovIRL
         public static ManualLogSource Logger;
         static float _dt = 0;
         static float _spamTimer = 0;
+        static float _spamTimeResolution = 2f;
 
         public static void LogError(string toPrint)
         {
@@ -23,12 +24,16 @@ namespace TarkovIRL
 
         public static void Log(string toPrint, bool spam)
         {
+            if (!PrimeMover.IsLogging.Value)
+            {
+                return;
+            }
             if (spam)
                 Logger.LogInfo((object)toPrint);
             else
             {
                 _spamTimer += _dt;
-                if (_spamTimer > 0.2f)
+                if (_spamTimer > PrimeMover.LoggingUpdateFrequency.Value)
                 {
                     _spamTimer = 0;
                     Logger.LogInfo((object)toPrint);

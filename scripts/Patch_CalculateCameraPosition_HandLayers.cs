@@ -31,6 +31,8 @@ namespace TarkovIRL
             {
                 return;
             }
+
+
             Player.FirearmController firearmController = (Player.FirearmController)fcField.GetValue(__instance);
             if ((UnityEngine.Object)(object)firearmController == (UnityEngine.Object)null)
             {
@@ -39,7 +41,14 @@ namespace TarkovIRL
             Player player = (Player)playerField.GetValue(firearmController);
             if ((UnityEngine.Object)(object)player != (UnityEngine.Object)null && player.IsYourPlayer)
             {
+                WeaponController.IsUsingMounted = __instance.IsMountedState;
+
                 if (AnimStateController.IsBlindfire)
+                {
+                    return;
+                }
+
+                if (WeaponController.IsUsingMounted)
                 {
                     return;
                 }

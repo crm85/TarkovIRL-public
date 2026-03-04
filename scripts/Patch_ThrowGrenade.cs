@@ -1,5 +1,4 @@
 ﻿using EFT;
-using HarmonyLib;
 using SPT.Reflection.Patching;
 using System;
 using System.Collections.Generic;
@@ -7,27 +6,22 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using static EFT.Player;
 
 namespace TarkovIRL
 {
     public class Patch_ThrowGrenade : ModulePatch
     {
-        private static FieldInfo playerField;
-
         protected override MethodBase GetTargetMethod()
         {
-            playerField = AccessTools.Field(typeof(PlayerInventoryController), "player_0");
-            return typeof(PlayerInventoryController).GetMethod("ThrowItem", BindingFlags.Instance | BindingFlags.Public);
+            return typeof(Player).GetMethod("ThrowGrenade", BindingFlags.Instance | BindingFlags.Public);
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(PlayerInventoryController __instance, bool downDirection)
+        private static void PatchPostfix(Player __instance, bool lowThrow)
         {
-            Player player = (Player)playerField.GetValue(__instance);
-            if ((UnityEngine.Object)(object)__instance != (UnityEngine.Object)null && player.IsYourPlayer)
+            if ((UnityEngine.Object)(object)__instance != (UnityEngine.Object)null && __instance.IsYourPlayer)
             {
-                ThrowController.NewThrow(downDirection);
+                ThrowController.NewThrow(lowThrow);
             }
         }
     }

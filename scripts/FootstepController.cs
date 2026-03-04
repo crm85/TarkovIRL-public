@@ -17,6 +17,7 @@ namespace TarkovIRL
 
         // vars
         static float _stepLerp = 0;
+        static float _stepLerpSmoothed = 0;
         static float _currentSpeed = 0;
 
         static float _sideToSideRotationLerp = 0;
@@ -29,16 +30,32 @@ namespace TarkovIRL
 
         public static void UpdateStep(float dt)
         {
+            PlayerMotionController.EPlayerDir dir = PlayerMotionController.Direction;
+            float forwardCoef;
+            if (dir == PlayerMotionController.EPlayerDir.FWD)
+            {
+                forwardCoef = 1f;
+            }
+            else if (dir == PlayerMotionController.EPlayerDir.FWDLEFT || dir == PlayerMotionController.EPlayerDir.FWDRIGHT)
+            {
+                forwardCoef = 0.35f;
+            }
+            else
+            {
+                forwardCoef = 0f;
+            }
+
             float speedAdjusted = 1f + _currentSpeed;
             _stepLerp = Mathf.Lerp(_stepLerp, 1f, dt * _UpdateMulti * speedAdjusted * PrimeMover.FootstepLerpMulti.Value);
             _sideToSideRotationLerp += dt * PrimeMover.SideToSideRotationDTMulti.Value * speedAdjusted;
             _sideToSidePositionLerp += dt * PrimeMover.SideToSidePositionDTMulti.Value * speedAdjusted;
 
-            float sideToSideAddedRotationValue = PrimeMover.Instance.SideToSideCurve.Evaluate(_sideToSideRotationLerp) * PrimeMover.SideToSideSwayMulti.Value;
+            float sideToSideAddedRotationValue = PrimeMover.Instance.SideToSideCurve.Evaluate(_sideToSideRotationLerp) * PrimeMover.SideToSideSwayMulti.Value * forwardCoef;
             sideToSideAddedRotationValue *= _currentStepLeft ? 1f : -1f;
-            float sideToSideAddedPositionValue = PrimeMover.Instance.FootStepCurve.Evaluate(_sideToSidePositionLerp) * PrimeMover.SideToSideSwayMulti.Value;
+            float sideToSideAddedPositionValue = PrimeMover.Instance.FootStepCurve.Evaluate(_sideToSidePositionLerp) * PrimeMover.SideToSideSwayMulti.Value * forwardCoef;
             sideToSideAddedPositionValue *= _currentStepLeft ? -1f : 1f;
 
+            _stepLerpSmoothed = Mathf.Lerp(_stepLerpSmoothed, _stepLerp, dt * 13f);
             _sideToSideRotationSmoothingLerp = Mathf.Lerp(_sideToSideRotationSmoothingLerp, sideToSideAddedRotationValue, dt * 7f);
             _sideToSidePositionSmoothingLerp = Mathf.Lerp(_sideToSidePositionSmoothingLerp, sideToSideAddedPositionValue, dt * 7f);
         }
@@ -66,7 +83,7 @@ namespace TarkovIRL
             get 
             {
                 float speedAdjusted = 0.2f + _currentSpeed;
-                float stepValue = PrimeMover.Instance.FootStepCurve.Evaluate(_stepLerp) * _StepIntensityMulti * PrimeMover.FootstepIntesnityMulti.Value * (EfficiencyController.EfficiencyModifier * 0.5f) * speedAdjusted;
+                float stepValue = PrimeMover.Instance.FootStepCurve.Evaluate(_stepLerpSmoothed) * _StepIntensityMulti * PrimeMover.FootstepIntesnityMulti.Value * (EfficiencyController.EfficiencyModifier * 0.5f) * speedAdjusted;
                 return new Vector3(0, stepValue, 0); 
             }
         }

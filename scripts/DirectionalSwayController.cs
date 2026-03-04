@@ -54,7 +54,7 @@ namespace TarkovIRL
             float lateralRotTarget = lateralRotOffset * dirSwayLateralValue * PrimeMover.DirectionalSwayMulti.Value;
             float verticalRotTarget = verticalRotOffset * dirSwayVerticalValue * PrimeMover.DirectionalSwayMulti.Value;
 
-            if (!WeaponController.HasShoulderContact())
+            if (!WeaponController.HasCheekWeld())
             {
                 lateralPosTarget = 0;
                 lateralRotTarget = 0;

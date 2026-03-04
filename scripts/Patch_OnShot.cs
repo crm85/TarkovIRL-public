@@ -20,7 +20,7 @@ namespace TarkovIRL
             {
                 FirearmController fc = __instance.HandsController as FirearmController;
                 WeaponController.UpdateWpnStats(fc);
-                if (WeaponController.HasShoulderContact() && fc.IsAiming) ParallaxAdsController.StartNewShot(fc.Weapon);
+                if (WeaponController.HasCheekWeld() && fc.IsAiming) ParallaxAdsController.StartNewShot(fc.Weapon);
             }
             else
             {

@@ -24,7 +24,7 @@ namespace TarkovIRL
             _rotDeltaSmoothed = _rotDeltaHistory * fdt * 9f;
 
             float deadzoneMulti = PrimeMover.WeaponDeadzoneMulti.Value * WeaponController.GetWeaponMulti(false);
-            if (WeaponController.HasShoulderContact() && PlayerMotionController.IsAiming)
+            if (WeaponController.HasCheekWeld() && PlayerMotionController.IsAiming)
             {
                 deadzoneMulti *= PrimeMover.DeadzoneInADS.Value;
             }

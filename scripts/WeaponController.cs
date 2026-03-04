@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using EFT;
+﻿using EFT;
+using RealismMod;
+using UnityEngine;
 
 namespace TarkovIRL
 {
@@ -15,6 +16,7 @@ namespace TarkovIRL
         public static bool IsPistol = false;
         public static bool SwayThisFrame = false;
         public static bool IsFoldable = false;
+        public static bool IsUsingMounted = false;
         
         static int _currentWeaponHash = 0;
         static readonly int _MP5KHash = 25347301;
@@ -89,7 +91,7 @@ namespace TarkovIRL
             get { return _currentWeaponHash; }
         }
 
-        public static bool HasShoulderContact()
+        public static bool HasCheekWeld()
         {
             bool result;
             //result = IsStocked;

@@ -33,7 +33,7 @@ namespace TarkovIRL
 
         public static void UpdateLerp(float deltaTime)
         {
-            bool shoulderContact = WeaponController.HasShoulderContact();
+            bool shoulderContact = WeaponController.HasCheekWeld();
             float value = PlayerMotionController.HorizontalRotationDelta * PrimeMover.WeaponSwayMulti.Value;
             float value2 = PrimeMover.NewSwayRotDeltaClamp.Value;
             value = Mathf.Clamp(value, 0f - value2, value2);
@@ -98,18 +98,18 @@ namespace TarkovIRL
             {
                 _laggingSwayIterator = 0;
             }
-            float goBackIterations = WeaponController.GetWeaponMulti(false) * RealismWrapper.WeaponBalanceMulti;
+            float efficiencyClamped = Mathf.Clamp(EfficiencyController.EfficiencyModifier, 1f, 10f);
+            float goBackIterations = WeaponController.GetWeaponMulti(false) * RealismWrapper.WeaponBalanceMulti * efficiencyClamped * PrimeMover.LaggingSwayMulti.Value;
             goBackIterations *= StanceController.CurrentStance == EStance.HighReady ? 0.5f : 1f;
-            goBackIterations = Mathf.Clamp(goBackIterations, 0, 10f);
+            goBackIterations = Mathf.Clamp(goBackIterations, 1f, PrimeMover.LaggingSwayClamp.Value);
             int iterThisFrame = _laggingSwayIterator - Mathf.RoundToInt(goBackIterations);
-            //TIRLUtils.Log($"go back {goBackIterations}", true);
+            //TIRLUtils.Log($"go back iters{goBackIterations}", true);
             if (iterThisFrame < 0)
             {
                 iterThisFrame = _lagginSwaySetSize + iterThisFrame;
             }
             _lagginPos = _laggingSwayPoses[iterThisFrame];
             _lagginRot = _laggingSwayRots[iterThisFrame];
-            //TIRLUtils.Log($"_laggingSwayIterator {_laggingSwayIterator}, goBackIterations {goBackIterations}, iterThisFrame {iterThisFrame}", true);
         }
 
         public static Vector3 GetNewSwayPosition()
@@ -118,7 +118,7 @@ namespace TarkovIRL
             Vector3 posTarget = new Vector3(_lerpPosHorizontal, _lerpPosVertical, 0);
             _posSmoothed = Vector3.Lerp(_posSmoothed, posTarget, PrimeMover.Instance.DeltaTime * lerpRate);
             _lagginPosSmoothed = Vector3.Lerp(_lagginPosSmoothed, _lagginPos, PrimeMover.Instance.DeltaTime * lerpRate);
-            _finalPos = Vector3.Lerp(_posSmoothed, _lagginPosSmoothed, PrimeMover.SecondarySwayNorm.Value);
+            _finalPos = Vector3.Lerp(_posSmoothed, _lagginPosSmoothed, PrimeMover.LaggingSwayNorm.Value);
             _finalPosSmoothed = Vector3.Lerp(_finalPosSmoothed, _finalPos, PrimeMover.Instance.DeltaTime * PrimeMover.NewSwayFinalLerpSpeed.Value);
 
             if (!PrimeMover.IsWeaponSway.Value)
@@ -144,7 +144,7 @@ namespace TarkovIRL
             rotTarget.z = _lerpRot;
             _rotSmoothed = Vector3.Lerp(_rotSmoothed, rotTarget, PrimeMover.Instance.DeltaTime * lerpRate);
             _lagginRotSmoothed = Vector3.Lerp(_lagginRotSmoothed, _lagginRot, PrimeMover.Instance.DeltaTime * lerpRate);
-            _finalRot = Vector3.Lerp(_rotSmoothed, _lagginRotSmoothed, PrimeMover.SecondarySwayNorm.Value);
+            _finalRot = Vector3.Lerp(_rotSmoothed, _lagginRotSmoothed, PrimeMover.LaggingSwayNorm.Value);
             _finalRotSmoothed = Vector3.Lerp(_finalRotSmoothed, _finalRot, PrimeMover.Instance.DeltaTime * PrimeMover.NewSwayFinalLerpSpeed.Value);
 
             if (!PrimeMover.IsWeaponSway.Value)

@@ -53,13 +53,7 @@ namespace TarkovIRL
 
         public static void UpdateAnimationPump(float dt)
         {
-            if (!PrimeMover.IsWeaponTrans.Value)
-            {
-                return;
-            }
-
-            if (_player == null) return;
-            if (_player.HandsAnimator == null) return;
+            if (!PrimeMover.IsWeaponTrans.Value) return;
 
             _posLerpHistory.x += _posLerp.x;
             _posLerpHistory.y += _posLerp.y;
@@ -100,8 +94,8 @@ namespace TarkovIRL
             EWeaponState state = AnimStateController.WeaponState;
             float animProgress = _player.HandsAnimator.Animator.GetCurrentAnimatorStateInfo(1).normalizedTime;
             float efficiencyMod = Mathf.Clamp(EfficiencyController.EfficiencyModifierInverse, 0.5f, 1.5f);
-            float proneMod = PlayerMotionController.IsProne ? 0.33f : 1f;
-            float foldedStockMulti = WeaponController.IsStockFolded ? 2f : 1f;
+            float proneMod = PlayerMotionController.IsProne ? 0.5f : 1f;
+            float foldedStockMulti = WeaponController.IsStockFolded ? 1.5f : 1f;
             float finalSpeedMulti = efficiencyMod * proneMod * WeaponController.GetWeaponMulti(true) * PrimeMover.TransitionSpeedMulti.Value * foldedStockMulti;
 
             if (state == EWeaponState.ORDER_ARM)

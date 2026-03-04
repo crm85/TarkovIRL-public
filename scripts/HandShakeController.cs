@@ -41,7 +41,7 @@ namespace TarkovIRL
             }
 
             float pistolFactor = WeaponController.IsPistol ? 2f : 1f;
-            float unstockedFactor = !WeaponController.IsPistol && !WeaponController.HasShoulderContact() ? 1.8f : 1f;
+            float unstockedFactor = !WeaponController.IsPistol && !WeaponController.HasCheekWeld() ? 1.8f : 1f;
             float augmentedBreathMulti = PlayerMotionController.IsAugmentedBreath ? 0.5f : 1f;
 
             bool leftBreak = player.HealthController.IsBodyPartBroken(EBodyPart.LeftArm);

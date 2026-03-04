@@ -11,7 +11,7 @@ namespace TarkovIRL
         static float _chromaEffectStrength = 0;
         public static float GetRealismReloadSpeed()
         {
-            float reloadSpeed = Mathf.Clamp(EfficiencyController.EfficiencyModifierInverse * WeaponStats.CurrentMagReloadSpeed * PlayerValues.ReloadSkillMulti * PlayerValues.GearErgoPenalty * StanceController.ActiveAimManipBuff, 0.65f, 1.35f);
+            float reloadSpeed = Mathf.Clamp(EfficiencyController.EfficiencyModifierInverse * WeaponStats.CurrentMagReloadSpeed * PlayerState.ReloadSkillMulti * PlayerState.GearErgoPenalty * StanceController.ActiveAimManipBuff, 0.65f, 1.35f);
             return reloadSpeed;
         }
 
@@ -22,7 +22,7 @@ namespace TarkovIRL
             {
                 value = PluginConfig.GlobalCheckAmmoPistolSpeedMulti.Value;
             }
-            float animationSpeed = Mathf.Clamp(EfficiencyController.EfficiencyModifierInverse * WeaponStats.CurrentMagReloadSpeed * PlayerValues.ReloadSkillMulti * value, 0.7f, 1.35f);
+            float animationSpeed = Mathf.Clamp(EfficiencyController.EfficiencyModifierInverse * WeaponStats.CurrentMagReloadSpeed * PlayerState.ReloadSkillMulti * value, 0.7f, 1.35f);
             return animationSpeed;
         }
 

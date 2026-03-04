@@ -75,7 +75,7 @@ namespace TarkovIRL
 
         public static void GetParallaxADSHeadTilt(out float Y, out float Z)
         {
-            if (PlayerMotionController.IsAiming && WeaponController.HasShoulderContact())
+            if (PlayerMotionController.IsAiming && WeaponController.HasCheekWeld())
             {
                 float shoulderSwap = RealismMod.StanceController.IsLeftShoulder ? -1f : 1f;
                 Y = _HeadTiltValY * _adsLerpWeight * shoulderSwap;
