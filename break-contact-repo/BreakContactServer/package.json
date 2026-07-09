@@ -1,0 +1,18 @@
+{
+  "name": "BreakContact",
+  "version": "0.1",
+  "main": "src/breakContact.js",
+  "license": "MIT",
+  "author": "Break Contact",
+  "sptVersion": "3.11.*",
+  "isBundleMod": false,
+  "scripts": {
+    "setup": "npm i",
+    "build": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/node": "^16.18.91",
+    "tsyringe": "^4.7.0",
+    "typescript": "4.9.4"
+  }
+}

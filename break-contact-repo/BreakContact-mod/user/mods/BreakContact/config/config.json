@@ -1,0 +1,19 @@
+{
+  "ExpandedFenceAssort": {
+    "Enabled": true,
+    "DebugLogging": false
+  },
+  "WeaponDurability": {
+    "Enabled": true,
+    "ValuePercentileLow": 0.1,
+    "ValuePercentileHigh": 0.9,
+    "WorldLowValueMin": 35,
+    "WorldLowValueMax": 95,
+    "WorldHighValueMin": 80,
+    "WorldHighValueMax": 98,
+    "TraderLowValueMin": 75,
+    "TraderLowValueMax": 99,
+    "TraderHighValueMin": 90,
+    "TraderHighValueMax": 99
+  }
+}

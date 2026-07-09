@@ -1,0 +1,19 @@
+# Build outputs
+bin/
+obj/
+*.cache
+*.dll
+*.pdb
+
+# Visual Studio user state
+.vs/
+*.suo
+*.user
+*.vsidx
+
+# Local reference/source drops
+/assem/
+/realism/
+
+# Local release packaging
+/Release tree/
